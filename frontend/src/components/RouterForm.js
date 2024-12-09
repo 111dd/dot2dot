@@ -12,7 +12,6 @@ const RouterForm = () => {
     ports_count: 8, // ברירת מחדל
     is_stack: false,
     slots_count: '',
-    network_id: '',
   });
 
   const [errorMessage, setErrorMessage] = useState('');
@@ -53,7 +52,6 @@ const RouterForm = () => {
     const cleanedData = {
       ...router,
       slots_count: router.slots_count || null,
-      network_id: router.network_id || null,
     };
 
     axios.post('http://127.0.0.1:5000/api/routers', cleanedData)
@@ -72,7 +70,6 @@ const RouterForm = () => {
           ports_count: 8,
           is_stack: false,
           slots_count: '',
-          network_id: '',
         });
       })
       .catch((error) => {
@@ -114,7 +111,6 @@ const RouterForm = () => {
           <input type="checkbox" name="is_stack" checked={router.is_stack} onChange={handleChange} />
         </label>
         <input type="number" name="slots_count" placeholder="Slots Count" value={router.slots_count} onChange={handleChange} />
-        <input type="number" name="network_id" placeholder="Network ID" value={router.network_id} onChange={handleChange} />
         <button type="submit">Add Router</button>
       </form>
       {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}

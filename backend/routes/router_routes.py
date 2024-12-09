@@ -32,20 +32,24 @@ def get_routers():
 def add_router():
     try:
         data = request.get_json()
-        if not data or 'name' not in data or 'ip_address' not in data:
-            return jsonify({'error': 'Missing required fields'}), 400
+
+        # בדיקת שדות חובה
+        required_fields = ['name', 'ip_address', 'floor', 'building', 'connection_speed', 'network_type']
+        for field in required_fields:
+            if field not in data or not data[field]:
+                return jsonify({'error': f'{field} is required.'}), 400
 
         # יצירת נתב חדש
         new_router = Router(
             name=data['name'],
             ip_address=data['ip_address'],
-            floor=data['floor'],
+            floor=int(data['floor']),
             building=data['building'],
             connection_speed=data['connection_speed'],
-            network_type=data['network_type'],  # קבלת סוג הרשת
-            ports_count=data.get('ports_count'),
-            is_stack=data.get('is_stack', False),
-            slots_count=data.get('slots_count'),
+            network_type=data['network_type'],
+            ports_count=int(data.get('ports_count', 0)),  # ערך ברירת מחדל
+            is_stack=bool(data.get('is_stack', False)),
+            slots_count=int(data.get('slots_count', 0)),
         )
         db.session.add(new_router)
         db.session.commit()
