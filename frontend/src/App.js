@@ -7,6 +7,7 @@ import RoutersPage from './pages/RoutersPage';
 import AddRouterPage from './pages/AddRouterPage';
 import AddEndpointPage from './pages/AddEndpointPage';
 import NotFound from './pages/NotFound';
+import RouterTable from './components/RouterTable';
 
 
 const App = () => {

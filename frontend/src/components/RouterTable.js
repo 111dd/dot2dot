@@ -37,6 +37,33 @@ const RouterTable = () => {
     setIsModalOpen(false);
   };
 
+  // עדכון נתב ברשימה לאחר עריכה
+  const handleUpdateRouter = (updatedRouter) => {
+    setRouters((prevRouters) =>
+      prevRouters.map((router) =>
+        router.id === updatedRouter.id ? updatedRouter : router
+      )
+    );
+    setIsModalOpen(false);
+  };
+
+  // מחיקת נתב מהרשימה ומהשרת
+  const handleDeleteRouter = (id) => {
+    axios
+      .delete(`http://127.0.0.1:5000/api/routers/${id}`)
+      .then(() => {
+        setRouters((prevRouters) =>
+          prevRouters.filter((router) => router.id !== id)
+        );
+        alert('Router deleted successfully!');
+        setIsModalOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error deleting router:', error);
+        alert('Failed to delete router.');
+      });
+  };
+
   // אם יש שגיאה, הצג הודעת שגיאה
   if (error) {
     return <div>Error: {error}</div>;
@@ -87,6 +114,8 @@ const RouterTable = () => {
         <RouterModal
           router={selectedRouter}
           onClose={handleCloseModal}
+          onUpdate={handleUpdateRouter} // העברת פונקציית עדכון
+          onDelete={handleDeleteRouter} // העברת פונקציית מחיקה
         />
       )}
     </div>

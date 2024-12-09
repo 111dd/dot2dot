@@ -16,10 +16,18 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
   const handleSave = () => {
     console.log('Sending data to server:', formData);
 
-    axios.put(`http://127.0.0.1:5000/api/routers/${router.id}`, formData)
+    axios
+      .put(`http://127.0.0.1:5000/api/routers/${router.id}`, formData)
       .then((response) => {
         console.log('Response from server:', response.data);
-        onUpdate(response.data); // עדכון ברשימה המקומית
+
+        // בדיקה אם `onUpdate` מוגדר
+        if (typeof onUpdate === 'function') {
+          onUpdate(response.data); // עדכון ברשימה המקומית
+        } else {
+          console.error('onUpdate is not defined or not a function');
+        }
+
         setIsEditing(false);
         alert('Router updated successfully!');
       })
