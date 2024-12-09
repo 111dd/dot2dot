@@ -1,0 +1,50 @@
+# Node modules
+node_modules/
+
+# Python virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Compiled files
+*.pyc
+__pycache__/
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Build directories
+build/
+dist/
+
+# Flask migrations
+migrations/
+*.sqlite3
+
+# Coverage and testing
+.coverage
+coverage/
+*.cover
+tests/__pycache__/
+
+# NPM/Yarn lock files (אם לא רלוונטי לפרויקט שלך)
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+*.swp
+
+# Static and media files (optional, אם הם נוצרים דינמית)
+staticfiles/
+media/

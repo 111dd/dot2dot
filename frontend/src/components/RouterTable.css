@@ -1,0 +1,33 @@
+.table-container {
+  max-height: 400px; /* גובה מקסימלי לאזור הגלילה */
+  overflow-y: auto; /* אפשר גלילה אנכית */
+  margin-top: 20px;
+  border: 1px solid #ddd;
+}
+
+.sticky-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.sticky-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #f9f9f9;
+  z-index: 1;
+}
+
+.sticky-table th, .sticky-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.sticky-table tbody tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+.sticky-table tbody tr:hover {
+  background-color: #ddd;
+}
