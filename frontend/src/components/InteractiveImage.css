@@ -1,0 +1,52 @@
+/* עיטוף התמונה */
+.image-wrapper {
+  position: relative;
+  max-width: 100%; /* התאמת גודל למסך */
+  display: inline-block;
+}
+
+/* התמונה */
+.interactive-image {
+  display: block;
+  width: 100%; /* התאמת הרוחב למסגרת */
+  height: auto;
+}
+
+/* אזור לחיץ */
+.clickable-area {
+  position: absolute;
+  cursor: pointer;
+  background-color: rgba(0, 255, 0, 0.0); /* רקע ירוק שקוף */
+  border: 1px solid rgba(0, 255, 0, 0.1); /* גבול ירוק */
+  transition: background-color 0.3s, border 0.3s;
+}
+
+/* הדגשה עם מעבר עכבר */
+.clickable-area:hover {
+  background-color: rgba(255, 255, 255, 0.3); /* שינוי צבע רקע */
+  border: 2px solid rgba(255, 255, 255, 0.5); /* גבול */
+}
+
+/* אזור דרום */
+.south {
+  top: 2%; /* מיקום אנכי */
+  left: 26%; /* מיקום אופקי */
+  width: 20%; /* רוחב */
+  height: 55%; /* גובה */
+}
+
+/* אזור צפון */
+.north {
+  top: 2%; /* מיקום אנכי */
+  left: 55%; /* מיקום אופקי */
+  width: 20%; /* רוחב */
+  height: 55%; /* גובה */
+}
+
+/* אזור הבור */
+.pit {
+  top: 60%; /* מיקום אנכי */
+  left: 40%; /* מיקום אופקי */
+  width: 25%; /* רוחב */
+  height: 35%; /* גובה */
+}

@@ -1,10 +1,11 @@
 import React from 'react';
+import InteractiveImage from '../components/InteractiveImage';
 
 const Home = () => {
   return (
     <div>
-      <h1>Welcome to the Network Documentation App</h1>
-      <p>Manage your routers and endpoints with ease.</p>
+      <h1>ברוך הבא לחפשן - האתר לתיעוד נקודות רשת</h1>
+      <InteractiveImage />
     </div>
   );
 };

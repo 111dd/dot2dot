@@ -146,3 +146,26 @@ def get_router_by_id(id):
     except Exception as e:
         logging.error(f"Error fetching router {id}: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+@router_bp.route('/building/<string:building>', methods=['GET'])
+def get_routers_by_building(building):
+    try:
+        # שליפת כל הנתבים לפי הבניין ומיון לפי קומה
+        routers = Router.query.filter_by(building=building).order_by(Router.floor).all()
+        return jsonify([
+            {
+                'id': router.id,
+                'name': router.name,
+                'ip_address': router.ip_address,
+                'floor': router.floor,
+                'building': router.building,
+                'connection_speed': router.connection_speed,
+                'ports_count': router.ports_count,
+                'is_stack': router.is_stack,
+                'slots_count': router.slots_count,
+            } for router in routers
+        ]), 200
+    except Exception as e:
+        logging.error(f"Error fetching routers for building {building}: {e}")
+        return jsonify({'error': 'Failed to fetch routers for the building'}), 500
