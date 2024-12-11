@@ -23,17 +23,17 @@ const InteractiveImage = () => {
         {/* אזורים לחיצים */}
         <div
           className="clickable-area south"
-          onClick={() => handleAreaClick('/south')}
+          onClick={() => handleAreaClick('/building/South')}
           title="South Building"
         ></div>
         <div
           className="clickable-area north"
-          onClick={() => handleAreaClick('/north')}
+          onClick={() => handleAreaClick('/building/North')}
           title="North Building"
         ></div>
         <div
           className="clickable-area pit"
-          onClick={() => handleAreaClick('/pit')}
+          onClick={() => handleAreaClick('/building/Pit')}
           title="Pit Area"
         ></div>
       </div>

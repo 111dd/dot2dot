@@ -5,9 +5,7 @@ from sqlalchemy.dialects.postgresql import ENUM
 db = SQLAlchemy()
 
 # רשימת הרשתות
-NETWORK_TYPES = ('שביל החלב', 'נתיב רקיע', 'ממד"ס', 'קליקנט',
-                 'למדן', 'רומ"ח', 'רואי', 'ארמי',
-                 'לב', 'ארמי TS', 'אליס')
+NETWORK_TYPES = (  'ים','יבשה', 'דרכים','שמיים')
 
 # טבלת נתבים
 class Router(db.Model):

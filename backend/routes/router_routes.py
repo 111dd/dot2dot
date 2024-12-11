@@ -10,21 +10,66 @@ router_bp = Blueprint('router_routes', __name__)
 # קבלת כל הנתבים
 @router_bp.route('/', methods=['GET'])
 def get_routers():
-    routers = Router.query.all()
-    return jsonify([
-        {
-            'id': router.id,
-            'name': router.name,
-            'ip_address': router.ip_address,
-            'floor': router.floor,
-            'building': router.building,
-            'connection_speed': router.connection_speed,
-            'network_type': router.network_type,  # הצגת סוג הרשת
-            'ports_count': router.ports_count,
-            'is_stack': router.is_stack,
-            'slots_count': router.slots_count,
-        } for router in routers
-    ]), 200
+    try:
+        building = request.args.get('building')
+        if building:
+            routers = Router.query.filter_by(building=building).order_by(Router.floor).all()
+            logging.info(f"Fetching routers for building: {building}")
+        else:
+            routers = Router.query.all()
+            logging.info("Fetching all routers")
+
+        return jsonify([
+            {
+                'id': router.id,
+                'name': router.name,
+                'ip_address': router.ip_address,
+                'floor': router.floor,
+                'building': router.building,
+                'connection_speed': router.connection_speed,
+                'network_type': router.network_type,
+                'ports_count': router.ports_count,
+                'is_stack': router.is_stack,
+                'slots_count': router.slots_count,
+            } for router in routers
+        ]), 200
+
+    except Exception as e:
+        logging.error(f"Error fetching routers: {e}")
+        return jsonify({'error': 'Failed to fetch routers'}), 500
+
+
+# קבלת נתבים לפי בניין
+@router_bp.route('/building/<string:building>', methods=['GET'])
+def get_routers_by_building(building):
+    try:
+        # בדיקה אם הבניין קיים
+        valid_buildings = [router.building for router in Router.query.distinct(Router.building).all()]
+        if building not in valid_buildings:
+            return jsonify({'error': f'Building {building} does not exist.'}), 404
+
+        # שליפת נתבים מהבניין
+        routers = Router.query.filter_by(building=building).order_by(Router.floor).all()
+        logging.info(f"Routers fetched for building {building}: {len(routers)} routers found.")
+        return jsonify([
+            {
+                'id': router.id,
+                'name': router.name,
+                'ip_address': router.ip_address,
+                'floor': router.floor,
+                'building': router.building,
+                'connection_speed': router.connection_speed,
+                'ports_count': router.ports_count,
+                'is_stack': router.is_stack,
+                'slots_count': router.slots_count,
+            } for router in routers
+        ]), 200
+    except Exception as e:
+        logging.error(f"Error fetching routers for building {building}: {e}")
+        return jsonify({'error': 'Failed to fetch routers for the building'}), 500
+
+
+
 
 
 # הוספת נתב חדש
@@ -32,14 +77,12 @@ def get_routers():
 def add_router():
     try:
         data = request.get_json()
-
-        # בדיקת שדות חובה
         required_fields = ['name', 'ip_address', 'floor', 'building', 'connection_speed', 'network_type']
         for field in required_fields:
             if field not in data or not data[field]:
+                logging.warning(f"Missing field: {field}")
                 return jsonify({'error': f'{field} is required.'}), 400
 
-        # יצירת נתב חדש
         new_router = Router(
             name=data['name'],
             ip_address=data['ip_address'],
@@ -47,19 +90,19 @@ def add_router():
             building=data['building'],
             connection_speed=data['connection_speed'],
             network_type=data['network_type'],
-            ports_count=int(data.get('ports_count', 0)),  # ערך ברירת מחדל
+            ports_count=int(data.get('ports_count', 0)),
             is_stack=bool(data.get('is_stack', False)),
             slots_count=int(data.get('slots_count', 0)),
         )
         db.session.add(new_router)
         db.session.commit()
-
         logging.info(f"Router added: {new_router.id}")
         return jsonify({'message': 'Router added successfully'}), 201
 
     except Exception as e:
         logging.error(f"Error adding router: {e}")
         return jsonify({'error': str(e)}), 500
+
 
 
 # עדכון נתב קיים
@@ -148,24 +191,3 @@ def get_router_by_id(id):
         return jsonify({'error': str(e)}), 500
 
 
-@router_bp.route('/building/<string:building>', methods=['GET'])
-def get_routers_by_building(building):
-    try:
-        # שליפת כל הנתבים לפי הבניין ומיון לפי קומה
-        routers = Router.query.filter_by(building=building).order_by(Router.floor).all()
-        return jsonify([
-            {
-                'id': router.id,
-                'name': router.name,
-                'ip_address': router.ip_address,
-                'floor': router.floor,
-                'building': router.building,
-                'connection_speed': router.connection_speed,
-                'ports_count': router.ports_count,
-                'is_stack': router.is_stack,
-                'slots_count': router.slots_count,
-            } for router in routers
-        ]), 200
-    except Exception as e:
-        logging.error(f"Error fetching routers for building {building}: {e}")
-        return jsonify({'error': 'Failed to fetch routers for the building'}), 500

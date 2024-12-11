@@ -8,7 +8,7 @@ const AddRouterPage = () => {
     floor: '',
     building: '',
     connection_speed: '10M', // ערך ברירת מחדל
-    network_type: 'שביל החלב', // ערך ברירת מחדל
+    network_type: 'דרכים', // ערך ברירת מחדל
     ports_count: 8, // ערך ברירת מחדל
     is_stack: false,
     slots_count: '',
@@ -16,10 +16,7 @@ const AddRouterPage = () => {
 
   const connectionSpeeds = ['10M', '100M', '1G']; // אפשרויות מהירות
   const portCounts = [8, 12, 24, 48]; // אפשרויות כמות פורטים
-  const networkTypes = [
-    'שביל החלב', 'נתיב רקיע', 'ממד"ס', 'קליקנט',
-    'למדן', 'רומ"ח', 'רואי', 'ארמי',
-    'לב', 'ארמי TS', 'אליס',
+  const networkTypes = [  'ים','יבשה', 'דרכים','שמיים'
   ]; // אפשרויות סוגי רשתות
 
   const handleChange = (e) => {
