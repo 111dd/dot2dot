@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AddRouterPage = () => {
@@ -7,17 +7,31 @@ const AddRouterPage = () => {
     ip_address: '',
     floor: '',
     building: '',
-    connection_speed: '10M', // ערך ברירת מחדל
-    network_type: 'דרכים', // ערך ברירת מחדל
-    ports_count: 8, // ערך ברירת מחדל
+    connection_speed: '10M', // ברירת מחדל
+    network_id: '', // מזהה רשת
+    ports_count: 8, // ברירת מחדל
     is_stack: false,
     slots_count: '',
   });
 
-  const connectionSpeeds = ['10M', '100M', '1G']; // אפשרויות מהירות
-  const portCounts = [8, 12, 24, 48]; // אפשרויות כמות פורטים
-  const networkTypes = [  'ים','יבשה', 'דרכים','שמיים'
-  ]; // אפשרויות סוגי רשתות
+  const [networks, setNetworks] = useState([]); // שמירת רשימת הרשתות
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const connectionSpeeds = ['10M', '100M', '1G'];
+  const portCounts = [8, 12, 24, 48];
+
+  // טעינת רשימת הרשתות מהשרת
+  useEffect(() => {
+    axios
+      .get('http://127.0.0.1:5000/api/networks')
+      .then((response) => {
+        setNetworks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching networks:', error);
+        setErrorMessage('Failed to load networks.');
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,37 +44,36 @@ const AddRouterPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // בדיקות תקינות בסיסיות
-    if (!router.name || !router.ip_address || !router.floor || !router.building || !router.network_type) {
+    // בדיקות תקינות
+    if (!router.name || !router.ip_address || !router.floor || !router.building || !router.network_id) {
       alert('Please fill in all required fields.');
       return;
     }
 
     console.log('Data to be sent before cleaning:', router);
 
-    // המרת ערכים מספריים
     const cleanedData = {
       ...router,
       floor: parseInt(router.floor, 10),
       ports_count: parseInt(router.ports_count, 10),
       slots_count: router.slots_count ? parseInt(router.slots_count, 10) : null,
+      network_id: parseInt(router.network_id, 10), // הבטחת `network_id` כמספר
     };
-
-    console.log('Data to be sent after cleaning:', cleanedData);
 
     axios
       .post('http://127.0.0.1:5000/api/routers/', cleanedData)
       .then((response) => {
         console.log('Response from server:', response.data);
         alert('Router added successfully!');
-        // איפוס הטופס לאחר הוספה מוצלחת
+
+        // איפוס הטופס
         setRouter({
           name: '',
           ip_address: '',
           floor: '',
           building: '',
           connection_speed: '10M',
-          network_type: 'שביל החלב',
+          network_id: '',
           ports_count: 8,
           is_stack: false,
           slots_count: '',
@@ -68,11 +81,8 @@ const AddRouterPage = () => {
       })
       .catch((error) => {
         console.error('Error adding router:', error);
-        if (error.response) {
-          alert(`Failed to add router: ${error.response.data.error}`);
-        } else {
-          alert('Failed to add router. Please try again.');
-        }
+        const errorResponse = error.response?.data?.error || 'Failed to add router. Please try again.';
+        setErrorMessage(errorResponse);
       });
   };
 
@@ -126,13 +136,14 @@ const AddRouterPage = () => {
           ))}
         </select>
         <select
-          name="network_type"
-          value={router.network_type}
+          name="network_id"
+          value={router.network_id}
           onChange={handleChange}
           required
         >
-          {networkTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
+          <option value="">Select Network</option>
+          {networks.map((network) => (
+            <option key={network.id} value={network.id}>{network.name}</option>
           ))}
         </select>
         <select
@@ -163,6 +174,7 @@ const AddRouterPage = () => {
         />
         <button type="submit">Add Router</button>
       </form>
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
     </div>
   );
 };

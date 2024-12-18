@@ -3,6 +3,8 @@
   overflow-y: auto; /* אפשר גלילה אנכית */
   margin-top: 20px;
   border: 1px solid #ddd;
+  border-radius: 8px; /* פינות מעוגלות */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* צל לתיחום */
 }
 
 .sticky-table {
@@ -10,24 +12,67 @@
   border-collapse: collapse;
   text-align: left;
   margin-top: 20px;
+  font-family: Arial, sans-serif; /* פונט קריא */
 }
 
 .sticky-table thead {
   position: sticky;
   top: 0;
-  background-color: #f9f9f9;
+  background-color: #4CAF50; /* רקע כותרת ירוק */
+  color: white; /* טקסט לבן */
   z-index: 1;
 }
 
 .sticky-table th, .sticky-table td {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 10px; /* מרווחים יותר גדולים */
+  font-size: 14px; /* גודל פונט */
+}
+
+.sticky-table th input {
+  width: 90%; /* התאמת שדות הסינון לגודל */
+  padding: 6px; /* מרווח בתוך השדה */
+  margin-top: 5px; /* מרווח בין הכותרת לשדה */
+  border: 1px solid #ccc;
+  border-radius: 4px; /* עיצוב שדות הסינון */
+  box-sizing: border-box;
+}
+
+.sticky-table th input:focus {
+  border-color: #4CAF50; /* הדגשת שדה ממוקד */
+  outline: none;
 }
 
 .sticky-table tbody tr:nth-child(odd) {
   background-color: #f2f2f2;
 }
 
+.sticky-table tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
 .sticky-table tbody tr:hover {
-  background-color: #ddd;
+  background-color: #ddd; /* הדגשה בעת מעבר עכבר */
+}
+
+.sticky-table td button {
+  background-color: #4CAF50; /* כפתור ירוק */
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.sticky-table td button:hover {
+  background-color: #45a049; /* שינוי צבע בעת מעבר עכבר */
+}
+
+.sticky-table td button:active {
+  background-color: #3e8e41; /* צבע לחיצה */
+}
+
+.sticky-table td {
+  text-align: center; /* יישור מרכזי של הטקסט בתאים */
 }

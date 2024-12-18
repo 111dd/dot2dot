@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const RouterForm = () => {
@@ -7,23 +7,31 @@ const RouterForm = () => {
     ip_address: '',
     floor: '',
     building: '',
-    connection_speed: '10M', // ברירת מחדל
-    network_type: 'שביל החלב', // ברירת מחדל
+    connection_speed: '10Mbps', // ברירת מחדל
+    network_id: '', // מזהה רשת
     ports_count: 8, // ברירת מחדל
     is_stack: false,
     slots_count: '',
   });
 
+  const [networks, setNetworks] = useState([]); // רשימת הרשתות
   const [errorMessage, setErrorMessage] = useState('');
 
-  const networkTypes = [
-    'שביל החלב', 'נתיב רקיע', 'ממד"ס', 'קליקנט',
-    'למדן', 'רומ"ח', 'רואי', 'ארמי',
-    'לב', 'ארמי TS', 'אליס'
-  ];
-
-  const connectionSpeeds = ['10M', '100M', '1G'];
+  const connectionSpeeds = ['10Mbps', '100Mbps', '1Gbps'];
   const portCounts = [8, 12, 24, 48];
+
+  useEffect(() => {
+    // שליפת רשימת הרשתות מהשרת
+    axios
+      .get('http://127.0.0.1:5000/api/networks')
+      .then((response) => {
+        setNetworks(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching networks:', error);
+        setErrorMessage('Failed to load networks.');
+      });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -36,37 +44,32 @@ const RouterForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // בדיקות תקינות
-    if (!router.name || !router.ip_address || !router.floor || !router.building) {
+    if (!router.name || !router.ip_address || !router.floor || !router.building || !router.network_id) {
       setErrorMessage('Please fill in all required fields.');
       return;
     }
 
-    // איפוס הודעת השגיאה
     setErrorMessage('');
 
-    // הדפסה לבדיקה לפני השליחה
-    console.log('Data to be sent to server:', router);
-
-    // טיפול בערכים אופציונליים
     const cleanedData = {
       ...router,
       slots_count: router.slots_count || null,
+      network_id: parseInt(router.network_id), // להבטיח ש-`network_id` יהיה מספרי
     };
 
-    axios.post('http://127.0.0.1:5000/api/routers', cleanedData)
+    axios
+      .post('http://127.0.0.1:5000/api/routers', cleanedData)
       .then((response) => {
         console.log('Response from server:', response.data);
         alert('Router added successfully!');
 
-        // איפוס הטופס
         setRouter({
           name: '',
           ip_address: '',
           floor: '',
           building: '',
-          connection_speed: '10M',
-          network_type: 'שביל החלב',
+          connection_speed: '10Mbps',
+          network_id: '',
           ports_count: 8,
           is_stack: false,
           slots_count: '',
@@ -96,9 +99,12 @@ const RouterForm = () => {
             <option key={speed} value={speed}>{speed}</option>
           ))}
         </select>
-        <select name="network_type" value={router.network_type} onChange={handleChange} required>
-          {networkTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
+        <select name="network_id" value={router.network_id} onChange={handleChange} required>
+          <option value="">Select Network</option>
+          {networks.map((network) => (
+            <option key={network.id} value={network.id}>
+              {network.name}
+            </option>
           ))}
         </select>
         <select name="ports_count" value={router.ports_count} onChange={handleChange} required>

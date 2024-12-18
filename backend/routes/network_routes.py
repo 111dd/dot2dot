@@ -29,17 +29,25 @@ def get_networks():
 def add_network():
     try:
         data = request.get_json()
+
+        # בדיקות תקינות
         if not data.get('name'):
             return jsonify({'error': 'Network name is required'}), 400
 
         new_network = Network(
             name=data['name'],
-            description=data.get('description', '')  # הוסף תיאור אופציונלי
+            description=data.get('description')  # אופציונלי
         )
         db.session.add(new_network)
         db.session.commit()
-        logging.info(f"Network added: {new_network.name}")
-        return jsonify({'message': 'Network added successfully', 'id': new_network.id}), 201
+
+        return jsonify({
+            'message': 'Network added successfully',
+            'id': new_network.id,
+            'name': new_network.name,
+            'description': new_network.description
+        }), 201
     except Exception as e:
-        logging.error(f"Error adding network: {e}")
-        return jsonify({'error': 'Failed to add network'}), 500
+        return jsonify({'error': f'Failed to add network: {str(e)}'}), 500
+
+

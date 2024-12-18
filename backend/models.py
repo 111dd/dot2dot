@@ -9,6 +9,7 @@ class Network(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)  # שם הרשת
     description = db.Column(db.Text, nullable=True)  # תיאור הרשת
+    color = db.Column(db.String(7), nullable=False, default='#FFFFFF')  # צבע (ברירת מחדל לבן)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)  # תאריך יצירה
 
     # קשר לנתבים שמשויכים לרשת זו

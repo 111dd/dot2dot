@@ -83,9 +83,9 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
               onChange={handleChange}
               required
             >
-              <option value="10M">10M</option>
-              <option value="100M">100M</option>
-              <option value="1G">1G</option>
+              <option value="10Mbps">10M</option>
+              <option value="100Mbps">100M</option>
+              <option value="1Gbps">1G</option>
             </select>
             <select
               name="ports_count"
