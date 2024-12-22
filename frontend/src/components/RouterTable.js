@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import RouterModal from './RouterModal';
+import './RouterTable.css';
+
 
 const RouterTable = ({ filter }) => {
   const [routers, setRouters] = useState([]);
+  const [networks, setNetworks] = useState([]); // שמירת רשימת הרשתות
   const [filteredRouters, setFilteredRouters] = useState([]);
   const [filters, setFilters] = useState(filter || {});
   const [selectedRouter, setSelectedRouter] = useState(null);
@@ -12,40 +15,40 @@ const RouterTable = ({ filter }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch routers from the server
+  // Fetch routers and networks from the server
   useEffect(() => {
     setIsLoading(true);
-    axios
-      .get('http://127.0.0.1:5000/api/routers')
-      .then((response) => {
-        setRouters(response.data);
-        applyFilters(response.data, filters);
+    const fetchData = async () => {
+      try {
+        const [routersResponse, networksResponse] = await Promise.all([
+          axios.get('http://127.0.0.1:5000/api/routers'),
+          axios.get('http://127.0.0.1:5000/api/networks'),
+        ]);
+
+        setRouters(routersResponse.data);
+        setNetworks(networksResponse.data);
+        setFilteredRouters(routersResponse.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data from the server.');
+      } finally {
         setIsLoading(false);
-      })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.error || error.response.statusText
-          : 'Failed to connect to the server.';
-        console.error('Error fetching routers:', errorMessage);
-        setError(errorMessage);
-        setIsLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // Apply filters whenever filters or routers change
   useEffect(() => {
-    console.log('Filters:', filters);
-    console.log('Routers before filtering:', routers);
     applyFilters(routers, filters);
   }, [filters, routers]);
 
   const applyFilters = (data, activeFilters) => {
     const filtered = data.filter((router) =>
       Object.entries(activeFilters).every(([key, value]) => {
-        if (value === undefined || value === '') return true;
-        const routerValue = router[key]?.toString().trim().toLowerCase();
-        const filterValue = value.toString().trim().toLowerCase();
-        return routerValue.includes(filterValue); // השוואה חלקית
+        if (!value) return true;
+        const routerValue = router[key]?.toString().toLowerCase() || '';
+        return routerValue.includes(value.toLowerCase());
       })
     );
     setFilteredRouters(filtered);
@@ -65,37 +68,8 @@ const RouterTable = ({ filter }) => {
     setIsModalOpen(false);
   };
 
-  const handleUpdateRouter = (updatedRouter) => {
-    setRouters((prevRouters) =>
-      prevRouters.map((router) =>
-        router.id === updatedRouter.id ? updatedRouter : router
-      )
-    );
-    setFilteredRouters((prevRouters) =>
-      prevRouters.map((router) =>
-        router.id === updatedRouter.id ? updatedRouter : router
-      )
-    );
-    setIsModalOpen(false);
-  };
-
-  const handleDeleteRouter = (id) => {
-    axios
-      .delete(`http://127.0.0.1:5000/api/routers/${id}`)
-      .then(() => {
-        setRouters((prevRouters) =>
-          prevRouters.filter((router) => router.id !== id)
-        );
-        setFilteredRouters((prevRouters) =>
-          prevRouters.filter((router) => router.id !== id)
-        );
-        alert('Router deleted successfully!');
-        setIsModalOpen(false);
-      })
-      .catch((error) => {
-        console.error('Error deleting router:', error);
-        alert('Failed to delete router.');
-      });
+  const getNetworkDetails = (networkId) => {
+    return networks.find((network) => network.id === networkId) || {};
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -152,10 +126,10 @@ const RouterTable = ({ filter }) => {
               />
             </th>
             <th>
-              Network ID
+              Network
               <input
                 type="text"
-                placeholder="Filter by Network ID"
+                placeholder="Filter by Network Name"
                 onChange={(e) => handleFilterChange('network_id', e.target.value)}
               />
             </th>
@@ -164,19 +138,26 @@ const RouterTable = ({ filter }) => {
         </thead>
         <tbody>
           {filteredRouters.length > 0 ? (
-            filteredRouters.map((router) => (
-              <tr key={router.id}>
-                <td>{router.id || 'N/A'}</td>
-                <td>{router.name || 'N/A'}</td>
-                <td>{router.ip_address || 'N/A'}</td>
-                <td>{router.floor || 'N/A'}</td>
-                <td>{router.building || 'N/A'}</td>
-                <td>{router.network_id || 'N/A'}</td>
-                <td>
-                  <button onClick={() => handleMoreClick(router)}>More</button>
-                </td>
-              </tr>
-            ))
+            filteredRouters.map((router) => {
+              const { name: networkName, color: networkColor } =
+                getNetworkDetails(router.network_id);
+              return (
+                <tr
+                  key={router.id}
+                  style={{ backgroundColor: networkColor || '#FFFFFF' }} // צבע השורה לפי צבע הרשת
+                >
+                  <td>{router.id || 'N/A'}</td>
+                  <td>{router.name || 'N/A'}</td>
+                  <td>{router.ip_address || 'N/A'}</td>
+                  <td>{router.floor || 'N/A'}</td>
+                  <td>{router.building || 'N/A'}</td>
+                  <td>{networkName || 'Unknown'}</td>
+                  <td>
+                    <button onClick={() => handleMoreClick(router)}>More</button>
+                  </td>
+                </tr>
+              );
+            })
           ) : (
             <tr>
               <td colSpan="7">No routers match the filters.</td>
@@ -189,8 +170,6 @@ const RouterTable = ({ filter }) => {
         <RouterModal
           router={selectedRouter}
           onClose={handleCloseModal}
-          onUpdate={handleUpdateRouter}
-          onDelete={handleDeleteRouter}
         />
       )}
     </div>

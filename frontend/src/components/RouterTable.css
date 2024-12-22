@@ -1,38 +1,47 @@
+/* עיצוב אזור גלילת הטבלה */
 .table-container {
   max-height: 400px; /* גובה מקסימלי לאזור הגלילה */
-  overflow-y: auto; /* אפשר גלילה אנכית */
+  max-width: 100%; /* שמירה על הרוחב במסגרת העמוד */
+  overflow-x: auto; /* גלילה אופקית */
+  overflow-y: auto; /* גלילה אנכית */
   margin-top: 20px;
   border: 1px solid #ddd;
   border-radius: 8px; /* פינות מעוגלות */
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* צל לתיחום */
 }
 
+/* עיצוב הטבלה */
 .sticky-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  margin-top: 20px;
   font-family: Arial, sans-serif; /* פונט קריא */
 }
 
+/* עיצוב כותרת הטבלה */
 .sticky-table thead {
   position: sticky;
   top: 0;
   background-color: #4CAF50; /* רקע כותרת ירוק */
   color: white; /* טקסט לבן */
-  z-index: 1;
+  z-index: 2;
+  border-bottom: 2px solid #ddd;
 }
 
+/* תאים בטבלה */
 .sticky-table th, .sticky-table td {
   border: 1px solid #ddd;
   padding: 10px; /* מרווחים יותר גדולים */
   font-size: 14px; /* גודל פונט */
+  text-align: center; /* יישור מרכזי */
 }
 
+/* שדות סינון בכותרת */
 .sticky-table th input {
-  width: 90%; /* התאמת שדות הסינון לגודל */
-  padding: 6px; /* מרווח בתוך השדה */
-  margin-top: 5px; /* מרווח בין הכותרת לשדה */
+  width: calc(100% - 20px); /* התאמה אוטומטית לגודל התא */
+  padding: 8px; /* מרווח נוח */
+  margin: 5px auto; /* מרווח אנכי */
+  display: block; /* התאמה לתא */
   border: 1px solid #ccc;
   border-radius: 4px; /* עיצוב שדות הסינון */
   box-sizing: border-box;
@@ -43,6 +52,7 @@
   outline: none;
 }
 
+/* עיצוב שורות */
 .sticky-table tbody tr:nth-child(odd) {
   background-color: #f2f2f2;
 }
@@ -55,6 +65,7 @@
   background-color: #ddd; /* הדגשה בעת מעבר עכבר */
 }
 
+/* עיצוב כפתורים בתאים */
 .sticky-table td button {
   background-color: #4CAF50; /* כפתור ירוק */
   color: white;
@@ -73,6 +84,39 @@
   background-color: #3e8e41; /* צבע לחיצה */
 }
 
+/* מניעת גלישה בטקסט בתאים */
 .sticky-table td {
-  text-align: center; /* יישור מרכזי של הטקסט בתאים */
+  white-space: nowrap; /* מניעת מעבר שורה */
+  overflow: hidden; /* הסתרת טקסט נוסף */
+  text-overflow: ellipsis; /* שלוש נקודות */
+}
+
+/* עיצוב רספונסיבי */
+@media (max-width: 768px) {
+  .sticky-table, .sticky-table thead, .sticky-table tbody, .sticky-table th, .sticky-table td, .sticky-table tr {
+    display: block; /* הצגת כל תא בנפרד */
+  }
+
+  .sticky-table th {
+    position: relative; /* שמירת מבנה */
+  }
+
+  .sticky-table td {
+    position: relative; /* מבנה רספונסיבי */
+    text-align: left; /* יישור שמאלי */
+    padding-left: 50%; /* יצירת מקום לכותרת */
+  }
+
+  .sticky-table td::before {
+    content: attr(data-label); /* הוספת כותרת לכל תא */
+    position: absolute;
+    left: 10px;
+    width: calc(50% - 20px); /* התאמת כותרת לשטח */
+    white-space: nowrap;
+    font-weight: bold;
+  }
+
+  .sticky-table tbody tr:hover {
+    background-color: inherit; /* ביטול הדגשה במובייל */
+  }
 }

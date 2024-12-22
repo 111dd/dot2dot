@@ -12,7 +12,6 @@ const NetworkTable = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // שליפת כל הרשתות
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -32,7 +31,6 @@ const NetworkTable = () => {
       });
   }, []);
 
-  // החלת פילטרים בכל שינוי
   useEffect(() => {
     applyFilters(networks, filters);
   }, [filters, networks]);
@@ -41,9 +39,7 @@ const NetworkTable = () => {
     const filtered = data.filter((network) =>
       Object.entries(activeFilters).every(([key, value]) => {
         if (!value) return true;
-        const networkValue = network[key]
-          ? network[key].toString().toLowerCase()
-          : '';
+        const networkValue = network[key]?.toString().toLowerCase() || '';
         return networkValue.includes(value.toLowerCase());
       })
     );
@@ -64,6 +60,32 @@ const NetworkTable = () => {
     setIsModalOpen(false);
   };
 
+  const handleUpdateNetwork = async (updatedNetwork) => {
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:5000/api/networks/${updatedNetwork.id}`,
+        updatedNetwork
+      );
+      console.log('Network updated:', response.data);
+
+      setNetworks((prevNetworks) =>
+  prevNetworks.map((network) =>
+    network.id === updatedNetwork.id ? updatedNetwork : network
+  )
+);
+
+setFilteredNetworks((prevFiltered) =>
+  prevFiltered.map((network) =>
+    network.id === updatedNetwork.id ? updatedNetwork : network
+  )
+);
+      alert('Network updated successfully!');
+    } catch (error) {
+      console.error('Error updating network:', error);
+      alert('Failed to update network. Please try again.');
+    }
+  };
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
@@ -82,7 +104,7 @@ const NetworkTable = () => {
               <input
                 type="text"
                 placeholder="Filter by ID"
-                onChange={(e) => handleFilterChange('id', e.target.value ? Number(e.target.value) : '')}
+                onChange={(e) => handleFilterChange('id', e.target.value)}
               />
             </th>
             <th>
@@ -107,7 +129,10 @@ const NetworkTable = () => {
         <tbody>
           {filteredNetworks.length > 0 ? (
             filteredNetworks.map((network) => (
-              <tr key={network.id}>
+              <tr
+                key={network.id}
+                style={{ backgroundColor: network.color || '#FFFFFF' }} // קביעת צבע השורה לפי עמודת הצבע
+              >
                 <td>{network.id || 'N/A'}</td>
                 <td>{network.name || 'N/A'}</td>
                 <td>{network.description || 'N/A'}</td>
@@ -118,16 +143,18 @@ const NetworkTable = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="4" style={{ textAlign: 'center', fontStyle: 'italic' }}>
-                No networks match the filters.
-              </td>
+              <td colSpan="4">No networks match the filters.</td>
             </tr>
           )}
         </tbody>
       </table>
 
       {isModalOpen && selectedNetwork && (
-        <NetworkModal network={selectedNetwork} onClose={handleCloseModal} />
+        <NetworkModal
+          network={selectedNetwork}
+          onClose={handleCloseModal}
+          onUpdate={handleUpdateNetwork} // פונקציית עדכון
+        />
       )}
     </div>
   );

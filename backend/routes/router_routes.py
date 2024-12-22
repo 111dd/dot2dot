@@ -73,36 +73,31 @@ def get_routers_by_building(building):
 @router_bp.route('/', methods=['POST'])
 def add_router():
     try:
-        logging.info("Handling POST request to add a new router.")
         data = request.get_json()
-        logging.debug(f"Received data: {data}")
-        required_fields = ['name', 'ip_address', 'floor', 'building', 'connection_speed', 'network_id']
-        for field in required_fields:
-            if field not in data or not data[field]:
-                logging.warning(f"Missing field: {field}")
-                return jsonify({'error': f'{field} is required.'}), 400
+        logging.info(f"Received data: {data}")
 
-        network = Network.query.get(data['network_id'])
-        if not network:
-            logging.warning(f"Network ID {data['network_id']} not found.")
-            return jsonify({'error': 'Network not found'}), 404
+        # בדיקות תקינות
+        if not all(key in data for key in ('name', 'ip_address', 'floor', 'building', 'network_id')):
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        slots_count = data.get('slots_count', 0) if data.get('is_stack') else 0
 
         new_router = Router(
             name=data['name'],
             ip_address=data['ip_address'],
             floor=int(data['floor']),
             building=data['building'],
-            connection_speed=data['connection_speed'],
-            network_id=int(data['network_id']),
-            ports_count=int(data.get('ports_count', 0)),
+            connection_speed=data.get('connection_speed', '10M'),
+            ports_count=int(data.get('ports_count', 8)),
             is_stack=bool(data.get('is_stack', False)),
-            slots_count=int(data.get('slots_count', 0)),
+            slots_count=int(slots_count),
+            network_id=int(data['network_id']),
         )
+
         db.session.add(new_router)
         db.session.commit()
-        logging.info(f"Router added with ID: {new_router.id}")
-        return jsonify({'message': 'Router added successfully'}), 201
 
+        return jsonify({'message': 'Router added successfully', 'id': new_router.id}), 201
     except Exception as e:
         logging.error(f"Error adding router: {e}")
         return jsonify({'error': str(e)}), 500

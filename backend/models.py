@@ -24,14 +24,13 @@ class Router(db.Model):
     floor = db.Column(db.Integer, nullable=False)  # קומה
     building = db.Column(db.String(50), nullable=False)  # בניין
     connection_speed = db.Column(db.String(50), nullable=False)  # מהירות חיבור
+    ports_count = db.Column(db.Integer, default=8)  # מספר פורטים
+    is_stack = db.Column(db.Boolean, default=False)  # האם זה stack
+    slots_count = db.Column(db.Integer, default=0)  # מספר ה-Slots
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # תאריך יצירה
 
     # קשר לרשת (מפתח זר לטבלת networks)
     network_id = db.Column(db.Integer, db.ForeignKey('networks.id'), nullable=False)
-
-    ports_count = db.Column(db.Integer, default=8)  # מספר פורטים
-    is_stack = db.Column(db.Boolean, default=False)  # האם זה stack
-    slots_count = db.Column(db.Integer, default=1)  # מספר ה-Slots
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # תאריך יצירה
 
     # קשר לנקודות קצה
     endpoints = db.relationship('Endpoint', backref='router', lazy=True)
@@ -46,6 +45,8 @@ class Endpoint(db.Model):
     point_location = db.Column(db.String(100), nullable=True)  # מיקום פיזי
     destination_room = db.Column(db.String(100), nullable=True)  # חדר יעד
     router_id = db.Column(db.Integer, db.ForeignKey('routers.id'), nullable=False)  # קשר לנתב
+    rit_port_number = db.Column(db.Integer, nullable=True, default=0)  # מספר פורט RIT
+    network = db.Column(db.String(100), nullable=True)  # רשת משויכת
 
 # טבלת לוגים
 class Log(db.Model):

@@ -11,7 +11,7 @@ const AddRouterPage = () => {
     network_id: '', // מזהה רשת
     ports_count: 8, // ברירת מחדל
     is_stack: false,
-    slots_count: '',
+    slots_count: '', // ברירת מחדל
   });
 
   const [networks, setNetworks] = useState([]); // שמירת רשימת הרשתות
@@ -42,49 +42,50 @@ const AddRouterPage = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    // בדיקות תקינות
-    if (!router.name || !router.ip_address || !router.floor || !router.building || !router.network_id) {
-      alert('Please fill in all required fields.');
-      return;
-    }
+  // בדיקות תקינות
+  if (!router.name || !router.ip_address || !router.floor || !router.building || !router.network_id) {
+    alert('Please fill in all required fields.');
+    return;
+  }
 
-    console.log('Data to be sent before cleaning:', router);
+  console.log('Data to be sent before cleaning:', router);
 
-    const cleanedData = {
-      ...router,
-      floor: parseInt(router.floor, 10),
-      ports_count: parseInt(router.ports_count, 10),
-      slots_count: router.slots_count ? parseInt(router.slots_count, 10) : null,
-      network_id: parseInt(router.network_id, 10), // הבטחת `network_id` כמספר
-    };
-
-    axios
-      .post('http://127.0.0.1:5000/api/routers/', cleanedData)
-      .then((response) => {
-        console.log('Response from server:', response.data);
-        alert('Router added successfully!');
-
-        // איפוס הטופס
-        setRouter({
-          name: '',
-          ip_address: '',
-          floor: '',
-          building: '',
-          connection_speed: '10M',
-          network_id: '',
-          ports_count: 8,
-          is_stack: false,
-          slots_count: '',
-        });
-      })
-      .catch((error) => {
-        console.error('Error adding router:', error);
-        const errorResponse = error.response?.data?.error || 'Failed to add router. Please try again.';
-        setErrorMessage(errorResponse);
-      });
+  const cleanedData = {
+    ...router,
+    floor: parseInt(router.floor, 10),
+    ports_count: parseInt(router.ports_count, 10),
+    slots_count: router.is_stack ? parseInt(router.slots_count || 0, 10) : 0, // אם לא מסומן - 0
+    network_id: parseInt(router.network_id, 10),
   };
+
+  axios
+    .post('http://127.0.0.1:5000/api/routers/', cleanedData)
+    .then((response) => {
+      console.log('Response from server:', response.data);
+      alert('Router added successfully!');
+
+      setRouter({
+        name: '',
+        ip_address: '',
+        floor: '',
+        building: '',
+        connection_speed: '10M',
+        network_id: '',
+        ports_count: 8,
+        is_stack: false,
+        slots_count: '',
+      });
+    })
+    .catch((error) => {
+      console.error('Error adding router:', error.response?.data || error.message);
+      const errorResponse = error.response?.data?.error || 'Failed to add router. Please try again.';
+      setErrorMessage(errorResponse);
+    });
+};
+
+
 
   return (
     <div>
@@ -171,6 +172,7 @@ const AddRouterPage = () => {
           placeholder="Slots Count"
           value={router.slots_count}
           onChange={handleChange}
+          disabled={!router.is_stack} // מושבת אם Is Stack לא מסומן
         />
         <button type="submit">Add Router</button>
       </form>
