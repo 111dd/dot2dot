@@ -47,7 +47,20 @@ def get_routers():
 def get_routers_by_building(building):
     try:
         logging.info(f"Fetching routers for building: {building}")
-        routers = Router.query.filter_by(building=building).order_by(Router.floor).all()
+
+        # בדוק האם הבניין חוקי
+        valid_buildings = ['South', 'North', 'Pit']
+        if building not in valid_buildings:
+            logging.warning(f"Invalid building name: {building}")
+            return jsonify({'error': 'Invalid building name'}), 404
+
+        # שליפת נתבים מתוך מסד הנתונים
+        routers = Router.query.filter(Router.building.ilike(building)).all()
+        if not routers:
+            logging.info(f"No routers found for building: {building}")
+            return jsonify([]), 200
+
+        # עיבוד תוצאות
         result = [
             {
                 'id': router.id,
@@ -57,16 +70,13 @@ def get_routers_by_building(building):
                 'building': router.building,
                 'connection_speed': router.connection_speed,
                 'network_id': router.network_id,
-                'ports_count': router.ports_count,
-                'is_stack': router.is_stack,
-                'slots_count': router.slots_count,
-            } for router in routers
+            }
+            for router in routers
         ]
-        logging.debug(f"Fetched routers for building {building}: {result}")
         return jsonify(result), 200
     except Exception as e:
         logging.error(f"Error fetching routers for building {building}: {e}")
-        return jsonify({'error': 'Failed to fetch routers for the building'}), 500
+        return jsonify({'error': 'Internal server error'}), 500
 
 
 # הוספת נתב חדש

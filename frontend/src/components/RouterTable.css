@@ -1,122 +1,121 @@
-/* עיצוב אזור גלילת הטבלה */
+/* עיצוב אזור גלילה לטבלה */
 .table-container {
-  max-height: 400px; /* גובה מקסימלי לאזור הגלילה */
-  max-width: 100%; /* שמירה על הרוחב במסגרת העמוד */
-  overflow-x: auto; /* גלילה אופקית */
-  overflow-y: auto; /* גלילה אנכית */
-  margin-top: 20px;
+  max-height: 500px; /* גובה מקסימלי עם גלילה אנכית */
+  overflow-y: auto;
+  overflow-x: auto;
+  margin: 20px 0;
   border: 1px solid #ddd;
-  border-radius: 8px; /* פינות מעוגלות */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* צל לתיחום */
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* עיצוב הטבלה */
-.sticky-table {
+.router-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-family: Arial, sans-serif; /* פונט קריא */
+  font-family: Arial, sans-serif;
+  background-color: #fff;
 }
 
 /* עיצוב כותרת הטבלה */
-.sticky-table thead {
+.router-table thead {
   position: sticky;
   top: 0;
-  background-color: #4CAF50; /* רקע כותרת ירוק */
-  color: white; /* טקסט לבן */
+  background-color: #4CAF50; /* רקע ירוק לכותרת */
+  color: white;
   z-index: 2;
-  border-bottom: 2px solid #ddd;
 }
 
-/* תאים בטבלה */
-.sticky-table th, .sticky-table td {
+.router-table thead th {
+  padding: 10px;
   border: 1px solid #ddd;
-  padding: 10px; /* מרווחים יותר גדולים */
-  font-size: 14px; /* גודל פונט */
-  text-align: center; /* יישור מרכזי */
+  font-size: 14px;
+  position: sticky;
+  top: 0;
 }
 
-/* שדות סינון בכותרת */
-.sticky-table th input {
-  width: calc(100% - 20px); /* התאמה אוטומטית לגודל התא */
-  padding: 8px; /* מרווח נוח */
-  margin: 5px auto; /* מרווח אנכי */
-  display: block; /* התאמה לתא */
+/* עיצוב שדות הפילטרים */
+.router-table thead th input {
+  width: calc(100% - 10px);
+  padding: 5px;
+  margin-top: 5px;
   border: 1px solid #ccc;
-  border-radius: 4px; /* עיצוב שדות הסינון */
+  border-radius: 4px;
   box-sizing: border-box;
+  font-size: 12px;
 }
 
-.sticky-table th input:focus {
+.router-table thead th input:focus {
   border-color: #4CAF50; /* הדגשת שדה ממוקד */
   outline: none;
 }
 
-/* עיצוב שורות */
-.sticky-table tbody tr:nth-child(odd) {
-  background-color: #f2f2f2;
+/* עיצוב גוף הטבלה */
+.router-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
 }
 
-.sticky-table tbody tr:nth-child(even) {
+.router-table tbody tr:nth-child(even) {
   background-color: #ffffff;
 }
 
-.sticky-table tbody tr:hover {
+.router-table tbody tr:hover {
   background-color: #ddd; /* הדגשה בעת מעבר עכבר */
 }
 
-/* עיצוב כפתורים בתאים */
-.sticky-table td button {
-  background-color: #4CAF50; /* כפתור ירוק */
+/* עיצוב התאים */
+.router-table tbody td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* כפתור פעולות */
+.router-table tbody td button {
+  background-color: #4CAF50; /* צבע ירוק */
   color: white;
   border: none;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
 }
 
-.sticky-table td button:hover {
-  background-color: #45a049; /* שינוי צבע בעת מעבר עכבר */
+.router-table tbody td button:hover {
+  background-color: #45a049; /* צבע כהה יותר בעת מעבר עכבר */
 }
 
-.sticky-table td button:active {
-  background-color: #3e8e41; /* צבע לחיצה */
+.router-table tbody td button:active {
+  background-color: #3e8e41; /* צבע כהה יותר בעת לחיצה */
 }
 
-/* מניעת גלישה בטקסט בתאים */
-.sticky-table td {
-  white-space: nowrap; /* מניעת מעבר שורה */
-  overflow: hidden; /* הסתרת טקסט נוסף */
-  text-overflow: ellipsis; /* שלוש נקודות */
-}
-
-/* עיצוב רספונסיבי */
+/* רספונסיביות */
 @media (max-width: 768px) {
-  .sticky-table, .sticky-table thead, .sticky-table tbody, .sticky-table th, .sticky-table td, .sticky-table tr {
-    display: block; /* הצגת כל תא בנפרד */
+  .router-table thead {
+    display: none; /* הסתרת כותרות הטבלה */
   }
 
-  .sticky-table th {
-    position: relative; /* שמירת מבנה */
+  .router-table tbody td {
+    display: block;
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
   }
 
-  .sticky-table td {
-    position: relative; /* מבנה רספונסיבי */
-    text-align: left; /* יישור שמאלי */
-    padding-left: 50%; /* יצירת מקום לכותרת */
-  }
-
-  .sticky-table td::before {
-    content: attr(data-label); /* הוספת כותרת לכל תא */
+  .router-table tbody td::before {
+    content: attr(data-label);
     position: absolute;
-    left: 10px;
-    width: calc(50% - 20px); /* התאמת כותרת לשטח */
-    white-space: nowrap;
+    left: 0;
+    width: 50%;
+    padding-left: 10px;
     font-weight: bold;
+    text-align: left;
   }
 
-  .sticky-table tbody tr:hover {
-    background-color: inherit; /* ביטול הדגשה במובייל */
+  .table-container {
+    border: none;
+    box-shadow: none;
   }
 }

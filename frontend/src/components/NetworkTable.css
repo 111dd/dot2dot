@@ -1,0 +1,121 @@
+/* עיצוב אזור גלילה לטבלה */
+.table-container {
+  max-height: 500px; /* גובה מקסימלי עם גלילה אנכית */
+  overflow-y: auto;
+  overflow-x: auto;
+  margin: 20px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* עיצוב הטבלה */
+.network-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+}
+
+/* עיצוב כותרת הטבלה */
+.network-table thead {
+  position: sticky;
+  top: 0;
+  background-color: #4CAF50; /* רקע ירוק לכותרת */
+  color: white;
+  z-index: 2;
+}
+
+.network-table thead th {
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+}
+
+/* עיצוב שדות הפילטרים */
+.network-table thead th input {
+  width: calc(100% - 10px);
+  padding: 5px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 12px;
+}
+
+.network-table thead th input:focus {
+  border-color: #4CAF50; /* הדגשת שדה ממוקד */
+  outline: none;
+}
+
+/* עיצוב גוף הטבלה */
+.network-table tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.network-table tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+.network-table tbody tr:hover {
+  background-color: #ddd; /* הדגשה בעת מעבר עכבר */
+}
+
+/* עיצוב התאים */
+.network-table tbody td {
+  border: 3px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* כפתור פעולות */
+.network-table tbody td button {
+  background-color: #4CAF50; /* צבע ירוק */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.network-table tbody td button:hover {
+  background-color: #45a049; /* צבע כהה יותר בעת מעבר עכבר */
+}
+
+.network-table tbody td button:active {
+  background-color: #3e8e41; /* צבע כהה יותר בעת לחיצה */
+}
+
+/* רספונסיביות */
+@media (max-width: 768px) {
+  .network-table thead {
+    display: none; /* הסתרת כותרות הטבלה */
+  }
+
+  .network-table tbody td {
+    display: block;
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  .network-table tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 10px;
+    font-weight: bold;
+    text-align: left;
+  }
+
+  .table-container {
+    border: none;
+    box-shadow: none;
+  }
+}

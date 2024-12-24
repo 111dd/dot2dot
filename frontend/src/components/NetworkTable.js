@@ -1,54 +1,96 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 import NetworkModal from './NetworkModal';
+import { useLanguage } from '../contexts/LanguageContext'; // ייבוא תמיכה בשפה
+import './NetworkTable.css';
 
 const NetworkTable = () => {
   const [networks, setNetworks] = useState([]);
-  const [filteredNetworks, setFilteredNetworks] = useState([]);
-  const [filters, setFilters] = useState({});
+  const [globalFilter, setGlobalFilter] = useState('');
   const [selectedNetwork, setSelectedNetwork] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { translations } = useLanguage(); // שימוש בתרגומים
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get('http://127.0.0.1:5000/api/networks')
-      .then((response) => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/api/networks');
         setNetworks(response.data);
-        setFilteredNetworks(response.data);
+      } catch (err) {
+        console.error('Error fetching networks:', err);
+        setError(translations.error_loading_data || 'Failed to load data from the server.');
+      } finally {
         setIsLoading(false);
-      })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.error || error.response.statusText
-          : 'Failed to connect to the server.';
-        console.error('Error fetching networks:', errorMessage);
-        setError(errorMessage);
-        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [translations.error_loading_data]);
+
+  const data = useMemo(() => networks, [networks]);
+
+  const columns = useMemo(
+    () => [
+      { accessorKey: 'id', header: translations.id || 'ID' },
+      { accessorKey: 'name', header: translations.name || 'Name' },
+      { accessorKey: 'description', header: translations.description || 'Description' },
+      {
+        accessorKey: 'color',
+        header: translations.color || 'Color',
+        cell: ({ row }) => (
+          <span
+            style={{
+              display: 'inline-block',
+              width: '20px',
+              height: '20px',
+              backgroundColor: row.original.color || '#FFFFFF',
+              border: '1px solid #000',
+            }}
+          ></span>
+        ),
+      },
+      {
+        id: 'actions',
+        header: translations.actions || 'Actions',
+        cell: ({ row }) => (
+          <button onClick={() => handleMoreClick(row.original)}>
+            {translations.more || 'More'}
+          </button>
+        ),
+      },
+    ],
+    [translations]
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, filterValue) => {
+      const filter = filterValue.toLowerCase();
+      return Object.values(row.original).some((value) => {
+        if (value === null || value === undefined) return false;
+        return value.toString().toLowerCase().includes(filter);
       });
-  }, []);
-
-  useEffect(() => {
-    applyFilters(networks, filters);
-  }, [filters, networks]);
-
-  const applyFilters = (data, activeFilters) => {
-    const filtered = data.filter((network) =>
-      Object.entries(activeFilters).every(([key, value]) => {
-        if (!value) return true;
-        const networkValue = network[key]?.toString().toLowerCase() || '';
-        return networkValue.includes(value.toLowerCase());
-      })
-    );
-    setFilteredNetworks(filtered);
-  };
-
-  const handleFilterChange = (column, value) => {
-    setFilters({ ...filters, [column]: value });
-  };
+    },
+  });
 
   const handleMoreClick = (network) => {
     setSelectedNetwork(network);
@@ -60,100 +102,85 @@ const NetworkTable = () => {
     setIsModalOpen(false);
   };
 
-  const handleUpdateNetwork = async (updatedNetwork) => {
-    try {
-      const response = await axios.put(
-        `http://127.0.0.1:5000/api/networks/${updatedNetwork.id}`,
-        updatedNetwork
-      );
-      console.log('Network updated:', response.data);
-
-      setNetworks((prevNetworks) =>
-  prevNetworks.map((network) =>
-    network.id === updatedNetwork.id ? updatedNetwork : network
-  )
-);
-
-setFilteredNetworks((prevFiltered) =>
-  prevFiltered.map((network) =>
-    network.id === updatedNetwork.id ? updatedNetwork : network
-  )
-);
-      alert('Network updated successfully!');
-    } catch (error) {
-      console.error('Error updating network:', error);
-      alert('Failed to update network. Please try again.');
+  const handleDeleteNetwork = async (id) => {
+    if (window.confirm(translations.confirm_delete || 'Are you sure you want to delete this network?')) {
+      try {
+        await axios.delete(`http://127.0.0.1:5000/api/networks/${id}`);
+        setNetworks((prev) => prev.filter((network) => network.id !== id));
+      } catch (error) {
+        console.error('Error deleting network:', error);
+        alert(translations.error_deleting || 'Failed to delete network. Please try again.');
+      }
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  const handleUpdateNetwork = (updatedNetwork) => {
+    setNetworks((prev) =>
+      prev.map((network) =>
+        network.id === updatedNetwork.id ? updatedNetwork : network
+      )
+    );
+    setIsModalOpen(false);
+  };
+
+  if (isLoading) return <div>{translations.loading || 'Loading...'}</div>;
   if (error) return <div style={{ color: 'red' }}>{error}</div>;
 
   return (
     <div>
-      <div style={{ marginBottom: '10px' }}>
-        <Link to="/add-network">
-          <button>Add Network</button>
-        </Link>
+      <div className="table-header">
+        <input
+          type="text"
+          placeholder={translations.global_search || 'Global Search...'}
+          value={globalFilter || ''}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="global-filter"
+        />
+        <button
+          onClick={() => navigate('/add-network')}
+          className="add-network-button"
+        >
+          {translations.add_network || 'Add Network'}
+        </button>
       </div>
-      <table className="network-table">
-        <thead>
-          <tr>
-            <th>
-              ID
-              <input
-                type="text"
-                placeholder="Filter by ID"
-                onChange={(e) => handleFilterChange('id', e.target.value)}
-              />
-            </th>
-            <th>
-              Name
-              <input
-                type="text"
-                placeholder="Filter by Name"
-                onChange={(e) => handleFilterChange('name', e.target.value)}
-              />
-            </th>
-            <th>
-              Description
-              <input
-                type="text"
-                placeholder="Filter by Description"
-                onChange={(e) => handleFilterChange('description', e.target.value)}
-              />
-            </th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredNetworks.length > 0 ? (
-            filteredNetworks.map((network) => (
-              <tr
-                key={network.id}
-                style={{ backgroundColor: network.color || '#FFFFFF' }} // קביעת צבע השורה לפי עמודת הצבע
-              >
-                <td>{network.id || 'N/A'}</td>
-                <td>{network.name || 'N/A'}</td>
-                <td>{network.description || 'N/A'}</td>
-                <td>
-                  <button onClick={() => handleMoreClick(network)}>More</button>
-                </td>
+      <div className="table-container">
+        <table className="network-table">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id}>
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
+                ))}
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4">No networks match the filters.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr
+                key={row.id}
+                style={{
+                  backgroundColor: row.original.color || '#FFFFFF',
+                }}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {isModalOpen && selectedNetwork && (
         <NetworkModal
           network={selectedNetwork}
           onClose={handleCloseModal}
-          onUpdate={handleUpdateNetwork} // פונקציית עדכון
+          onUpdate={handleUpdateNetwork}
+          onDelete={handleDeleteNetwork}
         />
       )}
     </div>

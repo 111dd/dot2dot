@@ -18,7 +18,7 @@ def get_networks():
                 'id': network.id,
                 'name': network.name,
                 'description': network.description,
-                'color': network.color,  # וודא ששדה זה נכלל
+                'color': network.color,
                 'created_at': network.created_at
             } for network in networks
         ]), 200
@@ -26,16 +26,12 @@ def get_networks():
         logging.error(f"Error fetching networks: {e}")
         return jsonify({'error': str(e)}), 500
 
-
-
-
-# הוספת רשת חדשה
 # הוספת רשת חדשה
 @network_bp.route('/', methods=['POST'])
 def add_network():
     try:
         data = request.get_json()
-        logging.info(f"Received network data: {data}")  # בדיקת נתוני הקלט
+        logging.info(f"Received network data: {data}")
 
         if not data.get('name'):
             return jsonify({'error': 'Network name is required'}), 400
@@ -47,12 +43,12 @@ def add_network():
         new_network = Network(
             name=data['name'],
             description=data.get('description'),
-            color=color  # שמירת הצבע שנשלח
+            color=color
         )
         db.session.add(new_network)
         db.session.commit()
 
-        logging.info(f"Network added with color: {new_network.color}")  # בדיקת צבע בנתונים שנשמרו
+        logging.info(f"Network added with color: {new_network.color}")
 
         return jsonify({
             'message': 'Network added successfully',
@@ -65,38 +61,61 @@ def add_network():
         logging.error(f"Error adding network: {e}")
         return jsonify({'error': f'Failed to add network: {str(e)}'}), 500
 
-
-
+# עדכון רשת קיימת
 @network_bp.route('/<int:network_id>', methods=['PUT'])
 def update_network(network_id):
     try:
         data = request.get_json()
-        network = Network.query.get_or_404(network_id)
+        logging.info(f"Updating network ID {network_id} with data: {data}")
 
-        # עדכון נתוני הרשת
+        network = Network.query.get(network_id)
+        if not network:
+            logging.warning(f"Network ID {network_id} not found.")
+            return jsonify({"error": "Network not found"}), 404
+
+        # עדכון השדות
         network.name = data.get('name', network.name)
         network.description = data.get('description', network.description)
         network.color = data.get('color', network.color)
 
         db.session.commit()
+        logging.info(f"Network ID {network_id} updated successfully.")
 
         return jsonify({
             "message": "Network updated successfully",
-            "id": network.id,
-            "name": network.name,
-            "description": network.description,
-            "color": network.color,
+            "network": {
+                'id': network.id,
+                'name': network.name,
+                'description': network.description,
+                'color': network.color,
+                'created_at': network.created_at
+            }
         }), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        logging.error(f"Error updating network ID {network_id}: {e}")
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update network: {str(e)}"}), 500
 
+# מחיקת רשת קיימת
+# מחיקת רשת
+@network_bp.route('/<int:network_id>', methods=['DELETE'])
+def delete_network(network_id):
+    try:
+        # חיפוש הרשת לפי ID
+        network = Network.query.get(network_id)
+        if not network:
+            return jsonify({"error": "Network not found"}), 404
 
-# @network_bp.route('/<int:network_id>', methods=['OPTIONS', 'PUT'])
-# def network_options(network_id):
-#     if request.method == 'OPTIONS':
-#         return '', 200  # מאשר Preflight
-#
-#     @network_bp.route('/<int:id>', methods=['OPTIONS'])
-#     def handle_options(id):
-#         return '', 204
+        # בדיקה אם יש ראוטרים שמשתמשים ברשת זו
+        routers = Router.query.filter_by(network_id=network_id).all()
+        if routers:
+            return jsonify({"error": "Cannot delete network with connected routers"}), 400
 
+        # מחיקת הרשת
+        db.session.delete(network)
+        db.session.commit()
+        return jsonify({"message": f"Network with ID {network_id} deleted successfully"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete network: {str(e)}"}), 500

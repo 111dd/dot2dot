@@ -20,9 +20,11 @@ CORS(app, resources={r"/*": {"origins": "*"}})
   # לאפשר גישה לפרונטאנד
 
 # רישום נתיבים
+app.register_blueprint(router_bp, url_prefix='/api')
 app.register_blueprint(router_bp, url_prefix='/api/routers')
 app.register_blueprint(endpoint_bp, url_prefix='/api/endpoints')
 app.register_blueprint(network_bp, url_prefix='/api/networks')
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -1,62 +1,110 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+} from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 import RouterModal from './RouterModal';
+import { useLanguage } from '../contexts/LanguageContext'; // תמיכה בשפה
 import './RouterTable.css';
-
 
 const RouterTable = ({ filter }) => {
   const [routers, setRouters] = useState([]);
-  const [networks, setNetworks] = useState([]); // שמירת רשימת הרשתות
-  const [filteredRouters, setFilteredRouters] = useState([]);
-  const [filters, setFilters] = useState(filter || {});
+  const [networks, setNetworks] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState('');
   const [selectedRouter, setSelectedRouter] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { translations } = useLanguage(); // קבלת תרגומים מהשפה הנוכחית
+  const navigate = useNavigate();
 
-  // Fetch routers and networks from the server
   useEffect(() => {
-    setIsLoading(true);
     const fetchData = async () => {
-      try {
-        const [routersResponse, networksResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:5000/api/routers'),
-          axios.get('http://127.0.0.1:5000/api/networks'),
-        ]);
+      setIsLoading(true);
+      setError(null);
 
-        setRouters(routersResponse.data);
-        setNetworks(networksResponse.data);
-        setFilteredRouters(routersResponse.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Failed to load data from the server.');
+      try {
+        const url = filter?.building
+          ? `http://127.0.0.1:5000/api/routers/building/${filter.building}`
+          : 'http://127.0.0.1:5000/api/routers';
+        const routersRes = await axios.get(url);
+        setRouters(routersRes.data);
+
+        if (networks.length === 0) {
+          const networksRes = await axios.get('http://127.0.0.1:5000/api/networks');
+          setNetworks(networksRes.data);
+        }
+      } catch (err) {
+        setError('Failed to load data from the server');
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [filter, networks.length]);
 
-  useEffect(() => {
-    applyFilters(routers, filters);
-  }, [filters, routers]);
+  const getNetworkDetails = useCallback(
+    (networkId) => {
+      return networks.find((network) => network.id === networkId) || {};
+    },
+    [networks]
+  );
 
-  const applyFilters = (data, activeFilters) => {
-    const filtered = data.filter((router) =>
-      Object.entries(activeFilters).every(([key, value]) => {
-        if (!value) return true;
-        const routerValue = router[key]?.toString().toLowerCase() || '';
-        return routerValue.includes(value.toLowerCase());
-      })
-    );
-    setFilteredRouters(filtered);
-  };
+  const data = useMemo(() => {
+    return routers.map((router) => {
+      const { name: networkName, color: networkColor } = getNetworkDetails(router.network_id);
+      return {
+        ...router,
+        networkName: networkName || translations.unknown, // תרגום לערך "לא ידוע"
+        networkColor: networkColor || '#FFFFFF',
+      };
+    });
+  }, [routers, getNetworkDetails, translations]);
 
-  const handleFilterChange = (column, value) => {
-    setFilters({ ...filters, [column]: value });
-  };
+  const columns = useMemo(
+    () => [
+      { accessorKey: 'id', header: translations.id, enableSorting: true, enableFiltering: true },
+      { accessorKey: 'name', header: translations.name, enableSorting: true, enableFiltering: true },
+      { accessorKey: 'ip_address', header: translations.ip_address, enableFiltering: true },
+      { accessorKey: 'floor', header: translations.floor, enableSorting: true, enableFiltering: true },
+      { accessorKey: 'building', header: translations.building, enableSorting: true, enableFiltering: true },
+      { accessorKey: 'networkName', header: translations.network, enableFiltering: true },
+      {
+        id: 'actions',
+        header: translations.actions,
+        cell: ({ row }) => (
+          <button onClick={() => handleMoreClick(row.original)}>{translations.more}</button>
+        ),
+      },
+    ],
+    [translations]
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      globalFilter,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, filterValue) => {
+      const filter = filterValue.toLowerCase();
+      return Object.values(row.original).some((value) => {
+        if (value === null || value === undefined) return false;
+        return value.toString().toLowerCase().includes(filter);
+      });
+    },
+  });
 
   const handleMoreClick = (router) => {
     setSelectedRouter(router);
@@ -68,8 +116,11 @@ const RouterTable = ({ filter }) => {
     setIsModalOpen(false);
   };
 
-  const getNetworkDetails = (networkId) => {
-    return networks.find((network) => network.id === networkId) || {};
+  const handleUpdateRouter = (updatedRouter) => {
+    setRouters((prev) =>
+      prev.map((router) => (router.id === updatedRouter.id ? updatedRouter : router))
+    );
+    setIsModalOpen(false);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -77,99 +128,83 @@ const RouterTable = ({ filter }) => {
 
   return (
     <div>
-      <div style={{ marginBottom: '10px' }}>
-        <Link to="/add-router">
-          <button>Add Router</button>
-        </Link>
+      <div className="table-header">
+        <input
+          type="text"
+          placeholder={translations.global_search} // תרגום לטקסט החיפוש
+          value={globalFilter || ''}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="global-filter"
+        />
+        <button
+          onClick={() => navigate('/add-router')}
+          className="add-router-button"
+        >
+          {translations.add_router}
+        </button>
       </div>
-      <table className="router-table">
-        <thead>
-          <tr>
-            <th>
-              ID
-              <input
-                type="text"
-                placeholder="Filter by ID"
-                onChange={(e) => handleFilterChange('id', e.target.value)}
-              />
-            </th>
-            <th>
-              Name
-              <input
-                type="text"
-                placeholder="Filter by Name"
-                onChange={(e) => handleFilterChange('name', e.target.value)}
-              />
-            </th>
-            <th>
-              IP Address
-              <input
-                type="text"
-                placeholder="Filter by IP"
-                onChange={(e) => handleFilterChange('ip_address', e.target.value)}
-              />
-            </th>
-            <th>
-              Floor
-              <input
-                type="text"
-                placeholder="Filter by Floor"
-                onChange={(e) => handleFilterChange('floor', e.target.value)}
-              />
-            </th>
-            <th>
-              Building
-              <input
-                type="text"
-                placeholder="Filter by Building"
-                onChange={(e) => handleFilterChange('building', e.target.value)}
-              />
-            </th>
-            <th>
-              Network
-              <input
-                type="text"
-                placeholder="Filter by Network Name"
-                onChange={(e) => handleFilterChange('network_id', e.target.value)}
-              />
-            </th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredRouters.length > 0 ? (
-            filteredRouters.map((router) => {
-              const { name: networkName, color: networkColor } =
-                getNetworkDetails(router.network_id);
-              return (
-                <tr
-                  key={router.id}
-                  style={{ backgroundColor: networkColor || '#FFFFFF' }} // צבע השורה לפי צבע הרשת
-                >
-                  <td>{router.id || 'N/A'}</td>
-                  <td>{router.name || 'N/A'}</td>
-                  <td>{router.ip_address || 'N/A'}</td>
-                  <td>{router.floor || 'N/A'}</td>
-                  <td>{router.building || 'N/A'}</td>
-                  <td>{networkName || 'Unknown'}</td>
-                  <td>
-                    <button onClick={() => handleMoreClick(router)}>More</button>
+      <div className="table-container">
+        <table className="router-table">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.column.getCanSort() && (
+                      <span>
+                        {header.column.getIsSorted() === 'asc'
+                          ? ' 🔼'
+                          : header.column.getIsSorted() === 'desc'
+                          ? ' 🔽'
+                          : ''}
+                      </span>
+                    )}
+                    {header.column.getCanFilter() && (
+                          <input
+                            type="text"
+                            value={header.column.getFilterValue() || ''}
+                            onChange={(e) => header.column.setFilterValue(e.target.value)}
+                            placeholder={
+                              translations.filter
+                                ? translations.filter.replace('{column}', header.column.columnDef.header)
+                                : `Filter ${header.column.columnDef.header}`
+                            }
+                            className="column-filter"
+                          />
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} style={{ backgroundColor: row.original.networkColor }}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
-                </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td colSpan="7">No routers match the filters.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {isModalOpen && selectedRouter && (
         <RouterModal
           router={selectedRouter}
           onClose={handleCloseModal}
+          onUpdate={handleUpdateRouter}
+          onDelete={(id) => {
+            setRouters((prev) => prev.filter((router) => router.id !== id));
+            setIsModalOpen(false);
+          }}
         />
       )}
     </div>

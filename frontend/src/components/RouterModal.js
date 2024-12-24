@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
-  const [formData, setFormData] = useState({ ...router }); // ניהול המידע על הראוטר
-  const [isEditing, setIsEditing] = useState(false); // מצב עריכה
+  const { translations } = useLanguage(); // שימוש בתרגומים
+  const [formData, setFormData] = useState({ ...router });
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -13,34 +15,45 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
     });
   };
 
-  const handleSave = () => {
-    console.log('Sending data to server:', formData);
-
-    axios
-      .put(`http://127.0.0.1:5000/api/routers/${router.id}`, formData)
-      .then((response) => {
-        console.log('Response from server:', response.data);
-
-        // בדיקה אם `onUpdate` מוגדר
-        if (typeof onUpdate === 'function') {
-          onUpdate(response.data); // עדכון ברשימה המקומית
-        } else {
-          console.error('onUpdate is not defined or not a function');
+  const handleDelete = async () => {
+    if (window.confirm(translations.confirm_delete_router || 'Are you sure you want to delete this router?')) {
+      try {
+        console.log(`Deleting router ID: ${router.id}`);
+        await axios.delete(`http://127.0.0.1:5000/api/routers/${router.id}`);
+        if (typeof onDelete === 'function') {
+          onDelete(router.id); // עדכון הטבלה לאחר מחיקה
         }
+        onClose(); // סגירת המודאל
+      } catch (error) {
+        console.error('Error deleting router:', error);
+        alert(translations.error_deleting_router || 'Failed to delete router. Please try again.');
+      }
+    }
+  };
 
-        setIsEditing(false);
-        alert('Router updated successfully!');
-      })
-      .catch((error) => {
-        console.error('Error updating router:', error.response || error);
-        alert('Failed to update router. Please check the data and try again.');
-      });
+  const handleSave = async () => {
+    try {
+      console.log('Saving router:', formData);
+      const response = await axios.put(
+        `http://127.0.0.1:5000/api/routers/${router.id}`,
+        formData
+      );
+      console.log('Updated router:', response.data);
+      if (typeof onUpdate === 'function') {
+        onUpdate(response.data); // עדכון הפרטים בטבלה
+      }
+      setIsEditing(false);
+      alert(translations.router_updated_successfully || 'Router updated successfully!');
+    } catch (error) {
+      console.error('Error updating router:', error);
+      alert(translations.error_updating_router || 'Failed to update router. Please check the data and try again.');
+    }
   };
 
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>{isEditing ? 'Edit Router' : 'Router Details'}</h2>
+        <h2>{isEditing ? translations.edit_router || 'Edit Router' : translations.router_details || 'Router Details'}</h2>
         {isEditing ? (
           <form>
             <input
@@ -48,7 +61,7 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
               name="name"
               value={formData.name || ''}
               onChange={handleChange}
-              placeholder="Name"
+              placeholder={translations.name || 'Name'}
               required
             />
             <input
@@ -56,7 +69,7 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
               name="ip_address"
               value={formData.ip_address || ''}
               onChange={handleChange}
-              placeholder="IP Address"
+              placeholder={translations.ip_address || 'IP Address'}
               required
             />
             <input
@@ -64,7 +77,7 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
               name="floor"
               value={formData.floor || ''}
               onChange={handleChange}
-              placeholder="Floor"
+              placeholder={translations.floor || 'Floor'}
               required
             />
             <select
@@ -73,9 +86,10 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
               onChange={handleChange}
               required
             >
-              <option value="North">North</option>
-              <option value="South">South</option>
-              <option value="Pit">Pit</option>
+              <option value="">{translations.select_building || 'Select Building'}</option>
+              <option value="North">{translations.north || 'North'}</option>
+              <option value="South">{translations.south || 'South'}</option>
+              <option value="Pit">{translations.pit || 'Pit'}</option>
             </select>
             <select
               name="connection_speed"
@@ -104,38 +118,40 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
                 checked={formData.is_stack || false}
                 onChange={handleChange}
               />
-              Is Stack
+              {translations.is_stack || 'Is Stack'}
             </label>
             <input
               type="number"
               name="slots_count"
               value={formData.slots_count || ''}
               onChange={handleChange}
-              placeholder="Slots Count"
+              placeholder={translations.slots_count || 'Slots Count'}
             />
           </form>
         ) : (
           <div>
             <p><strong>ID:</strong> {router.id}</p>
-            <p><strong>Name:</strong> {router.name}</p>
-            <p><strong>IP Address:</strong> {router.ip_address}</p>
-            <p><strong>Floor:</strong> {router.floor}</p>
-            <p><strong>Building:</strong> {router.building}</p>
-            <p><strong>Connection Speed:</strong> {router.connection_speed}</p>
-            <p><strong>Ports Count:</strong> {router.ports_count || 'N/A'}</p>
-            <p><strong>Is Stack:</strong> {router.is_stack ? 'Yes' : 'No'}</p>
-            <p><strong>Slots Count:</strong> {router.slots_count || 'N/A'}</p>
+            <p><strong>{translations.name || 'Name'}:</strong> {router.name}</p>
+            <p><strong>{translations.ip_address || 'IP Address'}:</strong> {router.ip_address}</p>
+            <p><strong>{translations.floor || 'Floor'}:</strong> {router.floor}</p>
+            <p><strong>{translations.building || 'Building'}:</strong> {router.building}</p>
+            <p><strong>{translations.connection_speed || 'Connection Speed'}:</strong> {router.connection_speed}</p>
+            <p><strong>{translations.ports_count || 'Ports Count'}:</strong> {router.ports_count || 'N/A'}</p>
+            <p><strong>{translations.is_stack || 'Is Stack'}:</strong> {router.is_stack ? translations.yes || 'Yes' : translations.no || 'No'}</p>
+            <p><strong>{translations.slots_count || 'Slots Count'}:</strong> {router.slots_count || 'N/A'}</p>
           </div>
         )}
 
         <div className="modal-actions">
           {isEditing ? (
-            <button onClick={handleSave}>Save</button>
+            <button onClick={handleSave}>{translations.save || 'Save'}</button>
           ) : (
-            <button onClick={() => setIsEditing(true)}>Edit</button>
+            <button onClick={() => setIsEditing(true)}>{translations.edit || 'Edit'}</button>
           )}
-          <button onClick={() => onDelete(router.id)}>Delete</button>
-          <button onClick={onClose}>Close</button>
+          <button onClick={handleDelete} style={{ color: 'red' }}>
+            {translations.delete || 'Delete'}
+          </button>
+          <button onClick={onClose}>{translations.close || 'Close'}</button>
         </div>
       </div>
     </div>
