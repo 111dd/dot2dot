@@ -97,14 +97,20 @@ const RouterTable = ({ filter }) => {
       globalFilter,
     },
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: (row, filterValue) => {
-      const filter = filterValue.toLowerCase();
-      return Object.values(row.original).some((value) => {
-        if (value === null || value === undefined) return false;
-        return value.toString().toLowerCase().includes(filter);
-      });
+    filterFns: {
+      auto: (row, columnId, filterValue) => {
+        const cellValue = row.getValue(columnId);
+        if (typeof cellValue === 'number') {
+          // חיפוש גמיש למספרים
+          return cellValue === Number(filterValue);
+        }
+        // חיפוש גמיש לטקסט
+        return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase());
+      },
     },
-  });
+    globalFilterFn: 'auto', // שימוש בפונקציה Auto
+});
+
 
   const handleMoreClick = (router) => {
     setSelectedRouter(router);

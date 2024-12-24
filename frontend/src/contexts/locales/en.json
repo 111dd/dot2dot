@@ -39,5 +39,13 @@
   "yes": "Yes",
   "no": "No",
   "select_building": "Select Building",
-  "select_network": "Select Network"
+  "select_network": "Select Network",
+  "description_minimum_length": "Description should be at least {minLength} characters long.",
+  "name_minimum_length": "Name should be at least {minLength} characters long.",
+  "adding_network": "Adding Network...",
+  "network_added_successfully": "Network added successfully!",
+  "error_adding_network": "Failed to add network. Please try again.",
+  "enter_network_description": "Enter network description (optional)",
+  "color": "Color",
+  "description": "description"
 }
