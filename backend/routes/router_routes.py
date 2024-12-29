@@ -73,18 +73,21 @@ def get_routers_by_building(building):
 def add_router():
     try:
         data = request.get_json()
-        required_fields = {'name', 'model', 'ip_address', 'floor', 'building', 'network_id'}
-        if not required_fields.issubset(data):
-            return jsonify({'error': 'Missing required fields'}), 400
+        logging.info(f"Received data: {data}")
 
-        # Check if the model exists
-        model_name = data.get('model')
-        if not RouterModel.query.filter_by(model_name=model_name).first():
+        required_fields = {'name', 'model_id', 'ip_address', 'floor', 'building', 'network_id'}
+        missing_fields = required_fields - set(data.keys())
+        if missing_fields:
+            logging.warning(f"Missing fields: {missing_fields}")
+            return jsonify({'error': f'Missing required fields: {missing_fields}'}), 400
+
+        model_id = data.get('model_id')
+        if not RouterModel.query.get(model_id):
             return jsonify({'error': 'Model does not exist. Please add it first.'}), 400
 
         new_router = Router(
             name=data['name'],
-            model=model_name,
+            model_id=model_id,
             ip_address=data['ip_address'],
             floor=int(data['floor']),
             building=data['building'],
@@ -96,10 +99,12 @@ def add_router():
         )
         db.session.add(new_router)
         db.session.commit()
+        logging.info(f"Router added successfully with ID: {new_router.id}")
         return jsonify({'message': 'Router added successfully', 'id': new_router.id}), 201
     except Exception as e:
         logging.error(f"Error adding router: {e}")
         return jsonify({'error': 'Failed to add router', 'details': str(e)}), 500
+
 
 # Update an existing router
 @router_bp.route('/<int:id>', methods=['PUT'])
@@ -112,8 +117,9 @@ def update_router(id):
             logging.warning(f"Router with ID {id} not found.")
             return jsonify({'error': 'Router not found'}), 404
 
+        # Update router details
         router.name = data.get('name', router.name)
-        router.model = data.get('model', router.model)
+        router.model_id = data.get('model_id', router.model_id)
         router.ip_address = data.get('ip_address', router.ip_address)
         router.floor = int(data.get('floor', router.floor))
         router.building = data.get('building', router.building)
@@ -180,18 +186,20 @@ def get_router_by_id(id):
         return jsonify({'error': str(e)}), 500
 
 # Fetch all router models
-@model_bp.route('/models', methods=['GET'])
+# נתיב הבקשה למודלים
+@model_bp.route('/', methods=['GET'])
 def get_router_models():
     try:
-        models = RouterModel.query.all()
+        logging.info("Fetching all router models.")
+        models = RouterModel.query.all()  # הבדיקה מפנה למודל router_models
         result = [{'id': model.id, 'model_name': model.model_name} for model in models]
         return jsonify(result), 200
     except Exception as e:
-        logging.error(f"Error fetching router models: {e}")
+        logging.error(f"Failed to fetch router models: {e}")
         return jsonify({'error': 'Failed to fetch router models', 'details': str(e)}), 500
 
-# Add a new router model
-@model_bp.route('/models', methods=['POST'])
+# הוספת מודל חדש
+@model_bp.route('/', methods=['POST'])
 def add_router_model():
     try:
         data = request.get_json()
@@ -199,11 +207,12 @@ def add_router_model():
         if not model_name:
             return jsonify({'error': 'Model name is required'}), 400
 
+        # הוספה למודל הקיים
         new_model = RouterModel(model_name=model_name)
         db.session.add(new_model)
         db.session.commit()
 
         return jsonify({'message': 'Model added successfully', 'id': new_model.id}), 201
     except Exception as e:
-        logging.error(f"Error adding router model: {e}")
+        logging.error(f"Failed to add router model: {e}")
         return jsonify({'error': 'Failed to add router model', 'details': str(e)}), 500
