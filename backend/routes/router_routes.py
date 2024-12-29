@@ -1,13 +1,30 @@
 from flask import Blueprint, request, jsonify
-from models import db, Router, Network
+from models import db, Router, Network, RouterModel
 import logging
 
-# הגדרת הלוגים
+# Set up logging
 logging.basicConfig(level=logging.INFO)
 
 router_bp = Blueprint('router_routes', __name__)
+model_bp = Blueprint('model_routes', __name__)  # Separate blueprint for router models
 
-# קבלת כל הנתבים
+def format_router(router):
+    """Helper function to format router data"""
+    return {
+        'id': router.id,
+        'name': router.name,
+        'model': router.router_model.model_name if router.router_model else None,  # קבלת שם הדגם אם קיים
+        'ip_address': router.ip_address,
+        'floor': router.floor,
+        'building': router.building,
+        'connection_speed': router.connection_speed,
+        'network_id': router.network_id,
+        'ports_count': router.ports_count,
+        'is_stack': router.is_stack,
+        'slots_count': router.slots_count,
+    }
+
+# Fetch all routers
 @router_bp.route('/', methods=['GET'])
 def get_routers():
     try:
@@ -20,112 +37,83 @@ def get_routers():
             logging.info("Fetching all routers without filters.")
             routers = Router.query.all()
 
-        result = [
-            {
-                'id': router.id,
-                'name': router.name,
-                'ip_address': router.ip_address,
-                'floor': router.floor,
-                'building': router.building,
-                'connection_speed': router.connection_speed,
-                'network_id': router.network_id,
-                'ports_count': router.ports_count,
-                'is_stack': router.is_stack,
-                'slots_count': router.slots_count,
-            } for router in routers
-        ]
-        logging.debug(f"Fetched routers: {result}")
+        result = [format_router(router) for router in routers]
         return jsonify(result), 200
 
     except Exception as e:
         logging.error(f"Error fetching routers: {e}")
-        return jsonify({'error': 'Failed to fetch routers'}), 500
+        return jsonify({'error': 'Failed to fetch routers', 'details': str(e)}), 500
 
-
-# קבלת נתבים לפי בניין
+# Fetch routers by building
 @router_bp.route('/building/<string:building>', methods=['GET'])
 def get_routers_by_building(building):
     try:
         logging.info(f"Fetching routers for building: {building}")
 
-        # בדוק האם הבניין חוקי
         valid_buildings = ['South', 'North', 'Pit']
         if building not in valid_buildings:
             logging.warning(f"Invalid building name: {building}")
             return jsonify({'error': 'Invalid building name'}), 404
 
-        # שליפת נתבים מתוך מסד הנתונים
         routers = Router.query.filter(Router.building.ilike(building)).all()
         if not routers:
             logging.info(f"No routers found for building: {building}")
             return jsonify([]), 200
 
-        # עיבוד תוצאות
         result = [
-            {
-                'id': router.id,
-                'name': router.name,
-                'ip_address': router.ip_address,
-                'floor': router.floor,
-                'building': router.building,
-                'connection_speed': router.connection_speed,
-                'network_id': router.network_id,
-            }
-            for router in routers
+            format_router(router) for router in routers
         ]
         return jsonify(result), 200
     except Exception as e:
         logging.error(f"Error fetching routers for building {building}: {e}")
-        return jsonify({'error': 'Internal server error'}), 500
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
-
-# הוספת נתב חדש
+# Add a new router
 @router_bp.route('/', methods=['POST'])
 def add_router():
     try:
         data = request.get_json()
-        logging.info(f"Received data: {data}")
-
-        # בדיקות תקינות
-        if not all(key in data for key in ('name', 'ip_address', 'floor', 'building', 'network_id')):
+        required_fields = {'name', 'model', 'ip_address', 'floor', 'building', 'network_id'}
+        if not required_fields.issubset(data):
             return jsonify({'error': 'Missing required fields'}), 400
 
-        slots_count = data.get('slots_count', 0) if data.get('is_stack') else 0
+        # Check if the model exists
+        model_name = data.get('model')
+        if not RouterModel.query.filter_by(model_name=model_name).first():
+            return jsonify({'error': 'Model does not exist. Please add it first.'}), 400
 
         new_router = Router(
             name=data['name'],
+            model=model_name,
             ip_address=data['ip_address'],
             floor=int(data['floor']),
             building=data['building'],
             connection_speed=data.get('connection_speed', '10M'),
             ports_count=int(data.get('ports_count', 8)),
             is_stack=bool(data.get('is_stack', False)),
-            slots_count=int(slots_count),
+            slots_count=int(data.get('slots_count', 0)),
             network_id=int(data['network_id']),
         )
-
         db.session.add(new_router)
         db.session.commit()
-
         return jsonify({'message': 'Router added successfully', 'id': new_router.id}), 201
     except Exception as e:
         logging.error(f"Error adding router: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Failed to add router', 'details': str(e)}), 500
 
-
-# עדכון נתב קיים
+# Update an existing router
 @router_bp.route('/<int:id>', methods=['PUT'])
 def update_router(id):
     try:
         logging.info(f"Handling PUT request to update router with ID: {id}")
         data = request.get_json()
-        logging.debug(f"Received update data: {data}")
         router = Router.query.get(id)
         if not router:
             logging.warning(f"Router with ID {id} not found.")
             return jsonify({'error': 'Router not found'}), 404
 
         router.name = data.get('name', router.name)
+        router.model = data.get('model', router.model)
         router.ip_address = data.get('ip_address', router.ip_address)
         router.floor = int(data.get('floor', router.floor))
         router.building = data.get('building', router.building)
@@ -140,14 +128,8 @@ def update_router(id):
             router.network_id = network_id
 
         router.is_stack = data.get('is_stack', router.is_stack)
-
-        ports_count = data.get('ports_count')
-        if ports_count is not None:
-            router.ports_count = int(ports_count)
-
-        slots_count = data.get('slots_count')
-        if slots_count is not None:
-            router.slots_count = int(slots_count)
+        router.ports_count = int(data.get('ports_count', router.ports_count))
+        router.slots_count = int(data.get('slots_count', router.slots_count))
 
         db.session.commit()
         logging.info(f"Router with ID {id} updated successfully.")
@@ -161,8 +143,7 @@ def update_router(id):
         logging.error(f"Error updating router {id}: {e}")
         return jsonify({'error': str(e)}), 500
 
-
-# מחיקת נתב
+# Delete a router
 @router_bp.route('/<int:id>', methods=['DELETE'])
 def delete_router(id):
     try:
@@ -174,7 +155,6 @@ def delete_router(id):
 
         db.session.delete(router)
         db.session.commit()
-
         logging.info(f"Router with ID {id} deleted successfully.")
         return jsonify({'message': 'Router deleted successfully'}), 200
 
@@ -182,8 +162,7 @@ def delete_router(id):
         logging.error(f"Error deleting router {id}: {e}")
         return jsonify({'error': str(e)}), 500
 
-
-# קבלת נתב לפי ID
+# Fetch a router by ID
 @router_bp.route('/<int:id>', methods=['GET'])
 def get_router_by_id(id):
     try:
@@ -193,21 +172,38 @@ def get_router_by_id(id):
             logging.warning(f"Router with ID {id} not found.")
             return jsonify({'error': 'Router not found'}), 404
 
-        result = {
-            'id': router.id,
-            'name': router.name,
-            'ip_address': router.ip_address,
-            'floor': router.floor,
-            'building': router.building,
-            'connection_speed': router.connection_speed,
-            'network_id': router.network_id,
-            'ports_count': router.ports_count,
-            'is_stack': router.is_stack,
-            'slots_count': router.slots_count,
-        }
-        logging.debug(f"Fetched router data: {result}")
+        result = format_router(router)
         return jsonify(result), 200
 
     except Exception as e:
         logging.error(f"Error fetching router with ID {id}: {e}")
         return jsonify({'error': str(e)}), 500
+
+# Fetch all router models
+@model_bp.route('/models', methods=['GET'])
+def get_router_models():
+    try:
+        models = RouterModel.query.all()
+        result = [{'id': model.id, 'model_name': model.model_name} for model in models]
+        return jsonify(result), 200
+    except Exception as e:
+        logging.error(f"Error fetching router models: {e}")
+        return jsonify({'error': 'Failed to fetch router models', 'details': str(e)}), 500
+
+# Add a new router model
+@model_bp.route('/models', methods=['POST'])
+def add_router_model():
+    try:
+        data = request.get_json()
+        model_name = data.get('model_name')
+        if not model_name:
+            return jsonify({'error': 'Model name is required'}), 400
+
+        new_model = RouterModel(model_name=model_name)
+        db.session.add(new_model)
+        db.session.commit()
+
+        return jsonify({'message': 'Model added successfully', 'id': new_model.id}), 201
+    except Exception as e:
+        logging.error(f"Error adding router model: {e}")
+        return jsonify({'error': 'Failed to add router model', 'details': str(e)}), 500

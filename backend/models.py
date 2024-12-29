@@ -15,11 +15,23 @@ class Network(db.Model):
     # קשר לנתבים שמשויכים לרשת זו
     routers = db.relationship('Router', backref='network', lazy=True)
 
+
+# טבלת דגמי נתבים
+class RouterModel(db.Model):
+    __tablename__ = 'router_models'
+    id = db.Column(db.Integer, primary_key=True)
+    model_name = db.Column(db.String(100), unique=True, nullable=True)  # שם הדגם
+
+    # קשר לנתבים שמשתמשים בדגם הזה
+    routers = db.relationship('Router', backref='router_model', lazy=True)  # שם ה-backref הוא 'router_model'
+
+
 # טבלת נתבים
 class Router(db.Model):
     __tablename__ = 'routers'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)  # שם הנתב
+    name = db.Column(db.String(100), unique=True, nullable=False)  # שם הנתב (ייחודי)
+    model_id = db.Column(db.Integer, db.ForeignKey('router_models.id'), nullable=True)  # Foreign Key לדגם
     ip_address = db.Column(db.String(15), unique=True, nullable=False)  # כתובת IP
     floor = db.Column(db.Integer, nullable=False)  # קומה
     building = db.Column(db.String(50), nullable=False)  # בניין
@@ -34,6 +46,21 @@ class Router(db.Model):
 
     # קשר לנקודות קצה
     endpoints = db.relationship('Endpoint', backref='router', lazy=True)
+
+    # קשר לסוויצ'ים
+    switches = db.relationship('Switch', backref='router', lazy=True)
+
+
+# טבלת סוויצ'ים
+class Switch(db.Model):
+    __tablename__ = 'switches'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)  # שם הסוויץ' (ייחודי)
+    model = db.Column(db.String(100), nullable=False)  # דגם הסוויץ'
+    ip_address = db.Column(db.String(15), unique=True, nullable=False)  # כתובת IP
+    router_id = db.Column(db.Integer, db.ForeignKey('routers.id'), nullable=False)  # קשר לנתב
+    connection_port = db.Column(db.Integer, nullable=False)  # מספר פורט המחבר לנתב
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)  # תאריך יצירה
 
 # טבלת נקודות קצה
 class Endpoint(db.Model):
@@ -53,7 +80,7 @@ class Log(db.Model):
     __tablename__ = 'logs'
     id = db.Column(db.Integer, primary_key=True)
     action = db.Column(db.String(50), nullable=False)  # פעולה שבוצעה
-    entity = db.Column(db.String(50), nullable=False)  # סוג היישות (Router/Endpoint)
+    entity = db.Column(db.String(50), nullable=False)  # סוג היישות (Router/Endpoint/Switch)
     entity_id = db.Column(db.Integer, nullable=False)  # מזהה היישות
     technician_name = db.Column(db.String(100), nullable=False)  # שם הטכנאי
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)  # תאריך הפעולה

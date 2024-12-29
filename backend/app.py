@@ -7,6 +7,7 @@ from models import db
 from routes.router_routes import router_bp
 from routes.endpoint_routes import endpoint_bp
 from routes.network_routes import network_bp
+from routes.router_routes import model_bp  # ייבוא הנתיבים של מודלים
 
 
 app = Flask(__name__)
@@ -17,13 +18,14 @@ db.init_app(app)
 migrate = Migrate(app, db)  # הוספת מיגרציות
 
 CORS(app, resources={r"/*": {"origins": "*"}})
-  # לאפשר גישה לפרונטאנד
+# לאפשר גישה לפרונטאנד
 
 # רישום נתיבים
-app.register_blueprint(router_bp, url_prefix='/api')
 app.register_blueprint(router_bp, url_prefix='/api/routers')
 app.register_blueprint(endpoint_bp, url_prefix='/api/endpoints')
 app.register_blueprint(network_bp, url_prefix='/api/networks')
+app.register_blueprint(model_bp, url_prefix='/api/models')  # New model routes
+
 
 
 if __name__ == '__main__':
