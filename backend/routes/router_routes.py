@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, Router, Network, RouterModel
+from models import db, Router, Network, RouterModel, Endpoint
 import logging
 
 # Set up logging
@@ -216,3 +216,25 @@ def add_router_model():
     except Exception as e:
         logging.error(f"Failed to add router model: {e}")
         return jsonify({'error': 'Failed to add router model', 'details': str(e)}), 500
+
+
+@router_bp.route('/<int:router_id>/connections', methods=['GET'])
+def get_router_connections(router_id):
+    try:
+        connections = Endpoint.query.filter_by(router_id=router_id).all()
+        result = [
+            {
+                'id': conn.id,
+                'technician_name': conn.technician_name,
+                'ip_address': conn.ip_address,
+                'point_location': conn.point_location,
+                'destination_room': conn.destination_room,
+                'connected_port_number': conn.connected_port_number,
+                'rit_port_number': conn.rit_port_number,
+                'network': conn.network,
+            } for conn in connections
+        ]
+        return jsonify(result), 200
+    except Exception as e:
+        logging.error(f"Error fetching connections for router {router_id}: {e}")
+        return jsonify({'error': 'Failed to fetch connections', 'details': str(e)}), 500
