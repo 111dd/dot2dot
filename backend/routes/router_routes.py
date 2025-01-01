@@ -1,12 +1,29 @@
 from flask import Blueprint, request, jsonify
-from models import db, Router, Network, RouterModel, Endpoint
+from models import db, Router, Network, RouterModel, Endpoint, Log
 import logging
+from datetime import datetime
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
 router_bp = Blueprint('router_routes', __name__)
 model_bp = Blueprint('model_routes', __name__)  # Separate blueprint for router models
+
+
+def log_action(action, entity, entity_id, technician_name, details=""):
+    """Helper function to log actions to the database."""
+    new_log = Log(
+        action=action,
+        entity=entity,
+        entity_id=entity_id,
+        technician_name=technician_name,
+        timestamp=datetime.utcnow(),
+        details=details,
+    )
+    db.session.add(new_log)
+    db.session.commit()
+
 
 def format_router(router):
     """Helper function to format router data"""
@@ -69,6 +86,7 @@ def get_routers_by_building(building):
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 # Add a new router
+# Add a new router
 @router_bp.route('/', methods=['POST'])
 def add_router():
     try:
@@ -99,6 +117,16 @@ def add_router():
         )
         db.session.add(new_router)
         db.session.commit()
+
+        # Add to logs
+        log_action(
+            action="create",
+            entity="Router",
+            entity_id=new_router.id,
+            technician_name="Admin",  # Replace with the actual technician
+            details=f"Router {new_router.name} added.",
+        )
+
         logging.info(f"Router added successfully with ID: {new_router.id}")
         return jsonify({'message': 'Router added successfully', 'id': new_router.id}), 201
     except Exception as e:
@@ -121,12 +149,12 @@ def update_router(id):
         router.name = data.get('name', router.name)
         router.model_id = data.get('model_id', router.model_id)
         router.ip_address = data.get('ip_address', router.ip_address)
-        router.floor = int(data.get('floor', router.floor))
+        router.floor = int(data['floor']) if data.get('floor') is not None else router.floor
         router.building = data.get('building', router.building)
         router.connection_speed = data.get('connection_speed', router.connection_speed)
 
         network_id = data.get('network_id')
-        if network_id:
+        if network_id is not None:
             network = Network.query.get(network_id)
             if not network:
                 logging.warning(f"Network ID {network_id} not found.")
@@ -134,10 +162,20 @@ def update_router(id):
             router.network_id = network_id
 
         router.is_stack = data.get('is_stack', router.is_stack)
-        router.ports_count = int(data.get('ports_count', router.ports_count))
-        router.slots_count = int(data.get('slots_count', router.slots_count))
+        router.ports_count = int(data['ports_count']) if data.get('ports_count') is not None else router.ports_count
+        router.slots_count = int(data['slots_count']) if data.get('slots_count') is not None else router.slots_count
 
         db.session.commit()
+
+        # Add to logs
+        log_action(
+            action="update",
+            entity="Router",
+            entity_id=id,
+            technician_name="Admin",  # Replace with the actual technician
+            details=f"Router {router.name} updated.",
+        )
+
         logging.info(f"Router with ID {id} updated successfully.")
         return jsonify({'message': 'Router updated successfully'}), 200
 
@@ -148,6 +186,8 @@ def update_router(id):
     except Exception as e:
         logging.error(f"Error updating router {id}: {e}")
         return jsonify({'error': str(e)}), 500
+
+
 
 # Delete a router
 @router_bp.route('/<int:id>', methods=['DELETE'])
@@ -221,17 +261,18 @@ def add_router_model():
 @router_bp.route('/<int:router_id>/connections', methods=['GET'])
 def get_router_connections(router_id):
     try:
+        # חיפוש כל החיבורים עבור הנתב עם ה-ID שנשלח
         connections = Endpoint.query.filter_by(router_id=router_id).all()
+        # עיבוד הנתונים לפורמט JSON
         result = [
             {
                 'id': conn.id,
                 'technician_name': conn.technician_name,
-                'ip_address': conn.ip_address,
                 'point_location': conn.point_location,
                 'destination_room': conn.destination_room,
                 'connected_port_number': conn.connected_port_number,
-                'rit_port_number': conn.rit_port_number,
-                'network': conn.network,
+                'rit_port_number': conn.rit_port_number or '-',
+                'network_color': conn.network_color or '#FFFFFF',  # צבע ברירת מחדל
             } for conn in connections
         ]
         return jsonify(result), 200
