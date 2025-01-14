@@ -4,7 +4,7 @@ import InteractiveImage from '../components/InteractiveImage';
 const Home = () => {
   return (
     <div>
-      <h1></h1>
+      <h1>Welcome to the Home Page</h1>
       <InteractiveImage />
     </div>
   );

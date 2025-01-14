@@ -9,18 +9,19 @@ import {
 } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 import RouterModal from './RouterModal';
-import { useLanguage } from '../contexts/LanguageContext'; // תמיכה בשפה
+import { useLanguage } from '../contexts/LanguageContext';
 import './RouterTable.css';
 
 const RouterTable = ({ filter }) => {
   const [routers, setRouters] = useState([]);
   const [networks, setNetworks] = useState([]);
+  const [models, setModels] = useState([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [selectedRouter, setSelectedRouter] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { translations } = useLanguage(); // קבלת תרגומים מהשפה הנוכחית
+  const { translations } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,15 +30,25 @@ const RouterTable = ({ filter }) => {
       setError(null);
 
       try {
+        // Fetch routers
         const url = filter?.building
           ? `http://127.0.0.1:5000/api/routers/building/${filter.building}`
           : 'http://127.0.0.1:5000/api/routers';
         const routersRes = await axios.get(url);
+        console.log('Routers Data:', routersRes.data); // בדוק שהנתונים מכילים model_id
         setRouters(routersRes.data);
 
+        // Fetch networks if not already fetched
         if (networks.length === 0) {
           const networksRes = await axios.get('http://127.0.0.1:5000/api/networks');
           setNetworks(networksRes.data);
+        }
+
+        // Fetch models if not already fetched
+        if (models.length === 0) {
+          const modelsRes = await axios.get('http://127.0.0.1:5000/api/router_models');
+          console.log('Models Data:', modelsRes.data); // בדוק שהנתונים מכילים id
+          setModels(modelsRes.data);
         }
       } catch (err) {
         setError('Failed to load data from the server');
@@ -48,7 +59,7 @@ const RouterTable = ({ filter }) => {
     };
 
     fetchData();
-  }, [filter, networks.length]);
+  }, [filter, networks.length, models.length]);
 
   const getNetworkDetails = useCallback(
     (networkId) => {
@@ -57,20 +68,45 @@ const RouterTable = ({ filter }) => {
     [networks]
   );
 
+  const getModelDetails = useCallback(
+  (modelId) => {
+    return models.find((model) => model.id === modelId) || { model_name: 'Unknown' };
+  },
+  [models]
+  );
+
   const data = useMemo(() => {
-    return routers.map((router) => {
-      const { name: networkName, color: networkColor } = getNetworkDetails(router.network_id);
-      return {
-        ...router,
-        networkName: networkName || translations.unknown, // תרגום לערך "לא ידוע"
-        networkColor: networkColor || '#FFFFFF',
-      };
-    });
-  }, [routers, getNetworkDetails, translations]);
+  return routers.map((router) => {
+    // בדוק אם יש model_id
+    let modelName = translations.unknown; // ערך ברירת מחדל למודל
+    if (router.model_id) {
+      // נסה לקבל את שם המודל לפי model_id
+      modelName = getModelDetails(router.model_id);
+    } else if (router.model) {
+      // אם אין model_id, השתמש בשדה model אם קיים
+      modelName = router.model;
+    } else {
+      // אם אין model_id ואין model, התריע בקונסול
+      console.warn(`Router missing both model_id and model:`, router);
+    }
+
+    // קבל את פרטי הרשת
+    const { name: networkName, color: networkColor } = getNetworkDetails(router.network_id);
+
+    // החזר את הנתונים המעודכנים
+    return {
+      ...router,
+      networkName: networkName || translations.unknown,
+      networkColor: networkColor || '#FFFFFF',
+      modelName,
+    };
+  });
+}, [routers, getNetworkDetails, getModelDetails, translations]);
 
   const columns = useMemo(
     () => [
       { accessorKey: 'id', header: translations.id, enableSorting: true, enableFiltering: true },
+      { accessorKey: 'modelName', header: translations.model || 'Model', enableSorting: true, enableFiltering: true },
       { accessorKey: 'name', header: translations.name, enableSorting: true, enableFiltering: true },
       { accessorKey: 'ip_address', header: translations.ip_address, enableFiltering: true },
       { accessorKey: 'floor', header: translations.floor, enableSorting: true, enableFiltering: true },
@@ -101,16 +137,13 @@ const RouterTable = ({ filter }) => {
       auto: (row, columnId, filterValue) => {
         const cellValue = row.getValue(columnId);
         if (typeof cellValue === 'number') {
-          // חיפוש גמיש למספרים
           return cellValue === Number(filterValue);
         }
-        // חיפוש גמיש לטקסט
         return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase());
       },
     },
-    globalFilterFn: 'auto', // שימוש בפונקציה Auto
-});
-
+    globalFilterFn: 'auto',
+  });
 
   const handleMoreClick = (router) => {
     setSelectedRouter(router);
@@ -137,7 +170,7 @@ const RouterTable = ({ filter }) => {
       <div className="table-header">
         <input
           type="text"
-          placeholder={translations.global_search} // תרגום לטקסט החיפוש
+          placeholder={translations.global_search}
           value={globalFilter || ''}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="global-filter"
@@ -170,19 +203,6 @@ const RouterTable = ({ filter }) => {
                           : ''}
                       </span>
                     )}
-                    {header.column.getCanFilter() && (
-                          <input
-                            type="text"
-                            value={header.column.getFilterValue() || ''}
-                            onChange={(e) => header.column.setFilterValue(e.target.value)}
-                            placeholder={
-                              translations.filter
-                                ? translations.filter.replace('{column}', header.column.columnDef.header)
-                                : `Filter ${header.column.columnDef.header}`
-                            }
-                            className="column-filter"
-                          />
-                        )}
                   </th>
                 ))}
               </tr>

@@ -279,3 +279,15 @@ def get_router_connections(router_id):
     except Exception as e:
         logging.error(f"Error fetching connections for router {router_id}: {e}")
         return jsonify({'error': 'Failed to fetch connections', 'details': str(e)}), 500
+
+
+@model_bp.route('/', methods=['GET'])
+def get_router_models():
+    try:
+        models = RouterModel.query.all()
+        result = [{'id': model.id, 'model_name': model.model_name} for model in models]
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': 'Failed to fetch models', 'details': str(e)}), 500
+
+

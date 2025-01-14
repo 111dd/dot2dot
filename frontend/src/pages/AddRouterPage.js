@@ -1,191 +1,228 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useLanguage } from '../contexts/LanguageContext'; // שימוש בקונטקסט השפה לתרגום
+import { useLanguage } from '../contexts/LanguageContext';
+import './css/AddRouterPage.css';
 
 const AddRouterPage = () => {
-  const { translations } = useLanguage(); // טעינת תרגומים
   const [router, setRouter] = useState({
     name: '',
+    model_id: '',
+    new_model_name: '',
     ip_address: '',
     floor: '',
     building: '',
-    connection_speed: '10M', // ברירת מחדל
-    network_id: '', // מזהה רשת
-    ports_count: 8, // ברירת מחדל
+    connection_speed: '',
+    ports_count: 8,
     is_stack: false,
-    slots_count: '', // ברירת מחדל
+    slots_count: 0,
+    network_id: '',
   });
 
-  const [networks, setNetworks] = useState([]); // שמירת רשימת הרשתות
+  const [models, setModels] = useState([]);
+  const [networks, setNetworks] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { translations } = useLanguage();
 
-  const connectionSpeeds = ['10M', '100M', '1G'];
-  const portCounts = [8, 12, 24, 48];
-
-  // טעינת רשימת הרשתות מהשרת
   useEffect(() => {
-    axios
-      .get('http://127.0.0.1:5000/api/networks')
-      .then((response) => {
-        setNetworks(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching networks:', error);
-        setErrorMessage(translations.error_loading_networks || 'Failed to load networks.');
-      });
-  }, [translations]);
+    const fetchData = async () => {
+      try {
+        const modelsResponse = await axios.get('http://127.0.0.1:5000/api/models/');
+        setModels(modelsResponse.data);
+        const networksResponse = await axios.get('http://127.0.0.1:5000/api/networks/');        setNetworks(networksResponse.data);
+      } catch (error) {
+        console.error('Error fetching models or networks:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setRouter({
-      ...router,
-      [name]: type === 'checkbox' ? checked : value,
-    });
+    const finalValue = type === 'checkbox' ? checked : value;
+    setRouter((prevRouter) => ({
+      ...prevRouter,
+      [name]: finalValue,
+    }));
+    setErrorMessage('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // בדיקות תקינות
-    if (!router.name || !router.ip_address || !router.floor || !router.building || !router.network_id) {
-      setErrorMessage(translations.fill_required_fields || 'Please fill in all required fields.');
+    if (!router.name.trim() || !router.ip_address.trim()) {
+      setErrorMessage(translations.router_name_ip_required || 'Name and IP address are required.');
       return;
     }
 
-    setErrorMessage('');
-    setSuccessMessage('');
+    setIsLoading(true);
 
-    const cleanedData = {
-      ...router,
-      floor: parseInt(router.floor, 10),
-      ports_count: parseInt(router.ports_count, 10),
-      slots_count: router.is_stack ? parseInt(router.slots_count || 0, 10) : 0, // אם לא מסומן - 0
-      network_id: parseInt(router.network_id, 10),
-    };
-
-    axios
-      .post('http://127.0.0.1:5000/api/routers/', cleanedData)
-      .then((response) => {
-        console.log('Response from server:', response.data);
-        setSuccessMessage(translations.router_added_success || 'Router added successfully!');
-
-        setRouter({
-          name: '',
-          ip_address: '',
-          floor: '',
-          building: '',
-          connection_speed: '10M',
-          network_id: '',
-          ports_count: 8,
-          is_stack: false,
-          slots_count: '',
+    try {
+      if (router.new_model_name.trim()) {
+        const newModelResponse = await axios.post('http://127.0.0.1:5000/api/models/', {
+          model_name: router.new_model_name,
         });
-      })
-      .catch((error) => {
-        console.error('Error adding router:', error.response?.data || error.message);
-        const errorResponse = error.response?.data?.error || translations.error_adding_router || 'Failed to add router. Please try again.';
-        setErrorMessage(errorResponse);
+        router.model_id = newModelResponse.data.id;
+      }
+
+      await axios.post('http://127.0.0.1:5000/api/routers/', router);
+      alert(translations.router_added_success || 'Router added successfully!');
+      setRouter({
+        name: '',
+        model_id: '',
+        new_model_name: '',
+        ip_address: '',
+        floor: '',
+        building: '',
+        connection_speed: '',
+        ports_count: 8,
+        is_stack: false,
+        slots_count: 0,
+        network_id: '',
       });
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Error adding router:', error);
+      const serverError =
+        error.response?.data?.error ||
+        translations.router_add_failed ||
+        'Failed to add router. Please try again.';
+      setErrorMessage(serverError);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div>
-      <h1>{translations.add_router || 'Add a New Router'}</h1>
+    <div className="container">
+      <h1>{translations.add_router || 'Add Router'}</h1>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder={translations.name || 'Name'}
-          value={router.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="ip_address"
-          placeholder={translations.ip_address || 'IP Address'}
-          value={router.ip_address}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="number"
-          name="floor"
-          placeholder={translations.floor || 'Floor'}
-          value={router.floor}
-          onChange={handleChange}
-          required
-        />
-        <select
-          name="building"
-          value={router.building}
-          onChange={handleChange}
-          required
-        >
-          <option value="">{translations.select_building || 'Select Building'}</option>
-          <option value="North">{translations.north || 'North'}</option>
-          <option value="South">{translations.south || 'South'}</option>
-          <option value="Pit">{translations.pit || 'Pit'}</option>
-        </select>
-        <select
-          name="connection_speed"
-          value={router.connection_speed}
-          onChange={handleChange}
-          required
-        >
-          {connectionSpeeds.map((speed) => (
-            <option key={speed} value={speed}>
-              {speed}
-            </option>
-          ))}
-        </select>
-        <select
-          name="network_id"
-          value={router.network_id}
-          onChange={handleChange}
-          required
-        >
-          <option value="">{translations.select_network || 'Select Network'}</option>
-          {networks.map((network) => (
-            <option key={network.id} value={network.id}>
-              {network.name}
-            </option>
-          ))}
-        </select>
-        <select
-          name="ports_count"
-          value={router.ports_count}
-          onChange={handleChange}
-          required
-        >
-          {portCounts.map((count) => (
-            <option key={count} value={count}>
-              {count}
-            </option>
-          ))}
-        </select>
-        <label>
-          {translations.is_stack || 'Is Stack'}:
+        <div className="form-group">
+          <label>{translations.name || 'Name'}:</label>
+          <input
+            type="text"
+            name="name"
+            value={router.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.model || 'Model'}:</label>
+          <select
+            name="model_id"
+            value={router.model_id}
+            onChange={handleChange}
+          >
+            <option value="">{translations.select_model || 'Select Model'}</option>
+            {models.map((model) => (
+              <option key={model.id} value={model.id}>
+                {model.model_name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-group">
+          <label>{translations.new_model || 'New Model Name'}:</label>
+          <input
+            type="text"
+            name="new_model_name"
+            value={router.new_model_name}
+            onChange={handleChange}
+            placeholder={translations.enter_new_model || 'Enter new model name'}
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.ip_address || 'IP Address'}:</label>
+          <input
+            type="text"
+            name="ip_address"
+            value={router.ip_address}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.floor || 'Floor'}:</label>
+          <input
+            type="number"
+            name="floor"
+            value={router.floor}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.building || 'Building'}:</label>
+          <select
+            name="building"
+            value={router.building}
+            onChange={handleChange}
+          >
+            <option value="">{translations.select_building || 'Select Building'}</option>
+            <option value="North">{translations.north || 'North'}</option>
+            <option value="South">{translations.south || 'South'}</option>
+            <option value="Central">{translations.pit || 'Pit'}</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label>{translations.connection_speed || 'Connection Speed'}:</label>
+          <input
+            type="text"
+            name="connection_speed"
+            value={router.connection_speed}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.ports_count || 'Ports Count'}:</label>
+          <input
+            type="number"
+            name="ports_count"
+            value={router.ports_count}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.is_stack || 'Is Stack'}:</label>
           <input
             type="checkbox"
             name="is_stack"
             checked={router.is_stack}
             onChange={handleChange}
           />
-        </label>
-        <input
-          type="number"
-          name="slots_count"
-          placeholder={translations.slots_count || 'Slots Count'}
-          value={router.slots_count}
-          onChange={handleChange}
-          disabled={!router.is_stack} // מושבת אם Is Stack לא מסומן
-        />
-        <button type="submit">{translations.add_router || 'Add Router'}</button>
+        </div>
+        <div className="form-group">
+          <label>{translations.slots_count || 'Slots Count'}:</label>
+          <input
+            type="number"
+            name="slots_count"
+            value={router.slots_count}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="form-group">
+          <label>{translations.network || 'Network'}:</label>
+          <select
+            name="network_id"
+            value={router.network_id}
+            onChange={handleChange}
+          >
+            <option value="">{translations.select_network || 'Select Network'}</option>
+            {networks.map((network) => (
+              <option key={network.id} value={network.id}>
+                {network.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button type="submit" disabled={isLoading}>
+          {isLoading
+            ? translations.adding || 'Adding...'
+            : translations.add_router || 'Add Router'}
+        </button>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
       </form>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
     </div>
   );
 };

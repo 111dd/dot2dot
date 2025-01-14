@@ -29,7 +29,7 @@ logging.info("Starting Flask application...")
 app.register_blueprint(router_bp, url_prefix='/api/routers')
 app.register_blueprint(endpoint_bp, url_prefix='/api/endpoints')
 app.register_blueprint(network_bp, url_prefix='/api/networks')
-app.register_blueprint(model_bp, url_prefix='/api/models')
+app.register_blueprint(model_bp, url_prefix='/api/router_models')
 app.register_blueprint(log_bp, url_prefix='/api/logs')  # רישום נתיבי הלוגים
 
 if __name__ == '__main__':
