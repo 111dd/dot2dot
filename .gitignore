@@ -48,3 +48,8 @@ yarn.lock
 # Static and media files (optional, אם הם נוצרים דינמית)
 staticfiles/
 media/
+
+.DS_Store
+
+
+/frontend/node_modules/.cache/
