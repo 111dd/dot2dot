@@ -30,24 +30,19 @@ const RouterTable = ({ filter }) => {
       setError(null);
 
       try {
-        // Fetch routers
         const url = filter?.building
           ? `http://127.0.0.1:5000/api/routers/building/${filter.building}`
           : 'http://127.0.0.1:5000/api/routers';
         const routersRes = await axios.get(url);
-        console.log('Routers Data:', routersRes.data); // בדוק שהנתונים מכילים model_id
         setRouters(routersRes.data);
 
-        // Fetch networks if not already fetched
         if (networks.length === 0) {
           const networksRes = await axios.get('http://127.0.0.1:5000/api/networks');
           setNetworks(networksRes.data);
         }
 
-        // Fetch models if not already fetched
         if (models.length === 0) {
-          const modelsRes = await axios.get('http://127.0.0.1:5000/api/router_models');
-          console.log('Models Data:', modelsRes.data); // בדוק שהנתונים מכילים id
+          const modelsRes = await axios.get('http://127.0.0.1:5000/api/models');
           setModels(modelsRes.data);
         }
       } catch (err) {
@@ -69,39 +64,26 @@ const RouterTable = ({ filter }) => {
   );
 
   const getModelDetails = useCallback(
-  (modelId) => {
-    return models.find((model) => model.id === modelId) || { model_name: 'Unknown' };
-  },
-  [models]
+    (modelId) => {
+      return models.find((model) => model.id === modelId) || { model_name: 'Unknown' };
+    },
+    [models]
   );
 
   const data = useMemo(() => {
-  return routers.map((router) => {
-    // בדוק אם יש model_id
-    let modelName = translations.unknown; // ערך ברירת מחדל למודל
-    if (router.model_id) {
-      // נסה לקבל את שם המודל לפי model_id
-      modelName = getModelDetails(router.model_id);
-    } else if (router.model) {
-      // אם אין model_id, השתמש בשדה model אם קיים
-      modelName = router.model;
-    } else {
-      // אם אין model_id ואין model, התריע בקונסול
-      console.warn(`Router missing both model_id and model:`, router);
-    }
-
-    // קבל את פרטי הרשת
-    const { name: networkName, color: networkColor } = getNetworkDetails(router.network_id);
-
-    // החזר את הנתונים המעודכנים
-    return {
-      ...router,
-      networkName: networkName || translations.unknown,
-      networkColor: networkColor || '#FFFFFF',
-      modelName,
-    };
-  });
-}, [routers, getNetworkDetails, getModelDetails, translations]);
+    return routers.map((router) => {
+      const modelName = router.model_id
+        ? getModelDetails(router.model_id).model_name
+        : router.model || translations.unknown;
+      const { name: networkName, color: networkColor } = getNetworkDetails(router.network_id);
+      return {
+        ...router,
+        networkName: networkName || translations.unknown,
+        networkColor: networkColor || '#FFFFFF',
+        modelName,
+      };
+    });
+  }, [routers, getNetworkDetails, getModelDetails, translations]);
 
   const columns = useMemo(
     () => [
@@ -119,8 +101,20 @@ const RouterTable = ({ filter }) => {
           <button onClick={() => handleMoreClick(row.original)}>{translations.more}</button>
         ),
       },
+      {
+        id: 'connections',
+        header: translations.view_connections || 'View Connections',
+        cell: ({ row }) => (
+          <button
+            onClick={() => navigate(`/routers/${row.original.id}/connections`)}
+            className="view-connections-button"
+          >
+            {translations.view_connections || 'View Connections'}
+          </button>
+        ),
+      },
     ],
-    [translations]
+    [translations, navigate]
   );
 
   const table = useReactTable({

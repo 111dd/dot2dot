@@ -47,6 +47,7 @@
   "error_adding_network": "נכשל בהוספת הרשת. אנא נסה שוב.",
   "enter_network_description": "הזן תיאור רשת (אופציונלי)",
   "color": "צבע",
-    "description": "תיאור"
+  "description": "תיאור",
+  "view_connections": "ראה חיבורים"
 
 }

@@ -1,6 +1,6 @@
 /* עיצוב אזור גלילה לטבלה */
 .table-container {
-  max-height: 500px; /* גובה מקסימלי עם גלילה אנכית */
+  max-height: 1000px; /* גובה מקסימלי עם גלילה אנכית */
   overflow-y: auto;
   overflow-x: auto;
   margin: 20px 0;

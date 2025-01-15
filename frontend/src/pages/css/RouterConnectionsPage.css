@@ -1,0 +1,18 @@
+.connections-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.connections-table th,
+.connections-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+.connections-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+.table-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}

@@ -11,6 +11,9 @@ import RoutersByBuilding from './pages/RoutersByBuilding'; // ייבוא הקו�
 import NetworksPage from './pages/NetworksPage';
 import AddNetworkPage from './pages/AddNetworkPage';
 import { LanguageProvider } from './contexts/LanguageContext';
+import RouterConnectionsPage from './pages/RouterConnectionsPage';
+
+
 
 const App = () => {
   return (
@@ -28,6 +31,9 @@ const App = () => {
             <Route path="/building/:building" element={<RoutersByBuilding />} />
 
             {/* עמודי נקודות קצה */}
+
+            <Route path="/routers/:routerId/connections" element={<RouterConnectionsPage />} />
+
             <Route path="/add-endpoint" element={<AddEndpointPage />} />
 
             {/* עמודי רשתות */}

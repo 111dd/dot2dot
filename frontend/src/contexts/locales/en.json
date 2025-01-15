@@ -47,5 +47,6 @@
   "error_adding_network": "Failed to add network. Please try again.",
   "enter_network_description": "Enter network description (optional)",
   "color": "Color",
-  "description": "description"
+  "description": "description",
+  "view_connections": "View Connections"
 }
