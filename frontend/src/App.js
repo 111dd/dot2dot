@@ -12,6 +12,9 @@ import NetworksPage from './pages/NetworksPage';
 import AddNetworkPage from './pages/AddNetworkPage';
 import { LanguageProvider } from './contexts/LanguageContext';
 import RouterConnectionsPage from './pages/RouterConnectionsPage';
+import LogsPage from './pages/LogsPage';
+import AddPointByRouterPage from './pages/AddPointByRouterPage';
+
 
 
 
@@ -35,10 +38,13 @@ const App = () => {
             <Route path="/routers/:routerId/connections" element={<RouterConnectionsPage />} />
 
             <Route path="/add-endpoint" element={<AddEndpointPage />} />
+            <Route path="/add-point-by-ip" element={<AddPointByRouterPage />} />
 
             {/* עמודי רשתות */}
             <Route path="/networks" element={<NetworksPage />} />
             <Route path="/add-network" element={<AddNetworkPage />} />
+
+            <Route path="/logs" element={<LogsPage />} />
 
             {/* עמוד שגיאה */}
             <Route path="*" element={<NotFound />} />

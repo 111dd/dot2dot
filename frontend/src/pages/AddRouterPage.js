@@ -11,8 +11,8 @@ const AddRouterPage = () => {
     ip_address: '',
     floor: '',
     building: '',
-    connection_speed: '',
-    ports_count: 8,
+    connection_speed: '10Mbps', // ערך ברירת מחדל
+    ports_count: 8, // ערך ברירת מחדל
     is_stack: false,
     slots_count: 0,
     network_id: '',
@@ -29,7 +29,8 @@ const AddRouterPage = () => {
       try {
         const modelsResponse = await axios.get('http://127.0.0.1:5000/api/models/');
         setModels(modelsResponse.data);
-        const networksResponse = await axios.get('http://127.0.0.1:5000/api/networks/');        setNetworks(networksResponse.data);
+        const networksResponse = await axios.get('http://127.0.0.1:5000/api/networks/');
+        setNetworks(networksResponse.data);
       } catch (error) {
         console.error('Error fetching models or networks:', error);
       }
@@ -75,7 +76,7 @@ const AddRouterPage = () => {
         ip_address: '',
         floor: '',
         building: '',
-        connection_speed: '',
+        connection_speed: '10Mbps',
         ports_count: 8,
         is_stack: false,
         slots_count: 0,
@@ -167,21 +168,28 @@ const AddRouterPage = () => {
         </div>
         <div className="form-group">
           <label>{translations.connection_speed || 'Connection Speed'}:</label>
-          <input
-            type="text"
+          <select
             name="connection_speed"
             value={router.connection_speed}
             onChange={handleChange}
-          />
+          >
+            <option value="10Mbps">10Mbps</option>
+            <option value="100Mbps">100Mbps</option>
+            <option value="1Gbps">1Gbps</option>
+          </select>
         </div>
         <div className="form-group">
           <label>{translations.ports_count || 'Ports Count'}:</label>
-          <input
-            type="number"
+          <select
             name="ports_count"
             value={router.ports_count}
             onChange={handleChange}
-          />
+          >
+            <option value={8}>8</option>
+            <option value={16}>16</option>
+            <option value={24}>24</option>
+            <option value={48}>48</option>
+          </select>
         </div>
         <div className="form-group">
           <label>{translations.is_stack || 'Is Stack'}:</label>

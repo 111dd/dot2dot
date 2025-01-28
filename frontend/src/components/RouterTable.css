@@ -1,6 +1,6 @@
 /* עיצוב אזור גלילה לטבלה */
 .table-container {
-  max-height: 1000px; /* גובה מקסימלי עם גלילה אנכית */
+  max-height: 1000px;
   overflow-y: auto;
   overflow-x: auto;
   margin: 20px 0;
@@ -13,7 +13,6 @@
 .router-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
   font-family: Arial, sans-serif;
   background-color: #fff;
 }
@@ -22,7 +21,7 @@
 .router-table thead {
   position: sticky;
   top: 0;
-  background-color: #4CAF50; /* רקע ירוק לכותרת */
+  background-color: #4CAF50;
   color: white;
   z-index: 2;
 }
@@ -31,24 +30,8 @@
   padding: 10px;
   border: 1px solid #ddd;
   font-size: 14px;
-  position: sticky;
-  top: 0;
-}
-
-/* עיצוב שדות הפילטרים */
-.router-table thead th input {
-  width: calc(100% - 10px);
-  padding: 5px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 12px;
-}
-
-.router-table thead th input:focus {
-  border-color: #4CAF50; /* הדגשת שדה ממוקד */
-  outline: none;
+  text-align: center; /* יישור אופקי */
+  vertical-align: middle; /* יישור אנכי */
 }
 
 /* עיצוב גוף הטבלה */
@@ -61,20 +44,24 @@
 }
 
 .router-table tbody tr:hover {
-  background-color: #ddd; /* הדגשה בעת מעבר עכבר */
+  background-color: #ddd;
 }
 
 /* עיצוב התאים */
 .router-table tbody td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: center;
-  font-size: 14px;
+  text-align: center; /* יישור אופקי */
+  vertical-align: middle; /* יישור אנכי */
+  height: 100%;
+  white-space: nowrap; /* מניעת שבירת שורות */
+  overflow: hidden;
+  text-overflow: ellipsis; /* שלוש נקודות אם הטקסט ארוך מדי */
 }
 
 /* כפתור פעולות */
 .router-table tbody td button {
-  background-color: #4CAF50; /* צבע ירוק */
+  background-color: #4CAF50;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -84,17 +71,17 @@
 }
 
 .router-table tbody td button:hover {
-  background-color: #45a049; /* צבע כהה יותר בעת מעבר עכבר */
+  background-color: #45a049;
 }
 
 .router-table tbody td button:active {
-  background-color: #3e8e41; /* צבע כהה יותר בעת לחיצה */
+  background-color: #3e8e41;
 }
 
 /* רספונסיביות */
 @media (max-width: 768px) {
   .router-table thead {
-    display: none; /* הסתרת כותרות הטבלה */
+    display: none;
   }
 
   .router-table tbody td {
@@ -117,5 +104,16 @@
   .table-container {
     border: none;
     box-shadow: none;
+  }
+
+  .container table th,
+  .container table td {
+    text-align: center; /* יישור אופקי */
+    vertical-align: middle; /* יישור אנכי */
+    padding: 10px; /* ריווח פנימי */
+    border: 1px solid #ddd; /* מסגרת תא */
+    white-space: nowrap; /* מניעת שבירת שורות */
+    overflow: hidden; /* הסתרת טקסט חורג */
+    text-overflow: ellipsis; /* שלוש נקודות אם הטקסט ארוך מדי */
   }
 }

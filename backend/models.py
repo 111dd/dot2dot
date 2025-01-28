@@ -57,6 +57,15 @@ class Switch(db.Model):
     connection_port = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+# טבלת RIT Prefix
+class RitPrefix(db.Model):
+    __tablename__ = 'rit_prefixes'
+    id = db.Column(db.Integer, primary_key=True)
+    prefix = db.Column(db.String(10), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f"<RitPrefix {self.prefix}>"
+
 # טבלת נקודות קצה
 class Endpoint(db.Model):
     __tablename__ = 'endpoints'
@@ -66,11 +75,16 @@ class Endpoint(db.Model):
     point_location = db.Column(db.String(255), nullable=False)
     destination_room = db.Column(db.String(255), nullable=False)
     connected_port_number = db.Column(db.Integer, nullable=False)
-    rit_port_number = db.Column(db.Integer, nullable=True)
+    rit_port_number = db.Column(db.String(50), nullable=True)  # שינוי לאפשר שילוב של RIT prefix ומספר
     network_color = db.Column(db.String(7), nullable=True)
     router_id = db.Column(db.Integer, db.ForeignKey('routers.id'), nullable=False)
 
-    # router = db.relationship('Router', backref='endpoints')
+    # קשר ל-RIT Prefix
+    rit_prefix_id = db.Column(db.Integer, db.ForeignKey('rit_prefixes.id'), nullable=True)
+    rit_prefix = db.relationship('RitPrefix', backref='endpoints')
+
+    def __repr__(self):
+        return f"<Endpoint {self.id}, RIT: {self.rit_port_number}>"
 
 # טבלת לוגים
 class Log(db.Model):

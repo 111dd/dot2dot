@@ -4,7 +4,7 @@ import RouterTable from '../components/RouterTable';
 const RoutersPage = () => {
   return (
     <div>
-      <h1>Routers</h1>
+      <h1>Switch</h1>
       <RouterTable />
     </div>
   );

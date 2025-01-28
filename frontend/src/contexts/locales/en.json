@@ -11,7 +11,7 @@
   "building": "Building",
   "network": "Network",
   "home": "Home",
-  "routers": "Routers",
+  "routers": "Switch",
   "endpoints": "Endpoints",
   "networks": "Networks",
   "filter": "Filter {column}",

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import db, Router, Network, RouterModel, Endpoint, Log
+from models import db, Router, Network, RouterModel, Endpoint, Log, RitPrefix
 import logging
 from datetime import datetime
 
@@ -145,7 +145,21 @@ def update_router(id):
             logging.warning(f"Router with ID {id} not found.")
             return jsonify({'error': 'Router not found'}), 404
 
-        # Update router details
+        # שמירה על הערכים הישנים להשוואה
+        old_values = {
+            'name': router.name,
+            'model_id': router.model_id,
+            'ip_address': router.ip_address,
+            'floor': router.floor,
+            'building': router.building,
+            'connection_speed': router.connection_speed,
+            'network_id': router.network_id,
+            'is_stack': router.is_stack,
+            'ports_count': router.ports_count,
+            'slots_count': router.slots_count,
+        }
+
+        # עדכון פרטי הראוטר
         router.name = data.get('name', router.name)
         router.model_id = data.get('model_id', router.model_id)
         router.ip_address = data.get('ip_address', router.ip_address)
@@ -167,17 +181,29 @@ def update_router(id):
 
         db.session.commit()
 
-        # Add to logs
+        # בדיקת שינויים והוספה ללוגים
+        changes = []
+        for key, old_value in old_values.items():
+            new_value = getattr(router, key)
+            if old_value != new_value:
+                changes.append(f"{key}: '{old_value}' -> '{new_value}'")
+
+        if changes:
+            change_details = "; ".join(changes)
+            log_details = f"Updated fields: {change_details}"
+        else:
+            log_details = "No changes made."
+
         log_action(
             action="update",
             entity="Router",
             entity_id=id,
-            technician_name="Admin",  # Replace with the actual technician
-            details=f"Router {router.name} updated.",
+            technician_name="Admin",  # החלף בשם הטכנאי בפועל
+            details=log_details,
         )
 
-        logging.info(f"Router with ID {id} updated successfully.")
-        return jsonify({'message': 'Router updated successfully'}), 200
+        logging.info(f"Router with ID {id} updated successfully with changes: {log_details}")
+        return jsonify({'message': 'Router updated successfully', 'details': log_details}), 200
 
     except ValueError as ve:
         logging.error(f"ValueError updating router {id}: {ve}")
@@ -186,7 +212,6 @@ def update_router(id):
     except Exception as e:
         logging.error(f"Error updating router {id}: {e}")
         return jsonify({'error': str(e)}), 500
-
 
 
 # Delete a router
@@ -258,11 +283,14 @@ def add_router_model():
         return jsonify({'error': 'Failed to add router model', 'details': str(e)}), 500
 
 
+from sqlalchemy.orm import joinedload
+
 @router_bp.route('/<int:router_id>/connections', methods=['GET'])
 def get_router_connections(router_id):
     try:
-        # חיפוש כל החיבורים עבור הנתב עם ה-ID שנשלח
-        connections = Endpoint.query.filter_by(router_id=router_id).all()
+        # חיפוש כל החיבורים עבור הנתב עם ה-ID שנשלח עם הצטרפות ל-RIT Prefix
+        connections = Endpoint.query.filter_by(router_id=router_id).options(joinedload(Endpoint.rit_prefix)).all()
+
         # עיבוד הנתונים לפורמט JSON
         result = [
             {
@@ -272,6 +300,7 @@ def get_router_connections(router_id):
                 'destination_room': conn.destination_room,
                 'connected_port_number': conn.connected_port_number,
                 'rit_port_number': conn.rit_port_number or '-',
+                'rit_prefix': conn.rit_prefix.prefix if conn.rit_prefix else None,  # הוספת התחילית
                 'network_color': conn.network_color or '#FFFFFF',  # צבע ברירת מחדל
             } for conn in connections
         ]
@@ -281,13 +310,24 @@ def get_router_connections(router_id):
         return jsonify({'error': 'Failed to fetch connections', 'details': str(e)}), 500
 
 
-@model_bp.route('/', methods=['GET'])
-def get_router_models():
+@router_bp.route('/all', methods=['GET'])
+def get_all_routers():
+    """Retrieve all routers with minimal details."""
     try:
-        models = RouterModel.query.all()
-        result = [{'id': model.id, 'model_name': model.model_name} for model in models]
+        routers = Router.query.all()
+        result = [
+            {
+                'id': router.id,
+                'name': router.name,
+                'floor': router.floor,
+                'building': router.building,
+                'ip_address': router.ip_address
+
+            }
+            for router in routers
+        ]
         return jsonify(result), 200
     except Exception as e:
-        return jsonify({'error': 'Failed to fetch models', 'details': str(e)}), 500
-
+        logging.error(f"Error fetching routers: {e}")
+        return jsonify({'error': 'Failed to fetch routers', 'details': str(e)}), 500
 

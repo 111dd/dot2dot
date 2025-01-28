@@ -10,6 +10,10 @@ const InteractiveImage = () => {
     navigate(path);
   };
 
+  const handleAddPointByRouter = () => {
+    navigate('/add-point-by-ip');
+  };
+
   return (
     <div className="interactive-image-container">
       <h1>לחץ על הבניין הדרוש</h1>
@@ -37,6 +41,14 @@ const InteractiveImage = () => {
           title="Pit Area"
         ></div>
       </div>
+
+      {/* כפתור להוספת נקודה לפי בחירת ראוטר */}
+      <button
+        className="add-point-button"
+        onClick={handleAddPointByRouter}
+      >
+        הוסף נקודה לפי בחירת ראוטר
+      </button>
     </div>
   );
 };

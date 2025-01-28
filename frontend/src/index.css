@@ -21,7 +21,17 @@ nav ul li a {
 }
 
 .container {
-  padding: 20px;
+  width: 90%; /* תופס 90% מרוחב המסך */
+  max-width: 1200px; /* מגביל את הרוחב ל-1200px */
+  margin: 0 auto; /* מרכז את הקונטיינר */
+  padding: 50px; /* שמור על רווח פנימי */
+}
+
+.container table th,
+.container table td {
+  padding: 10px; /* ריווח פנימי לתאים */
+  text-align: left; /* יישור הטקסט לשמאל */
+  border: 1px solid #ddd; /* הוספת גבול דק */
 }
 
 footer {
