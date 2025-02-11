@@ -1,119 +1,43 @@
-/* עיצוב אזור גלילה לטבלה */
-.table-container {
-  max-height: 1000px;
-  overflow-y: auto;
-  overflow-x: auto;
-  margin: 20px 0;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* עיצוב הטבלה */
+.table-container {
+  @apply max-w-7xl mx-auto bg-gray-800 p-4 rounded-lg shadow-md overflow-x-auto;
+}
+
 .router-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-  background-color: #fff;
+  @apply w-full border-collapse text-white;
 }
 
-/* עיצוב כותרת הטבלה */
-.router-table thead {
-  position: sticky;
-  top: 0;
-  background-color: #4CAF50;
-  color: white;
-  z-index: 2;
+.router-table th {
+  @apply bg-gray-900 text-black p-3 text-left border-b border-gray-700;
 }
 
-.router-table thead th {
-  padding: 10px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  text-align: center; /* יישור אופקי */
-  vertical-align: middle; /* יישור אנכי */
+.router-table td {
+  @apply p-3 border-b border-gray-700 text-gray-800;
 }
 
-/* עיצוב גוף הטבלה */
+/* שורות עם צבע רקע משתנה */
 .router-table tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  @apply bg-gray-700;
 }
 
 .router-table tbody tr:nth-child(even) {
-  background-color: #ffffff;
+  @apply bg-gray-800;
 }
 
 .router-table tbody tr:hover {
-  background-color: #ddd;
+  @apply bg-gray-600 transition;
 }
 
-/* עיצוב התאים */
-.router-table tbody td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center; /* יישור אופקי */
-  vertical-align: middle; /* יישור אנכי */
-  height: 100%;
-  white-space: nowrap; /* מניעת שבירת שורות */
-  overflow: hidden;
-  text-overflow: ellipsis; /* שלוש נקודות אם הטקסט ארוך מדי */
+/* שורת חיפוש קומפקטית יותר */
+.table-header {
+  @apply flex justify-start items-center mb-4 px-2 py-1 bg-gray-900 rounded-md;
 }
 
-/* כפתור פעולות */
-.router-table tbody td button {
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.router-table tbody td button:hover {
-  background-color: #45a049;
-}
-
-.router-table tbody td button:active {
-  background-color: #3e8e41;
-}
-
-/* רספונסיביות */
-@media (max-width: 768px) {
-  .router-table thead {
-    display: none;
-  }
-
-  .router-table tbody td {
-    display: block;
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-  }
-
-  .router-table tbody td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 0;
-    width: 50%;
-    padding-left: 10px;
-    font-weight: bold;
-    text-align: left;
-  }
-
-  .table-container {
-    border: none;
-    box-shadow: none;
-  }
-
-  .container table th,
-  .container table td {
-    text-align: center; /* יישור אופקי */
-    vertical-align: middle; /* יישור אנכי */
-    padding: 10px; /* ריווח פנימי */
-    border: 1px solid #ddd; /* מסגרת תא */
-    white-space: nowrap; /* מניעת שבירת שורות */
-    overflow: hidden; /* הסתרת טקסט חורג */
-    text-overflow: ellipsis; /* שלוש נקודות אם הטקסט ארוך מדי */
-  }
+/* החיפוש יהיה קטן יותר */
+.global-filter {
+  @apply w-1/4 p-1 text-xs bg-gray-700 border border-gray-600 text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none;
 }

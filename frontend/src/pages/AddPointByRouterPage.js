@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
+import { useLanguage } from '../contexts/LanguageContext'; // שימוש בקונטקסט התרגום
 import './css/AddPointByRouterPage.css';
 
 const AddPointByRouterPage = () => {
+  const { translations } = useLanguage(); // קבלת התרגומים מהקונטקסט
   const [routers, setRouters] = useState([]);
   const [ritPrefixes, setRitPrefixes] = useState([]);
   const [selectedRouter, setSelectedRouter] = useState(null);
@@ -31,26 +33,26 @@ const AddPointByRouterPage = () => {
         setRouters(
           routersRes.data.map((router) => ({
             value: router.id,
-            label: `${router.name} (${router.ip_address}) - Floor: ${router.floor}, Building: ${router.building}`,
-            color: router.network_color || '#FFFFFF', // Use network color or default to white
+            label: `${router.name} (${router.ip_address}) - ${translations.point_location || 'Floor'}: ${router.floor}, ${translations.destination_room || 'Building'}: ${router.building}`,
+            color: router.network_color || '#FFFFFF',
           }))
         );
         setRitPrefixes(ritPrefixesRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError('Failed to fetch data. Please try again later.');
+        setError(translations.failed_to_fetch || 'Failed to fetch data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [translations]);
 
   const handlePointSubmit = async (e) => {
     e.preventDefault();
     if (!selectedRouter) {
-      alert('Please select a router first.');
+      alert(translations.select_router || 'Please select a router first.');
       return;
     }
 
@@ -62,19 +64,19 @@ const AddPointByRouterPage = () => {
         connected_port_number: parseInt(pointDetails.connected_port_number, 10),
         rit_port_number: pointDetails.rit_port_number,
         rit_prefix_id: parseInt(pointDetails.rit_prefix_id, 10),
-        router_id: selectedRouter.value, // Use the selected router's value as ID
+        router_id: selectedRouter.value,
       };
 
       console.log('Sending point data:', formattedData);
 
-      const response = await axios.post('http://127.0.0.1:5000/api/endpoints/', formattedData, {
+      const response = await axios.post('http://127.0.0.1:5000/api/endpoints', formattedData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
       console.log('Point added successfully:', response.data);
-      alert('Point added successfully!');
+      alert(translations.success_point_added || 'Point added successfully!');
 
       // Reset form
       setSelectedRouter(null);
@@ -89,7 +91,9 @@ const AddPointByRouterPage = () => {
     } catch (error) {
       console.error('Error adding point:', error);
       alert(
-        error.response?.data?.error || 'Failed to add point. Please check your data and try again.'
+        error.response?.data?.error ||
+          translations.failed_to_fetch ||
+          'Failed to add point. Please check your data and try again.'
       );
     }
   };
@@ -118,35 +122,35 @@ const AddPointByRouterPage = () => {
 
   return (
     <div>
-      <h1>Add Point by Router</h1>
+      <h1>{translations.page_title || 'Add Point by Router'}</h1>
 
       {/* Error message */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {/* Loading message */}
       {loading ? (
-        <p>Loading routers...</p>
+        <p>{translations.loading_routers || 'Loading routers...'}</p>
       ) : (
         <div>
           {/* Search and Select Router */}
           <div>
-            <h2>Select a Router</h2>
+            <h2>{translations.select_router || 'Select a Router'}</h2>
             <Select
               options={routers}
               value={selectedRouter}
               onChange={(selectedOption) => setSelectedRouter(selectedOption)}
-              placeholder="Search or select a router..."
+              placeholder={translations.select_router || 'Search or select a router...'}
               isSearchable
-              styles={customStyles} // Apply custom styles
+              styles={customStyles}
             />
           </div>
 
           {/* Selected Router Details */}
           {selectedRouter && (
             <div className="selected-router-details">
-              <h3>Selected Router Details</h3>
+              <h3>{translations.selected_router_details || 'Selected Router Details'}</h3>
               <p>
-                <strong>Selected:</strong> {selectedRouter.label}
+                <strong>{translations.selected_router || 'Selected:'}</strong> {selectedRouter.label}
               </p>
             </div>
           )}
@@ -154,10 +158,10 @@ const AddPointByRouterPage = () => {
           {/* Point Details Form */}
           {selectedRouter && (
             <form onSubmit={handlePointSubmit} className="point-details-form">
-              <h2>Point Details</h2>
+              <h2>{translations.point_details || 'Point Details'}</h2>
               <input
                 type="text"
-                placeholder="Technician Name"
+                placeholder={translations.technician_name || 'Technician Name'}
                 value={pointDetails.technician_name}
                 onChange={(e) =>
                   setPointDetails({ ...pointDetails, technician_name: e.target.value })
@@ -166,7 +170,7 @@ const AddPointByRouterPage = () => {
               />
               <input
                 type="text"
-                placeholder="Point Location"
+                placeholder={translations.point_location || 'Point Location'}
                 value={pointDetails.point_location}
                 onChange={(e) =>
                   setPointDetails({ ...pointDetails, point_location: e.target.value })
@@ -175,7 +179,7 @@ const AddPointByRouterPage = () => {
               />
               <input
                 type="text"
-                placeholder="Destination Room"
+                placeholder={translations.destination_room || 'Destination Room'}
                 value={pointDetails.destination_room}
                 onChange={(e) =>
                   setPointDetails({ ...pointDetails, destination_room: e.target.value })
@@ -184,7 +188,7 @@ const AddPointByRouterPage = () => {
               />
               <input
                 type="number"
-                placeholder="Connected Port Number"
+                placeholder={translations.connected_port || 'Connected Port Number'}
                 value={pointDetails.connected_port_number}
                 onChange={(e) =>
                   setPointDetails({ ...pointDetails, connected_port_number: e.target.value })
@@ -199,7 +203,7 @@ const AddPointByRouterPage = () => {
                 }
                 required
               >
-                <option value="">Select RIT Prefix</option>
+                <option value="">{translations.select_rit_prefix || 'Select RIT Prefix'}</option>
                 {ritPrefixes.map((prefix) => (
                   <option key={prefix.id} value={prefix.id}>
                     {prefix.prefix}
@@ -208,13 +212,13 @@ const AddPointByRouterPage = () => {
               </select>
               <input
                 type="number"
-                placeholder="RIT Port Number"
+                placeholder={translations.rit_port_number || 'RIT Port Number'}
                 value={pointDetails.rit_port_number}
                 onChange={(e) =>
                   setPointDetails({ ...pointDetails, rit_port_number: e.target.value })
                 }
               />
-              <button type="submit">Add Point</button>
+              <button type="submit">{translations.add_point || 'Add Point'}</button>
             </form>
           )}
         </div>

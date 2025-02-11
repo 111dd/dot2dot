@@ -1,42 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ✅ עיצוב ניווט */
 nav {
-  background-color: #333;
-  color: white;
-  padding: 10px;
+  @apply bg-black text-white shadow-md; /* רקע שחור, טקסט לבן, צל עדין */
+  padding: 15px;
 }
 
 nav ul {
-  list-style: none;
+  @apply flex gap-6 list-none justify-center items-center; /* סידור הכפתורים במרכז */
   padding: 0;
-  display: flex;
-  gap: 15px;
 }
 
 nav ul li {
-  display: inline;
+  @apply inline; /* מונע שבירת כפתורים לשורות חדשות */
 }
 
 nav ul li a {
-  color: white;
+  @apply text-gray-300 hover:text-gray-100 transition duration-300; /* צבע טקסט אפור בהיר, הופך ללבן בריחוף */
   text-decoration: none;
 }
 
+/* ✅ עיצוב קונטיינר ראשי */
 .container {
-  width: 90%; /* תופס 90% מרוחב המסך */
-  max-width: 1200px; /* מגביל את הרוחב ל-1200px */
-  margin: 0 auto; /* מרכז את הקונטיינר */
-  padding: 50px; /* שמור על רווח פנימי */
+  @apply w-11/12 max-w-6xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md; /* מרכז הקונטיינר עם רקע כהה וצל עדין */
+  direction: ltr; /* ברירת מחדל לכיוון שמאל-לימין */
 }
 
-.container table th,
+[dir="rtl"] .container {
+  direction: rtl; /* כאשר השפה היא עברית, מעביר את הכיוון לימין */
+}
+
+/* ✅ עיצוב טבלאות */
+.container table {
+  @apply w-full border-collapse border border-gray-300 text-white; /* עיצוב כללי של טבלאות */
+}
+
+.container table th {
+  @apply bg-gray-700 p-3 text-left border border-gray-600 text-gray-300; /* רקע כהה לכותרות */
+}
+
+[dir="rtl"] .container table th {
+  text-align: right; /* בעברית הכותרות יהיו מימין */
+}
+
 .container table td {
-  padding: 10px; /* ריווח פנימי לתאים */
-  text-align: left; /* יישור הטקסט לשמאל */
-  border: 1px solid #ddd; /* הוספת גבול דק */
+  @apply p-3 border border-gray-100; /* עיצוב תוכן הטבלה */
 }
 
+/* ✅ עיצוב כפתורים */
+button, .btn {
+  @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg transition duration-300 shadow-sm;
+  /* כפתור כחול עם ריחוף לאפור כהה, טקסט לבן */
+}
+
+button:hover {
+  @apply shadow-lg bg-blue-500; /* הוספת צל בהיר כאשר מרחפים על הכפתור */
+}
+
+/* ✅ עיצוב פוטר */
 footer {
-  text-align: center;
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #f1f1f1;
+  @apply text-center mt-6 p-4 bg-gray-900 text-gray-400; /* מרכז את הטקסט עם רקע כהה */
+}
+
+/* ✅ כפתור רגיל */
+.btn {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background-color: white;
+  color: black; /* כאשר מרחפים, הכפתור הופך לבן עם טקסט שחור */
+}
+
+/* ✅ כפתור שפה */
+.btn-white {
+  background-color: white;
+  color: black;
+  border: 2px solid white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-white:hover {
+  background-color: gray;
+  color: white; /* כאשר מרחפים, הכפתור הופך לאפור עם טקסט לבן */
+}
+
+/* ✅ עיצוב תמונות ואזורי לחיצה */
+.image-wrapper {
+  @apply relative inline-block max-w-full overflow-hidden rounded-xl; /* מונע גלישה מהמסגרת */
+}
+
+.interactive-image {
+  @apply w-full h-auto transition-all duration-300 brightness-90 hover:brightness-100; /* בהירות משתנה בזמן ריחוף */
+}
+
+/* ✅ אזורים לחיצים */
+.clickable-area {
+  @apply absolute cursor-pointer rounded-md transition-all duration-300 border border-white/10 bg-transparent;
+}
+
+.clickable-area:hover {
+  @apply bg-white/30 border-white/50; /* הופך את הרקע ללבן שקוף */
+}
+
+/* ✅ עיצוב לפי מיקום */
+.south {
+  @apply top-[2%] left-[26%] w-[20%] h-[55%]; /* מתאים למיקום "דרום" */
+}
+
+.north {
+  @apply top-[2%] left-[55%] w-[20%] h-[55%]; /* מתאים למיקום "צפון" */
+}
+
+.pit {
+  @apply top-[60%] left-[40%] w-[25%] h-[35%]; /* מתאים למיקום "הבור" */
+}
+
+/* ✅ עיצוב טופס הוספת נתב */
+.form-container {
+  @apply max-w-2xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg; /* טופס עם רקע כהה, טקסט לבן */
+  direction: ltr; /* ברירת מחדל שמאל לימין */
+}
+
+[dir="rtl"] .form-container {
+  direction: rtl; /* בעברית יופיע מיושר לימין */
+}
+
+.form-container h2 {
+  @apply text-2xl font-semibold mb-4 text-center; /* כותרת גדולה ומודגשת */
+}
+
+.form-container input,
+.form-container select {
+  @apply w-full p-3 my-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400; /* עיצוב שדות הקלט */
+}
+
+.form-container input:focus,
+.form-container select:focus {
+  @apply border-blue-500 outline-none; /* הדגשה כחולה בעת פוקוס */
+}
+
+.form-container label {
+  @apply block font-semibold text-gray-100 mt-4 text-left; /* טקסט מיושר לשמאל */
+}
+
+[dir="rtl"] .form-container label {
+  text-align: right; /* בעיצוב RTL, הכיתוב יופיע מימין */
+}
+
+.form-container button {
+  @apply w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition-all duration-300;
+}
+
+.form-container button:hover {
+  @apply shadow-md; /* אפקט ריחוף */
+}
+
+/* ✅ עיצוב ההודעה על שגיאות */
+.error-message {
+  @apply text-red-500 text-sm mt-2; /* טקסט אדום קטן להודעות שגיאה */
+}
+
+html[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+html[dir="ltr"] {
+  text-align: left;
+  direction: ltr;
 }

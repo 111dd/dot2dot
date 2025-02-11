@@ -1,64 +1,64 @@
-/* עיטוף התמונה */
-.image-wrapper {
-  position: relative;
-  max-width: 100%; /* התאמת גודל למסך */
-  display: inline-block;
-  overflow: hidden; /* למנוע גלישה */
-  border-radius: 15px; /* פינות מעוגלות */
-}
+/*!* עיטוף התמונה *!*/
+/*.image-wrapper {*/
+/*  position: relative;*/
+/*  max-width: 100%; !* התאמת גודל למסך *!*/
+/*  display: inline-block;*/
+/*  overflow: hidden; !* למנוע גלישה *!*/
+/*  border-radius: 15px; !* פינות מעוגלות *!*/
+/*}*/
 
-/* התמונה */
-.interactive-image {
-  display: block;
-  width: 100%; /* התאמת הרוחב למסגרת */
-  height: auto;
-  filter: brightness(0.9); /* כהות קלה */
-  transition: filter 0.3s ease-in-out;
-}
+/*!* התמונה *!*/
+/*.interactive-image {*/
+/*  display: block;*/
+/*  width: 100%; !* התאמת הרוחב למסגרת *!*/
+/*  height: auto;*/
+/*  filter: brightness(0.9); !* כהות קלה *!*/
+/*  transition: filter 0.3s ease-in-out;*/
+/*}*/
 
-/* אפקט Hover על התמונה */
-.image-wrapper:hover .interactive-image {
-  filter: brightness(1); /* בהירות בזמן ריחוף */
-}
+/*!* אפקט Hover על התמונה *!*/
+/*.image-wrapper:hover .interactive-image {*/
+/*  filter: brightness(1); !* בהירות בזמן ריחוף *!*/
+/*}*/
 
-/* אזור לחיץ */
-.clickable-area {
-  position: absolute;
-  cursor: pointer;
-  background-color: rgba(0, 255, 0, 0); /* רקע שקוף */
-  border: 1px solid rgba(255, 255, 255, 0.08); /* גבול לבן עדין */
-  transition: background-color 0.3s, border 0.3s;
-    border-radius: 8px; /* עיגול קל של הגבול */
+/*!* אזור לחיץ *!*/
+/*.clickable-area {*/
+/*  position: absolute;*/
+/*  cursor: pointer;*/
+/*  background-color: rgba(0, 255, 0, 0); !* רקע שקוף *!*/
+/*  border: 1px solid rgba(255, 255, 255, 0.08); !* גבול לבן עדין *!*/
+/*  transition: background-color 0.3s, border 0.3s;*/
+/*    border-radius: 8px; !* עיגול קל של הגבול *!*/
 
-}
+/*}*/
 
-/* הדגשה עם מעבר עכבר */
-.clickable-area:hover {
-  background-color: rgba(255, 255, 255, 0.3); /* שינוי צבע רקע */
-  border: 2px solid rgba(255, 255, 255, 0.5); /* גבול */
-  border-radius: 8px; /* עיגול קל של הגבול */
-}
+/*!* הדגשה עם מעבר עכבר *!*/
+/*.clickable-area:hover {*/
+/*  background-color: rgba(255, 255, 255, 0.3); !* שינוי צבע רקע *!*/
+/*  border: 2px solid rgba(255, 255, 255, 0.5); !* גבול *!*/
+/*  border-radius: 8px; !* עיגול קל של הגבול *!*/
+/*}*/
 
-/* אזור דרום */
-.south {
-  top: 2%; /* מיקום אנכי */
-  left: 26%; /* מיקום אופקי */
-  width: 20%; /* רוחב */
-  height: 55%; /* גובה */
-}
+/*!* אזור דרום *!*/
+/*.south {*/
+/*  top: 2%; !* מיקום אנכי *!*/
+/*  left: 26%; !* מיקום אופקי *!*/
+/*  width: 20%; !* רוחב *!*/
+/*  height: 55%; !* גובה *!*/
+/*}*/
 
-/* אזור צפון */
-.north {
-  top: 2%; /* מיקום אנכי */
-  left: 55%; /* מיקום אופקי */
-  width: 20%; /* רוחב */
-  height: 55%; /* גובה */
-}
+/*!* אזור צפון *!*/
+/*.north {*/
+/*  top: 2%; !* מיקום אנכי *!*/
+/*  left: 55%; !* מיקום אופקי *!*/
+/*  width: 20%; !* רוחב *!*/
+/*  height: 55%; !* גובה *!*/
+/*}*/
 
-/* אזור הבור */
-.pit {
-  top: 60%; /* מיקום אנכי */
-  left: 40%; /* מיקום אופקי */
-  width: 25%; /* רוחב */
-  height: 35%; /* גובה */
-}
+/*!* אזור הבור *!*/
+/*.pit {*/
+/*  top: 60%; !* מיקום אנכי *!*/
+/*  left: 40%; !* מיקום אופקי *!*/
+/*  width: 25%; !* רוחב *!*/
+/*  height: 35%; !* גובה *!*/
+/*}*/

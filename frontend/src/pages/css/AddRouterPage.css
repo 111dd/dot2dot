@@ -3,7 +3,7 @@
   margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #f9f9f9;
+  background-color: #bd4545;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -27,14 +27,14 @@ form {
 label {
   flex: 0 0 120px;
   font-weight: bold;
-  color: #555;
+  color: #ffffff;
 }
 
 input, select, button {
   flex: 1;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #d32f2f;
   border-radius: 5px;
 }
 
@@ -46,7 +46,7 @@ input:focus, select:focus {
 
 button {
   background-color: #007bff;
-  color: #fff;
+  color: #c51b1b;
   border: none;
   cursor: pointer;
   font-weight: bold;

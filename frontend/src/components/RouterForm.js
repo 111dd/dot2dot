@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const RouterForm = () => {
-  const { translations } = useLanguage(); // שימוש בתרגומים
+  const { translations } = useLanguage();
   const [router, setRouter] = useState({
     name: '',
     ip_address: '',
@@ -87,7 +87,8 @@ const RouterForm = () => {
   };
 
   return (
-    <div>
+    <div className="form-container">
+      <h2>{translations.add_router || 'Add Router'}</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -141,14 +142,15 @@ const RouterForm = () => {
             </option>
           ))}
         </select>
-        <label>
-          {translations.is_stack || 'Is Stack'}:
+        <label className="flex items-center space-x-2">
           <input
             type="checkbox"
             name="is_stack"
             checked={router.is_stack}
             onChange={handleChange}
+            className="w-5 h-5"
           />
+          <span>{translations.is_stack || 'Is Stack'}</span>
         </label>
         <input
           type="number"
@@ -159,7 +161,7 @@ const RouterForm = () => {
         />
         <button type="submit">{translations.add_router || 'Add Router'}</button>
       </form>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
     </div>
   );
 };

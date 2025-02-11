@@ -14,5 +14,6 @@
 }
 .table-container {
   overflow-x: auto;
+  color: blue;
   margin-top: 20px;
 }
