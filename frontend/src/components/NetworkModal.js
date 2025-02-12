@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useLanguage } from '../contexts/LanguageContext'; // ייבוא תמיכה בשפה
+import { useLanguage } from '../contexts/LanguageContext'; // שימוש בתרגומים
 
 const NetworkModal = ({ network, onClose, onUpdate, onDelete }) => {
-  const { translations } = useLanguage(); // שימוש בתרגומים
+  const { translations, language } = useLanguage(); // נוסיף את השפה שנבחרה
   const [isEditing, setIsEditing] = useState(false);
   const [editableNetwork, setEditableNetwork] = useState({
     id: network.id || '',
@@ -62,90 +62,84 @@ const NetworkModal = ({ network, onClose, onUpdate, onDelete }) => {
   };
 
   return (
-    <div className="modal">
+    <div className="modal" dir={language === 'he' ? 'rtl' : 'ltr'}>
       <div className="modal-content">
         <h2>
           {isEditing
             ? translations.edit_network || 'Edit Network'
             : translations.network_details || 'Network Details'}
         </h2>
+
         {isEditing ? (
           <>
-            <div>
-              <label>{translations.id || 'ID'}:</label>
-              <span>{editableNetwork.id}</span>
-            </div>
-            <div>
-              <label>{translations.name || 'Name'}:</label>
-              <input
-                type="text"
-                name="name"
-                value={editableNetwork.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div>
-              <label>{translations.description || 'Description'}:</label>
-              <textarea
-                name="description"
-                value={editableNetwork.description}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>{translations.color || 'Color'}:</label>
-              <input
-                type="color"
-                name="color"
-                value={editableNetwork.color}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="modal-actions">
-              <button onClick={handleSave}>{translations.save || 'Save'}</button>
-              <button onClick={() => setIsEditing(false)}>
-                {translations.cancel || 'Cancel'}
-              </button>
+            <table className="table-auto w-full border-collapse border border-gray-300 text-white">
+              <tbody>
+                <tr>
+                  <th className="bg-gray-700 p-3 border border-gray-600">{translations.id || 'ID'}</th>
+                  <td className="p-3 border border-gray-900">{editableNetwork.id}</td>
+                </tr>
+                <tr>
+                  <th className="bg-gray-700 p-3 border border-gray-600">{translations.name || 'Name'}</th>
+                  <td className="p-3 border border-gray-900">
+                    <input
+                      type="text"
+                      name="name"
+                      value={editableNetwork.name}
+                      onChange={handleChange}
+                      className="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-black"
+                      required
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th className="bg-gray-700 p-3 border border-gray-600">{translations.description || 'Description'}</th>
+                  <td className="p-3 border border-gray-900">
+                    <textarea
+                      name="description"
+                      value={editableNetwork.description}
+                      onChange={handleChange}
+                      className="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-black"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th className="bg-gray-700 p-3 border border-gray-600">{translations.color || 'Color'}</th>
+                  <td className="p-3 border border-gray-900">
+                    <input
+                      type="color"
+                      name="color"
+                      value={editableNetwork.color}
+                      onChange={handleChange}
+                      className="p-1 border border-gray-600"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="modal-actions flex justify-between">
+              <button className="btn bg-blue-500" onClick={handleSave}>{translations.save || 'Save'}</button>
+              <button className="btn bg-gray-500" onClick={() => setIsEditing(false)}>{translations.cancel || 'Cancel'}</button>
             </div>
           </>
         ) : (
           <>
-            <p>
-              <strong>{translations.id || 'ID'}:</strong> {network.id}
-            </p>
-            <p>
-              <strong>{translations.name || 'Name'}:</strong> {network.name}
-            </p>
-            <p>
-              <strong>{translations.description || 'Description'}:</strong>{' '}
-              {network.description || translations.not_available || 'N/A'}
-            </p>
-            <p>
-              <strong>{translations.color || 'Color'}:</strong>{' '}
-              <span
-                style={{
-                  display: 'inline-block',
-                  width: '20px',
-                  height: '20px',
-                  backgroundColor: network.color || '#FFFFFF',
-                  border: '1px solid #000',
-                }}
-              ></span>{' '}
-              {network.color || translations.not_available || 'N/A'}
-            </p>
-            <p>
-              <strong>{translations.created_at || 'Created At'}:</strong>{' '}
-              {network.created_at || translations.not_available || 'N/A'}
-            </p>
-            <div className="modal-actions">
-              <button onClick={() => setIsEditing(true)}>
-                {translations.edit || 'Edit'}
-              </button>
-              <button onClick={handleDelete} className="delete-button">
-                {translations.delete || 'Delete'}
-              </button>
-              <button onClick={onClose}>{translations.close || 'Close'}</button>
+            <table className="table-auto w-full border-collapse border border-gray-300 text-white">
+              <tbody>
+                <tr>
+                  <th className="bg-gray-700 p-3 border border-gray-600">{translations.id || 'ID'}</th>
+                  <td className="p-3 border border-gray-900">{network.id}</td>
+                </tr>
+                <tr>
+                  <th className="bg-gray-700 p-3 border border-gray-600">{translations.name || 'Name'}</th>
+                  <td className="p-3 border border-gray-900">{network.name}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div className="modal-actions flex justify-between">
+              <button className="btn bg-blue-500" onClick={() => setIsEditing(true)}>{translations.edit || 'Edit'}</button>
+              <button className="btn bg-red-500" onClick={handleDelete}>{translations.delete || 'Delete'}</button>
+              <button className="btn bg-gray-500" onClick={onClose}>{translations.close || 'Close'}</button>
             </div>
           </>
         )}

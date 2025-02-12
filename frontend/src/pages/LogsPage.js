@@ -7,9 +7,11 @@ import {
   getFilteredRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import './css/LogsPage.css'; // יצירת קובץ CSS לעיצוב
+import { useLanguage } from '../contexts/LanguageContext'; // שימוש בתרגומים
+import './css/LogsPage.css'; // קובץ CSS נפרד לעיצוב
 
 const LogsPage = () => {
+  const { translations } = useLanguage();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -21,26 +23,26 @@ const LogsPage = () => {
         setLogs(response.data);
       } catch (error) {
         console.error('Error fetching logs:', error);
-        setErrorMessage('Failed to load logs.');
+        setErrorMessage(translations.error_loading_logs || 'Failed to load logs.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchLogs();
-  }, []);
+  }, [translations]);
 
   const columns = useMemo(
     () => [
-      { accessorKey: 'id', header: 'ID', enableSorting: true },
-      { accessorKey: 'action', header: 'Action', enableSorting: true },
-      { accessorKey: 'entity', header: 'Entity', enableSorting: true },
-      { accessorKey: 'entity_id', header: 'Entity ID', enableSorting: true },
-      { accessorKey: 'technician_name', header: 'Technician', enableSorting: true },
-      { accessorKey: 'timestamp', header: 'Timestamp', enableSorting: true },
-      { accessorKey: 'details', header: 'Details', enableSorting: false },
+      { accessorKey: 'id', header: translations.id || 'ID', enableSorting: true },
+      { accessorKey: 'action', header: translations.action || 'Action', enableSorting: true },
+      { accessorKey: 'entity', header: translations.entity || 'Entity', enableSorting: true },
+      { accessorKey: 'entity_id', header: translations.entity_id || 'Entity ID', enableSorting: true },
+      { accessorKey: 'technician_name', header: translations.technician_name || 'Technician', enableSorting: true },
+      { accessorKey: 'timestamp', header: translations.timestamp || 'Timestamp', enableSorting: true },
+      { accessorKey: 'details', header: translations.details || 'Details', enableSorting: false },
     ],
-    []
+    [translations]
   );
 
   const table = useReactTable({
@@ -52,7 +54,7 @@ const LogsPage = () => {
   });
 
   if (loading) {
-    return <p>Loading logs...</p>;
+    return <p className="loading-message">{translations.loading || 'Loading logs...'}</p>;
   }
 
   if (errorMessage) {
@@ -61,7 +63,7 @@ const LogsPage = () => {
 
   return (
     <div className="logs-page">
-      <h2>Logs</h2>
+      <h2>{translations.logs || 'Logs'}</h2>
       <div className="table-container">
         <table className="logs-table">
           <thead>
@@ -71,16 +73,12 @@ const LogsPage = () => {
                   <th
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                    className={header.column.getCanSort() ? 'sortable-header' : ''}
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                     {header.column.getCanSort() && (
-                      <span>
-                        {header.column.getIsSorted() === 'asc'
-                          ? ' 🔼'
-                          : header.column.getIsSorted() === 'desc'
-                          ? ' 🔽'
-                          : ''}
+                      <span className="sort-indicator">
+                        {header.column.getIsSorted() === 'asc' ? ' 🔼' : header.column.getIsSorted() === 'desc' ? ' 🔽' : ''}
                       </span>
                     )}
                   </th>
@@ -89,15 +87,21 @@ const LogsPage = () => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={columns.length} className="no-data">
+                  {translations.no_data_available || 'No data available'}
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

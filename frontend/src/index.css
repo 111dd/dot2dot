@@ -2,15 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ✅ עיצוב ניווט */
+/* ✅ ניווט (Navbar) */
 nav {
-  @apply bg-black text-white shadow-md; /* רקע שחור, טקסט לבן, צל עדין */
-  padding: 15px;
+  @apply bg-black text-white shadow-md p-4; /* רקע שחור, טקסט לבן, צל עדין */
 }
 
 nav ul {
-  @apply flex gap-6 list-none justify-center items-center; /* סידור הכפתורים במרכז */
-  padding: 0;
+  @apply flex gap-6 list-none justify-center items-center p-0; /* יישור הכפתורים */
 }
 
 nav ul li {
@@ -18,27 +16,31 @@ nav ul li {
 }
 
 nav ul li a {
-  @apply text-gray-300 hover:text-gray-100 transition duration-300; /* צבע טקסט אפור בהיר, הופך ללבן בריחוף */
-  text-decoration: none;
+  @apply text-gray-300 hover:text-gray-100 transition duration-300 no-underline; /* צבע טקסט אפור בהיר, הופך ללבן בריחוף */
 }
 
-/* ✅ עיצוב קונטיינר ראשי */
+/* ✅ פסקאות */
+p {
+  @apply text-gray-200;
+}
+
+/* ✅ קונטיינר ראשי */
 .container {
-  @apply w-11/12 max-w-6xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md; /* מרכז הקונטיינר עם רקע כהה וצל עדין */
-  direction: ltr; /* ברירת מחדל לכיוון שמאל-לימין */
+  @apply w-11/12 max-w-6xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md; /* רקע כהה וצל עדין */
+  direction: ltr; /* ברירת מחדל שמאל-לימין */
 }
 
 [dir="rtl"] .container {
   direction: rtl; /* כאשר השפה היא עברית, מעביר את הכיוון לימין */
 }
 
-/* ✅ עיצוב טבלאות */
+/* ✅ טבלאות */
 .container table {
-  @apply w-full border-collapse border border-gray-300 text-white; /* עיצוב כללי של טבלאות */
+  @apply w-full border-collapse border border-gray-300 text-black; /* עיצוב כללי של טבלאות */
 }
 
 .container table th {
-  @apply bg-gray-700 p-3 text-left border border-gray-600 text-gray-300; /* רקע כהה לכותרות */
+  @apply bg-gray-700 p-3 border border-gray-600 text-gray-100 text-left; /* רקע כהה לכותרות */
 }
 
 [dir="rtl"] .container table th {
@@ -46,22 +48,17 @@ nav ul li a {
 }
 
 .container table td {
-  @apply p-3 border border-gray-100; /* עיצוב תוכן הטבלה */
+  @apply p-3 border border-gray-200; /* עיצוב תוכן הטבלה */
 }
 
-/* ✅ עיצוב כפתורים */
-button, .btn {
-  @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg transition duration-300 shadow-sm;
-  /* כפתור כחול עם ריחוף לאפור כהה, טקסט לבן */
+/* ✅ כפתורים */
+button,
+.btn {
+  @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-sm;
 }
 
 button:hover {
-  @apply shadow-lg bg-blue-500; /* הוספת צל בהיר כאשר מרחפים על הכפתור */
-}
-
-/* ✅ עיצוב פוטר */
-footer {
-  @apply text-center mt-6 p-4 bg-gray-900 text-gray-400; /* מרכז את הטקסט עם רקע כהה */
+  @apply shadow-lg bg-blue-500;
 }
 
 /* ✅ כפתור רגיל */
@@ -111,52 +108,52 @@ footer {
 }
 
 .clickable-area:hover {
-  @apply bg-white/30 border-white/50; /* הופך את הרקע ללבן שקוף */
+  @apply bg-white/30 border-white/50;
 }
 
 /* ✅ עיצוב לפי מיקום */
 .south {
-  @apply top-[2%] left-[26%] w-[20%] h-[55%]; /* מתאים למיקום "דרום" */
+  @apply top-[2%] left-[26%] w-[20%] h-[55%];
 }
 
 .north {
-  @apply top-[2%] left-[55%] w-[20%] h-[55%]; /* מתאים למיקום "צפון" */
+  @apply top-[2%] left-[55%] w-[20%] h-[55%];
 }
 
 .pit {
-  @apply top-[60%] left-[40%] w-[25%] h-[35%]; /* מתאים למיקום "הבור" */
+  @apply top-[60%] left-[40%] w-[25%] h-[35%];
 }
 
-/* ✅ עיצוב טופס הוספת נתב */
+/* ✅ טופס הוספת נתב */
 .form-container {
-  @apply max-w-2xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg; /* טופס עם רקע כהה, טקסט לבן */
-  direction: ltr; /* ברירת מחדל שמאל לימין */
+  @apply max-w-2xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg;
+  direction: ltr;
 }
 
 [dir="rtl"] .form-container {
-  direction: rtl; /* בעברית יופיע מיושר לימין */
+  direction: rtl;
 }
 
 .form-container h2 {
-  @apply text-2xl font-semibold mb-4 text-center; /* כותרת גדולה ומודגשת */
+  @apply text-2xl font-semibold mb-4 text-center;
 }
 
 .form-container input,
 .form-container select {
-  @apply w-full p-3 my-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400; /* עיצוב שדות הקלט */
+  @apply w-full p-3 my-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400;
 }
 
 .form-container input:focus,
 .form-container select:focus {
-  @apply border-blue-500 outline-none; /* הדגשה כחולה בעת פוקוס */
+  @apply border-blue-500 outline-none;
 }
 
 .form-container label {
-  @apply block font-semibold text-gray-100 mt-4 text-left; /* טקסט מיושר לשמאל */
+  @apply block font-semibold text-gray-100 mt-4 text-left;
 }
 
 [dir="rtl"] .form-container label {
-  text-align: right; /* בעיצוב RTL, הכיתוב יופיע מימין */
+  text-align: right;
 }
 
 .form-container button {
@@ -164,14 +161,15 @@ footer {
 }
 
 .form-container button:hover {
-  @apply shadow-md; /* אפקט ריחוף */
+  @apply shadow-md;
 }
 
-/* ✅ עיצוב ההודעה על שגיאות */
+/* ✅ הודעות שגיאה */
 .error-message {
-  @apply text-red-500 text-sm mt-2; /* טקסט אדום קטן להודעות שגיאה */
+  @apply text-red-500 text-sm mt-2;
 }
 
+/* ✅ תמיכה בשפות RTL ו-LTR */
 html[dir="rtl"] {
   text-align: right;
   direction: rtl;

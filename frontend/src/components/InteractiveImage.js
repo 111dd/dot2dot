@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext'; // תמיכה בשפות
 import './InteractiveImage.css'; // ודא שהנתיב נכון
 
 const InteractiveImage = () => {
   const navigate = useNavigate();
+  const { translations, currentLanguage } = useLanguage(); // קבלת התרגומים והשפה הנוכחית
 
   const handleAreaClick = (path) => {
-    console.log(`Navigating to: ${path}`); // בדיקה
+    console.log(`Navigating to: ${path}`);
     navigate(path);
   };
 
@@ -16,38 +18,43 @@ const InteractiveImage = () => {
 
   return (
     <div className="interactive-image-container">
-      <h1>לחץ על הבניין הדרוש</h1>
+      {/* כותרת בהתאמה לשפה */}
+      <h1>{translations.select_building || 'Select a building'}</h1>
+
       <div className="image-wrapper">
-        {/* התמונה */}
+        {/* תמונה */}
         <img
           src="/img/kanrit.webp"
-          alt="Interactive Building Map"
+          alt={translations.building_map || "Building Map"}
           className="interactive-image"
         />
+
         {/* אזורים לחיצים */}
         <div
           className="clickable-area south"
           onClick={() => handleAreaClick('/building/South')}
-          title="South Building"
+          title={translations.south_building || "South Building"}
         ></div>
+
         <div
           className="clickable-area north"
           onClick={() => handleAreaClick('/building/North')}
-          title="North Building"
+          title={translations.north_building || "North Building"}
         ></div>
+
         <div
           className="clickable-area pit"
           onClick={() => handleAreaClick('/building/Pit')}
-          title="Pit Area"
+          title={translations.pit_area || "Pit Area"}
         ></div>
       </div>
 
-      {/* כפתור להוספת נקודה לפי בחירת ראוטר */}
+      {/* כפתור להוספת נקודה לפי ראוטר */}
       <button
         className="add-point-button"
         onClick={handleAddPointByRouter}
       >
-        הוסף נקודה לפי בחירת ראוטר
+        {translations.add_point_by_router || "Add Point by Router"}
       </button>
     </div>
   );
