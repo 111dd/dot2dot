@@ -7,6 +7,7 @@
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
+  color: white;
 }
 .connections-table th {
   background-color: #f4f4f4;
@@ -15,5 +16,5 @@
 .table-container {
   overflow-x: auto;
   color: blue;
-  margin-top: 20px;
+  margin-top: 10px;
 }

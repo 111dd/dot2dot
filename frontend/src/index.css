@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  background-image: url('/public/img/kanrit.webp'); /* נתיב התמונה */
+  background-size: cover; /* התאמת התמונה לגודל הדף */
+  background-position: center; /* מיקום במרכז */
+  /*background-attachment: fixed; !* התמונה לא תזוז עם הגלילה *!*/
+  /*background-repeat: no-repeat; !* ללא חזרות *!*/
+}
+
 /* ✅ ניווט (Navbar) */
 nav {
   @apply bg-black text-white shadow-md p-4; /* רקע שחור, טקסט לבן, צל עדין */
@@ -177,4 +185,40 @@ html[dir="rtl"] {
 html[dir="ltr"] {
   text-align: left;
   direction: ltr;
+}
+
+
+/* ✅ מודל (חלון קופץ) */
+.modal {
+  @apply fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm;
+  z-index: 50;
+}
+
+.modal-content {
+  @apply bg-gray-900 p-6 rounded-lg shadow-lg w-96;
+  direction: ltr; /* ברירת מחדל */
+}
+
+[dir="rtl"] .modal-content {
+  direction: rtl; /* אם השפה היא עברית */
+}
+
+.modal-actions {
+  @apply flex justify-between mt-4;
+}
+
+.modal button {
+  @apply px-4 py-2 rounded-md transition-all duration-200;
+}
+
+.modal .save-button {
+  @apply bg-blue-500 hover:bg-blue-700 text-white;
+}
+
+.modal .delete-button {
+  @apply bg-red-500 hover:bg-red-700 text-white;
+}
+
+.modal .close-button {
+  @apply bg-gray-500 hover:bg-gray-700 text-white;
 }
