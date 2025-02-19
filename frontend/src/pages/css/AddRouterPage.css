@@ -1,63 +1,129 @@
-.container {
-  max-width: 600px;
-  margin: 0 auto;
+.add-router-page__container {
+  max-width: 650px;
+  margin: 20px auto;
+  background-color: rgba(30, 41, 59, 0.6); /* רקע כהה ושקוף חלקית */
+  color: #fff;
   padding: 20px;
-  font-family: Arial, sans-serif;
-  background-color: #bd4545;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
-h1 {
+/* כוכבית ליד שדות חובה */
+.add-router-page__required {
+  color: #ff6b6b;
+  margin-left: 4px;
+}
+
+.add-router-page__title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
   text-align: center;
-  margin-bottom: 20px;
-  color: #333;
+  text-shadow: 0 0 2px rgba(0,0,0,0.3);
 }
 
-form {
-  display: grid;
-  gap: 15px;
-}
-
-.form-group {
+/* טופס */
+.add-router-page__form {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 14px; /* ריווח אנכי בין קבוצות שדות */
 }
 
-label {
-  flex: 0 0 120px;
-  font-weight: bold;
-  color: #ffffff;
+/* כל שדה בקבוצה משלו */
+.add-router-page__form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-input, select, button {
-  flex: 1;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #d32f2f;
-  border-radius: 5px;
+/* תוויות */
+.add-router-page__form-group label {
+  margin-bottom: 3px;
+  font-weight: 600;
+  color: #cbd5e1;
 }
 
-input:focus, select:focus {
+/* שדה טקסט, מספר, סלקט, וכו' */
+.add-router-page__input,
+.add-router-page__select {
+  background-color: #2d3748;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  color: #fff;
+  padding: 6px;
+  font-size: 0.95rem;
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+
+  /* אנימציית מעבר עדינה */
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-button {
-  background-color: #007bff;
-  color: #c51b1b;
+.add-router-page__input:focus,
+.add-router-page__select:focus {
+  background-color: #394150;
+  border-color: #667080;
+}
+
+/* כאשר יש שגיאה */
+.add-router-page__input--error {
+  border-color: #ff6b6b !important;
+}
+
+/* הודעת שגיאה מתחת לשדה */
+.add-router-page__field-error {
+  color: #ff6b6b;
+  margin-top: 3px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* שורה עם שני עמודות (לדוגמה Floor + Building) */
+.add-router-page__row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start; /* או center, אם רוצים למרכז אנכית */
+}
+
+/* כל עמודה */
+.add-router-page__col {
+  flex: 1;
+}
+
+/* צ'קבוקס */
+.add-router-page__checkbox {
+  width: 20px;
+  height: 20px;
+  margin-left: 8px; /* רווח בין הטקסט לצ'קבוקס */
+  accent-color: #4caf50; /* צבע סימון ירוק (בדפדפנים תומכים) */
+}
+
+/* כפתור שליחה */
+.add-router-page__submit-btn {
+  background-color: #4caf50;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
+  border-radius: 4px;
+  padding: 8px;
   cursor: pointer;
+  margin-top: 12px;
+
+  /* מעבר חלק */
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+.add-router-page__submit-btn:hover {
+  background-color: #45a049;
+  transform: scale(1.02);
+}
+
+.add-router-page__submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* הודעת שגיאה גלובלית */
+.add-router-page__error {
+  color: #ff6b6b;
+  margin-top: 10px;
   font-weight: bold;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-.error-message {
-  color: red;
-  font-size: 14px;
-  margin-top: -10px;
+  text-align: center;
 }

@@ -1,3 +1,4 @@
+// RouterTable.jsx
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import {
@@ -163,64 +164,64 @@ const RouterTable = ({ filter }) => {
     <div>
       <div className="table-header">
         <input
-            type="text"
-            placeholder={translations.global_search}
-            value={globalFilter || ''}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="global-filter"
+          type="text"
+          placeholder={translations.global_search}
+          value={globalFilter || ''}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="global-filter"
         />
       </div>
 
       <div className="table-container">
         <table className="router-table">
           <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                    <th
-                        key={header.id}
-                        onClick={header.column.getToggleSortingHandler()}
-                        style={{cursor: header.column.getCanSort() ? 'pointer' : 'default'}}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {header.column.getCanSort() && (
-                          <span>
-                  {header.column.getIsSorted() === 'asc'
-                      ? ' 🔼'
-                      : header.column.getIsSorted() === 'desc'
+                  <th
+                    key={header.id}
+                    onClick={header.column.getToggleSortingHandler()}
+                    style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.column.getCanSort() && (
+                      <span>
+                        {header.column.getIsSorted() === 'asc'
+                          ? ' 🔼'
+                          : header.column.getIsSorted() === 'desc'
                           ? ' 🔽'
                           : ''}
-                </span>
-                      )}
-                    </th>
+                      </span>
+                    )}
+                  </th>
                 ))}
               </tr>
-          ))}
+            ))}
           </thead>
           <tbody>
-          {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} style={{backgroundColor: row.original.networkColor}}>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} style={{ backgroundColor: row.original.networkColor }}>
                 {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
                 ))}
               </tr>
-          ))}
+            ))}
           </tbody>
         </table>
       </div>
 
       {isModalOpen && selectedRouter && (
-          <RouterModal
-              router={selectedRouter}
-              onClose={handleCloseModal}
-              onUpdate={handleUpdateRouter}
-              onDelete={(id) => {
-                setRouters((prev) => prev.filter((router) => router.id !== id));
-                setIsModalOpen(false);
-              }}
-          />
+        <RouterModal
+          router={selectedRouter}
+          onClose={handleCloseModal}
+          onUpdate={handleUpdateRouter}
+          onDelete={(id) => {
+            setRouters((prev) => prev.filter((r) => r.id !== id));
+            setIsModalOpen(false);
+          }}
+        />
       )}
     </div>
   );

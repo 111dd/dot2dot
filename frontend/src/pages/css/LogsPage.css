@@ -1,79 +1,100 @@
-/* ✅ עיצוב כללי של הדף */
+/* LogsPage.css */
+
+/* עיצוב כללי של הדף */
 .logs-page {
-  max-width: 90%;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #1e293b;
+  max-width: 100%;
+  margin: 2px auto;
+  padding: 10px;
+  background-color: rgba(30, 41, 59, 0.5);
   color: white;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ✅ עיצוב כותרת */
+/* כותרת הדף */
 .logs-page h2 {
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom: 15px;
 }
 
-/* ✅ טבלת לוגים */
-.table-container {
-  overflow-x: auto;
+/* שדה חיפוש */
+.logs-page__search-input {
+  width: 30%;
+  min-width: 200px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  font-size: 16px;
+  color: #fff;
+  background-color: #4a5568;
+}
+
+/* אזור הטבלה: מקסימום גובה וגלילה אנכית */
+.logs-page__table-container {
+  max-height: 500px; /* בחר גובה שנוח לך */
   overflow-y: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  background-color: rgba(30, 41, 59, 0.5);
 
 }
 
-.logs-table {
+/* הטבלה עצמה */
+.logs-page__table {
   width: 100%;
   border-collapse: collapse;
   background-color: #2d3748;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
-.logs-table th {
+/* כותרת הטבלה - נעשית דביקה (sticky) */
+.logs-page__table thead th {
+  position: sticky;
+  top: 0;
   background-color: #4a5568;
   color: #fff;
   padding: 10px;
   text-align: center;
   font-weight: bold;
   border-bottom: 3px solid #1a202c;
-  cursor: pointer;
+  z-index: 1; /* מוודא שהכותרת תהיה קדמית לגלילה */
 }
 
-.logs-table td {
+/* גוף הטבלה */
+.logs-page__table td {
   padding: 10px;
   color: #fff;
   text-align: center;
-  border-bottom: 1px solid #4a5568;
-  background-color: #2d3748;
+  border-bottom: 1px solid #fff;
+  background-color: rgba(30, 41, 59, 0.1);
 }
 
-.logs-table tr:hover {
-  background-color: #3b4252;
+.logs-page__table tr:hover {
+  background-color: rgba(30, 41, 59, 0.7);
 }
 
-/* ✅ עיצוב הודעות טעינה ושגיאה */
-.loading-message,
-.error-message,
-.no-data {
+/* הודעות טעינה ושגיאה */
+.logs-page__loading,
+.logs-page__error,
+.logs-page__no-data {
   font-size: 18px;
   padding: 15px;
   font-weight: bold;
   color: #ff6b6b;
 }
 
-/* ✅ עיצוב כותרות ממוינות */
-.sortable-header {
+/* כותרות ממוינות */
+.logs-page__sortable-header {
   cursor: pointer;
   user-select: none;
 }
 
-.sortable-header:hover {
+.logs-page__sortable-header:hover {
   background-color: #5a67d8;
 }
 
-/* ✅ עיצוב אינדיקטור מיון */
-.sort-indicator {
+/* אינדיקטור מיון */
+.logs-page__sort-indicator {
   margin-left: 5px;
 }

@@ -1,3 +1,4 @@
+// NetworkTable.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import {
@@ -9,7 +10,7 @@ import {
 } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 import NetworkModal from './NetworkModal';
-import { useLanguage } from '../contexts/LanguageContext'; // ייבוא תמיכה בשפה
+import { useLanguage } from '../contexts/LanguageContext';
 import './NetworkTable.css';
 
 const NetworkTable = () => {
@@ -19,7 +20,7 @@ const NetworkTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { translations } = useLanguage(); // שימוש בתרגומים
+  const { translations } = useLanguage();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +58,7 @@ const NetworkTable = () => {
               backgroundColor: row.original.color || '#FFFFFF',
               border: '1px solid #000',
             }}
-          ></span>
+          />
         ),
       },
       {
@@ -79,25 +80,22 @@ const NetworkTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    state: {
-      globalFilter,
-    },
+    state: { globalFilter },
     onGlobalFilterChange: setGlobalFilter,
     filterFns: {
       auto: (row, columnId, filterValue) => {
         const cellValue = row.getValue(columnId);
         if (typeof cellValue === 'number') {
-          // חיפוש גמיש למספרים
           return cellValue === Number(filterValue);
         }
-        // חיפוש גמיש לטקסט
-        return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase());
+        return cellValue
+          ?.toString()
+          .toLowerCase()
+          .includes(filterValue.toLowerCase());
       },
     },
-    globalFilterFn: 'auto', // שימוש בפונקציה Auto
-});
-
-
+    globalFilterFn: 'auto',
+  });
 
   const handleMoreClick = (network) => {
     setSelectedNetwork(network);
@@ -113,7 +111,7 @@ const NetworkTable = () => {
     if (window.confirm(translations.confirm_delete || 'Are you sure you want to delete this network?')) {
       try {
         await axios.delete(`http://127.0.0.1:5000/api/networks/${id}`);
-        setNetworks((prev) => prev.filter((network) => network.id !== id));
+        setNetworks((prev) => prev.filter((net) => net.id !== id));
       } catch (error) {
         console.error('Error deleting network:', error);
         alert(translations.error_deleting || 'Failed to delete network. Please try again.');
@@ -130,8 +128,13 @@ const NetworkTable = () => {
     setIsModalOpen(false);
   };
 
-  if (isLoading) return <div>{translations.loading || 'Loading...'}</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  if (isLoading) {
+    return <div>{translations.loading || 'Loading...'}</div>;
+  }
+
+  if (error) {
+    return <div style={{ color: 'red' }}>{error}</div>;
+  }
 
   return (
     <div>
@@ -150,6 +153,7 @@ const NetworkTable = () => {
           {translations.add_network || 'Add Network'}
         </button>
       </div>
+
       <div className="table-container">
         <table className="network-table">
           <thead>

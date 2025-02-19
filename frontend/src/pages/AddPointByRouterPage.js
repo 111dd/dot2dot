@@ -5,7 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext'; // שימוש בקו�
 import './css/AddPointByRouterPage.css';
 
 const AddPointByRouterPage = () => {
-  const { translations } = useLanguage(); // קבלת התרגומים מהקונטקסט
+  const { translations } = useLanguage();
   const [routers, setRouters] = useState([]);
   const [ritPrefixes, setRitPrefixes] = useState([]);
   const [selectedRouter, setSelectedRouter] = useState(null);
@@ -19,8 +19,9 @@ const AddPointByRouterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // Fetch all routers and RIT Prefixes on component load
+  // הבאת הנתונים מהרשת
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -51,34 +52,35 @@ const AddPointByRouterPage = () => {
 
   const handlePointSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+
     if (!selectedRouter) {
-      alert(translations.select_router || 'Please select a router first.');
+      setError(translations.select_router || 'Please select a router first.');
+      return;
+    }
+
+    if (!pointDetails.technician_name || !pointDetails.point_location || !pointDetails.connected_port_number) {
+      setError(translations.fill_required_fields || 'Please fill in all required fields.');
       return;
     }
 
     try {
       const formattedData = {
-        technician_name: pointDetails.technician_name,
-        point_location: pointDetails.point_location,
-        destination_room: pointDetails.destination_room,
+        ...pointDetails,
         connected_port_number: parseInt(pointDetails.connected_port_number, 10),
-        rit_port_number: pointDetails.rit_port_number,
-        rit_prefix_id: parseInt(pointDetails.rit_prefix_id, 10),
+        rit_port_number: pointDetails.rit_port_number ? parseInt(pointDetails.rit_port_number, 10) : null,
+        rit_prefix_id: pointDetails.rit_prefix_id ? parseInt(pointDetails.rit_prefix_id, 10) : null,
         router_id: selectedRouter.value,
       };
 
-      console.log('Sending point data:', formattedData);
-
-      const response = await axios.post('http://127.0.0.1:5000/api/endpoints', formattedData, {
+      await axios.post('http://127.0.0.1:5000/api/endpoints', formattedData, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      console.log('Point added successfully:', response.data);
-      alert(translations.success_point_added || 'Point added successfully!');
-
-      // Reset form
+      setSuccessMessage(translations.success_point_added || 'Point added successfully!');
       setSelectedRouter(null);
       setPointDetails({
         technician_name: '',
@@ -90,33 +92,41 @@ const AddPointByRouterPage = () => {
       });
     } catch (error) {
       console.error('Error adding point:', error);
-      alert(
+      setError(
         error.response?.data?.error ||
-          translations.failed_to_fetch ||
-          'Failed to add point. Please check your data and try again.'
+        translations.failed_to_fetch ||
+        'Failed to add point. Please check your data and try again.'
       );
     }
   };
 
-  // Custom styles for react-select
+  // 🎨 **עיצוב `react-select` בהתאמה לאתר**
   const customStyles = {
     control: (provided) => ({
       ...provided,
       borderRadius: '8px',
-      padding: '4px',
-      borderColor: '#ccc',
+      padding: '8px',
+      borderColor: '#4a5568',
+      backgroundColor: '#2d3748',
+      color: 'whitesmoke',
+    }),
+    input: (provided) => ({
+      ...provided,
+      color: 'whitesmoke',
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: '#a0aec0',
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.data.color,
-      color: '#000',
-      fontWeight: state.isSelected ? 'bold' : 'normal',
+      backgroundColor: state.isSelected ? '#4a5568' : '#2d3748',
+      color: state.isSelected ? 'whitesmoke' : '#a0aec0',
       padding: '10px',
-      cursor: 'pointer',
     }),
-    singleValue: (provided, state) => ({
+    singleValue: (provided) => ({
       ...provided,
-      color: state.data.color,
+      color: 'whitesmoke',
     }),
   };
 
@@ -124,15 +134,16 @@ const AddPointByRouterPage = () => {
     <div>
       <h1>{translations.page_title || 'Add Point by Router'}</h1>
 
-      {/* Error message */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* הודעות */}
+      {error && <p className="error-message">{error}</p>}
+      {successMessage && <p className="success-message">{successMessage}</p>}
 
-      {/* Loading message */}
+      {/* טעינה */}
       {loading ? (
         <p>{translations.loading_routers || 'Loading routers...'}</p>
       ) : (
         <div>
-          {/* Search and Select Router */}
+          {/* בחירת נתב */}
           <div>
             <h2>{translations.select_router || 'Select a Router'}</h2>
             <Select
@@ -145,7 +156,7 @@ const AddPointByRouterPage = () => {
             />
           </div>
 
-          {/* Selected Router Details */}
+          {/* פרטי הנתב שנבחר */}
           {selectedRouter && (
             <div className="selected-router-details">
               <h3>{translations.selected_router_details || 'Selected Router Details'}</h3>
@@ -155,69 +166,19 @@ const AddPointByRouterPage = () => {
             </div>
           )}
 
-          {/* Point Details Form */}
+          {/* טופס הוספת נקודה */}
           {selectedRouter && (
             <form onSubmit={handlePointSubmit} className="point-details-form">
               <h2>{translations.point_details || 'Point Details'}</h2>
-              <input
-                type="text"
-                placeholder={translations.technician_name || 'Technician Name'}
-                value={pointDetails.technician_name}
-                onChange={(e) =>
-                  setPointDetails({ ...pointDetails, technician_name: e.target.value })
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder={translations.point_location || 'Point Location'}
-                value={pointDetails.point_location}
-                onChange={(e) =>
-                  setPointDetails({ ...pointDetails, point_location: e.target.value })
-                }
-                required
-              />
-              <input
-                type="text"
-                placeholder={translations.destination_room || 'Destination Room'}
-                value={pointDetails.destination_room}
-                onChange={(e) =>
-                  setPointDetails({ ...pointDetails, destination_room: e.target.value })
-                }
-                required
-              />
-              <input
-                type="number"
-                placeholder={translations.connected_port || 'Connected Port Number'}
-                value={pointDetails.connected_port_number}
-                onChange={(e) =>
-                  setPointDetails({ ...pointDetails, connected_port_number: e.target.value })
-                }
-                required
-              />
-              <select
-                name="rit_prefix_id"
-                value={pointDetails.rit_prefix_id}
-                onChange={(e) =>
-                  setPointDetails({ ...pointDetails, rit_prefix_id: e.target.value })
-                }
-                required
-              >
+              <input type="text" placeholder={translations.technician_name || 'Technician Name'} value={pointDetails.technician_name} onChange={(e) => setPointDetails({ ...pointDetails, technician_name: e.target.value })} required />
+              <input type="text" placeholder={translations.point_location || 'Point Location'} value={pointDetails.point_location} onChange={(e) => setPointDetails({ ...pointDetails, point_location: e.target.value })} required />
+              <input type="text" placeholder={translations.destination_room || 'Destination Room'} value={pointDetails.destination_room} onChange={(e) => setPointDetails({ ...pointDetails, destination_room: e.target.value })} />
+              <input type="number" placeholder={translations.connected_port || 'Connected Port Number'} value={pointDetails.connected_port_number} onChange={(e) => setPointDetails({ ...pointDetails, connected_port_number: e.target.value })} required />
+              <select name="rit_prefix_id" value={pointDetails.rit_prefix_id} onChange={(e) => setPointDetails({ ...pointDetails, rit_prefix_id: e.target.value })}>
                 <option value="">{translations.select_rit_prefix || 'Select RIT Prefix'}</option>
-                {ritPrefixes.map((prefix) => (
-                  <option key={prefix.id} value={prefix.id}>
-                    {prefix.prefix}
-                  </option>
-                ))}
+                {ritPrefixes.map((prefix) => <option key={prefix.id} value={prefix.id}>{prefix.prefix}</option>)}
               </select>
-              <input
-                type="number"
-                placeholder={translations.rit_port_number || 'RIT Port Number'}
-                value={pointDetails.rit_port_number}
-                onChange={(e) =>
-                  setPointDetails({ ...pointDetails, rit_port_number: e.target.value })
-                }
-              />
+              <input type="number" placeholder={translations.rit_port_number || 'RIT Port Number'} value={pointDetails.rit_port_number} onChange={(e) => setPointDetails({ ...pointDetails, rit_port_number: e.target.value })} />
               <button type="submit">{translations.add_point || 'Add Point'}</button>
             </form>
           )}

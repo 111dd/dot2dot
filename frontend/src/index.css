@@ -12,7 +12,7 @@ body {
 
 /* ✅ ניווט (Navbar) */
 nav {
-  @apply bg-black text-white shadow-md p-4; /* רקע שחור, טקסט לבן, צל עדין */
+  @apply bg-black text-white shadow-md p-1; /* רקע שחור, טקסט לבן, צל עדין */
 }
 
 nav ul {
@@ -24,7 +24,7 @@ nav ul li {
 }
 
 nav ul li a {
-  @apply text-gray-300 hover:text-gray-100 transition duration-300 no-underline; /* צבע טקסט אפור בהיר, הופך ללבן בריחוף */
+  @apply text-gray-300 hover:text-gray-100 transition duration-100 no-underline; /* צבע טקסט אפור בהיר, הופך ללבן בריחוף */
 }
 
 /* ✅ פסקאות */
@@ -34,7 +34,8 @@ p {
 
 /* ✅ קונטיינר ראשי */
 .container {
-  @apply w-11/12 max-w-6xl mx-auto p-6 bg-gray-900 rounded-lg shadow-md; /* רקע כהה וצל עדין */
+  @apply w-11/12 max-w-6xl mx-auto p-1 divide-blue-900 rounded-lg shadow-md;
+  background-color: rgba(30, 41, 59, 0.7);
   direction: ltr; /* ברירת מחדל שמאל-לימין */
 }
 
@@ -56,13 +57,13 @@ p {
 }
 
 .container table td {
-  @apply p-3 border border-gray-200; /* עיצוב תוכן הטבלה */
+  @apply p-3 text-white border border-gray-200; /* עיצוב תוכן הטבלה */
 }
 
 /* ✅ כפתורים */
 button,
 .btn {
-  @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-4 py-2 rounded-lg transition duration-200 shadow-sm;
+  @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-2 py-2 rounded-lg transition duration-200 shadow-sm ;
 }
 
 button:hover {

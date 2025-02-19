@@ -146,5 +146,14 @@
   "timestamp": "תאריך ושעה",
   "details": "פרטים",
   "sort_ascending": "מיון עולה",
-  "sort_descending": "מיון יורד"
+  "sort_descending": "מיון יורד",
+    "model": "דגם",
+  "select_model": "בחר דגם",
+  "new_model": "דגם חדש",
+  "enter_new_model": "הזן שם דגם חדש (אופציונלי)",
+  "router_name_placeholder": "הזן שם נתב...",
+  "invalid_ip": "כתובת IP לא תקינה.",
+  "router_name_ip_required": "שם וכתובת IP הם שדות חובה.",
+  "router_added_success": "הנתב נוסף בהצלחה!",
+  "router_add_failed": "נכשל בהוספת הנתב. אנא נסה שוב."
 }
