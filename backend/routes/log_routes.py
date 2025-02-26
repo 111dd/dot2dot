@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models import db, Log
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 # הגדרת לוגים לשרת
@@ -43,7 +43,7 @@ def add_log():
             entity=data['entity'],
             entity_id=data['entity_id'],
             technician_name=data['technician_name'],
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             details=data.get('details', ''),
         )
         db.session.add(new_log)

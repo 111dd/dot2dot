@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import db, RitPrefix, Endpoint, Log
 from sqlalchemy.orm import joinedload
-from datetime import datetime
+from datetime import datetime, timezone
 import logging
 
 # Set up logging
@@ -17,7 +17,7 @@ def log_action(action, entity, entity_id, technician_name, details=""):
             entity=entity,
             entity_id=entity_id,
             technician_name=technician_name,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             details=details
         )
         db.session.add(log_entry)

@@ -1,0 +1,61 @@
+/* ✅ עיצוב כללי לדף */
+.add-network-page {
+  @apply max-w-lg mx-auto mt-10 mb-10 p-6 bg-gray-800 bg-opacity-80 text-white rounded-lg shadow-lg;
+}
+
+/* ✅ כותרת ראשית */
+.add-network-title {
+  @apply text-2xl font-semibold text-center mb-6;
+}
+
+/* ✅ טופס כללי */
+.add-network-form {
+  @apply flex flex-col gap-5;
+}
+
+/* ✅ קבוצה לכל שדה */
+.form-group {
+  @apply flex flex-col gap-1;
+}
+
+/* ✅ תווית */
+.form-label {
+  @apply font-medium text-gray-300;
+}
+
+/* ✅ שדה טקסט */
+.form-input,
+.form-textarea {
+  @apply w-full p-3 bg-gray-800 border border-gray-700 rounded-md text-white outline-none transition focus:border-blue-500;
+}
+
+/* ✅ שדה טקסט במצב פוקוס */
+.form-input:focus,
+.form-textarea:focus {
+  @apply bg-gray-700 border-blue-500;
+}
+
+/* ✅ אזור טקסט */
+.form-textarea {
+  @apply h-24 resize-none;
+}
+
+/* ✅ בחירת צבע */
+.color-picker {
+  @apply w-16 h-10 border border-gray-700 rounded-md cursor-pointer;
+}
+
+/* ✅ כפתור שליחה */
+.submit-button {
+  @apply bg-blue-500 hover:bg-blue-600 text-white font-semibold p-3 rounded-md transition cursor-pointer;
+}
+
+/* ✅ כפתור במצב לא פעיל */
+.submit-button:disabled {
+  @apply bg-gray-600 cursor-not-allowed;
+}
+
+/* ✅ הודעת שגיאה */
+.error-message {
+  @apply text-red-400 text-sm font-medium mt-1;
+}

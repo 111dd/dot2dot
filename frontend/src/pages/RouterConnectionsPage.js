@@ -413,27 +413,31 @@ const RouterConnectionsPage = () => {
               <label>
                 {translations.select_rit_prefix || 'Select RIT Prefix'}:
                 <select
-                  value={newEndpoint.rit_prefix_id}
-                  onChange={(e) => {
-                    if (e.target.value === 'add-new') {
-                      setIsAddingRitPrefix(true);
-                    } else {
-                      setNewEndpoint({ ...newEndpoint, rit_prefix_id: e.target.value });
-                    }
-                  }}
-                >
-                  <option value="">
-                    {translations.select_rit_prefix || 'Select RIT Prefix'}
-                  </option>
-                  {ritPrefixes.map((prefix) => (
-                    <option key={prefix.id} value={String(prefix.id)}>
-                      {prefix.prefix}
-                    </option>
-                  ))}
-                  <option value="add-new">
-                    {translations.add_new_rit_prefix || 'Add New RIT Prefix'}
-                  </option>
-                </select>
+  value={String(newEndpoint.rit_prefix_id)} // חשוב שיהיה string
+  onChange={(e) => {
+    if (e.target.value === 'add-new') {
+      setIsAddingRitPrefix(true);
+    } else {
+      setNewEndpoint({ ...newEndpoint, rit_prefix_id: e.target.value });
+    }
+  }}
+>
+  {/* אם אין ערך ב־rit_prefix_id, מציגים את האופציה הריקה */}
+  {!newEndpoint.rit_prefix_id && (
+    <option value="">
+      {translations.select_rit_prefix || 'Select RIT Prefix'}
+    </option>
+  )}
+
+  {ritPrefixes.map((prefix) => (
+    <option key={prefix.id} value={String(prefix.id)}>
+      {prefix.prefix}
+    </option>
+  ))}
+  <option value="add-new">
+    {translations.add_new_rit_prefix || 'Add New RIT Prefix'}
+  </option>
+</select>
               </label>
 
               <label>

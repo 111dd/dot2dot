@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from models import db, Log
 from app import app  # או שם הקובץ שבו מוגדרת האפליקציה Flask שלך
 
@@ -17,7 +17,7 @@ def generate_random_logs():
                 entity=random.choice(entities),
                 entity_id=random.randint(1, 50),  # מזהה ישות רנדומלי
                 technician_name=random.choice(technicians),
-                timestamp=datetime.utcnow() - timedelta(days=random.randint(0, 30)),  # תאריך רנדומלי מהחודש האחרון
+                timestamp=datetime.now(timezone.utc) - timedelta(days=random.randint(0, 30)),  # תאריך רנדומלי מהחודש האחרון
                 details=f"Random log entry for testing. Action: {random.choice(actions)}."
             )
             db.session.add(log)

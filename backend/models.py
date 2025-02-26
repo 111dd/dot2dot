@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timezone
 
 db = SQLAlchemy()
 
@@ -10,7 +10,7 @@ class Network(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.Text, nullable=True)
     color = db.Column(db.String(7), nullable=False, default='#FFFFFF')
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
     # קשר לנתבים
     routers = db.relationship('Router', backref='network', lazy=True)
@@ -37,7 +37,7 @@ class Router(db.Model):
     ports_count = db.Column(db.Integer, default=8)
     is_stack = db.Column(db.Boolean, default=False)
     slots_count = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     network_id = db.Column(db.Integer, db.ForeignKey('networks.id'), nullable=False)
 
     # קשר לנקודות קצה
@@ -55,7 +55,7 @@ class Switch(db.Model):
     ip_address = db.Column(db.String(15), unique=True, nullable=False)
     router_id = db.Column(db.Integer, db.ForeignKey('routers.id'), nullable=False)
     connection_port = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
 
 # טבלת RIT Prefix
 class RitPrefix(db.Model):
@@ -94,5 +94,5 @@ class Log(db.Model):
     entity = db.Column(db.String(50), nullable=False)
     entity_id = db.Column(db.Integer, nullable=False)
     technician_name = db.Column(db.String(100), nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     details = db.Column(db.Text, nullable=True)

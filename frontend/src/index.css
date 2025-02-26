@@ -29,7 +29,13 @@ nav ul li a {
 
 /* ✅ פסקאות */
 p {
-  @apply text-gray-200;
+  background-color: rgba(30, 41, 59, 0.9); /* צבע רקע */
+  color: white; /* צבע טקסט */
+  display: inline-block; /* מאפשר יישור */
+  text-align: center;
+  padding: 5px 10px; /* קצת רווח סביב הטקסט */
+  border-radius: 4px; /* פינות מעוגלות (לא חובה) */
+
 }
 
 /* ✅ קונטיינר ראשי */
@@ -37,6 +43,8 @@ p {
   @apply w-11/12 max-w-6xl mx-auto p-1 divide-blue-900 rounded-lg shadow-md;
   background-color: rgba(30, 41, 59, 0.7);
   direction: ltr; /* ברירת מחדל שמאל-לימין */
+      text-align: center;
+
 }
 
 [dir="rtl"] .container {
@@ -57,13 +65,15 @@ p {
 }
 
 .container table td {
-  @apply p-3 text-white border border-gray-200; /* עיצוב תוכן הטבלה */
+  @apply p-4 text-white border border-gray-900; /* עיצוב תוכן הטבלה */
 }
 
 /* ✅ כפתורים */
 button,
 .btn {
   @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-2 py-2 rounded-lg transition duration-200 shadow-sm ;
+    text-align: center;
+
 }
 
 button:hover {
@@ -190,36 +200,87 @@ html[dir="ltr"] {
 
 
 /* ✅ מודל (חלון קופץ) */
-.modal {
-  @apply fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm;
+.network-modal {
+  @apply fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md transition-opacity duration-300;
   z-index: 50;
+  opacity: 1;
 }
 
-.modal-content {
-  @apply bg-gray-900 p-6 rounded-lg shadow-lg w-96;
-  direction: ltr; /* ברירת מחדל */
+/* ✅ תוכן המודל */
+.network-modal__content {
+  @apply bg-gray-900 p-6 rounded-lg shadow-lg w-96 border border-white;
+  direction: ltr;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-in-out;
 }
 
-[dir="rtl"] .modal-content {
-  direction: rtl; /* אם השפה היא עברית */
+[dir="rtl"] .network-modal__content {
+  direction: rtl;
 }
 
-.modal-actions {
-  @apply flex justify-between mt-4;
+/* ✅ כותרת המודל */
+.network-modal__title {
+  @apply text-lg font-semibold text-white text-center mb-4;
 }
 
-.modal button {
-  @apply px-4 py-2 rounded-md transition-all duration-200;
+/* ✅ טבלה */
+.network-modal__table {
+  @apply w-full border-collapse border border-white text-white;
 }
 
-.modal .save-button {
-  @apply bg-blue-500 hover:bg-blue-700 text-white;
+.network-modal__th {
+  @apply bg-gray-200 p-3 border border-white text-white text-left;
 }
 
-.modal .delete-button {
-  @apply bg-red-500 hover:bg-red-700 text-white;
+.network-modal__td {
+  @apply p-3 border border-white text-white;
 }
 
-.modal .close-button {
-  @apply bg-gray-500 hover:bg-gray-700 text-white;
+/* ✅ קלטים */
+.network-modal__input,
+.network-modal__textarea {
+  @apply w-full p-2 rounded-md bg-gray-700 border border-white text-white focus:ring-2 focus:ring-blue-400;
+}
+
+/* ✅ בורר צבע */
+.network-modal__color-picker {
+  @apply p-1 border border-white rounded;
+}
+
+/* ✅ אזור כפתורים */
+.network-modal__actions {
+  @apply flex justify-between mt-4 gap-3;
+}
+
+/* ✅ כפתורים */
+.network-modal__button {
+  @apply px-4 py-2 rounded-md transition-all duration-200 border border-white font-semibold;
+}
+
+/* ✅ כפתור שמירה */
+.network-modal__button--save {
+  @apply bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg;
+}
+
+/* ✅ כפתור עריכה */
+.network-modal__button--edit {
+  @apply bg-yellow-500 hover:bg-yellow-600 text-white shadow-md hover:shadow-lg;
+}
+
+/* ✅ כפתור מחיקה */
+.network-modal__button--delete {
+  @apply bg-red-500 hover:bg-red-600 text-white shadow-md hover:shadow-lg;
+}
+
+/* ✅ כפתור סגירה */
+.network-modal__button--close {
+  @apply bg-gray-500 hover:bg-gray-600 text-white shadow-md hover:shadow-lg;
+}
+
+/* ✅ אפקטים נוספים */
+.network-modal__button:hover {
+  transform: scale(1.05);
+}
+
+.network-modal__button:active {
+  transform: scale(1);
 }

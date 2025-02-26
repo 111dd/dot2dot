@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from models import db, Router, Network, RouterModel, Endpoint, Log, RitPrefix
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # Set up logging
@@ -18,7 +18,7 @@ def log_action(action, entity, entity_id, technician_name, details=""):
         entity=entity,
         entity_id=entity_id,
         technician_name=technician_name,
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(timezone.utc),
         details=details,
     )
     db.session.add(new_log)

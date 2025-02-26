@@ -91,9 +91,8 @@
 }
 
 .add-network-button {
-  width: 50px;
+  width: 50%;
   /* רקע גרדיאנט מודרני */
-  /*background: linear-gradient(90deg, #4CAF50 0%, #3B9E40 100%);*/
   color: #fff;
   border: none;
   padding: 6px 12px; /* מרווח נוח */

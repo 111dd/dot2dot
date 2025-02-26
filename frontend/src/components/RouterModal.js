@@ -49,123 +49,111 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-gray-900 text-white rounded-lg shadow-lg w-96 p-6">
-        <h2 className="text-xl font-semibold mb-4">
+      <div className="bg-gray-900 text-white rounded-lg shadow-lg w-full max-w-3xl p-6 border border-white">
+        <h2 className="text-xl font-semibold mb-4 text-center">
           {isEditing ? translations.edit_router || 'Edit Router' : translations.router_details || 'Router Details'}
         </h2>
 
-        {isEditing ? (
-          <form className="space-y-3">
-            <input
-              type="text"
-              name="name"
-              value={formData.name || ''}
-              onChange={handleChange}
-              placeholder={translations.name || 'Name'}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="ip_address"
-              value={formData.ip_address || ''}
-              onChange={handleChange}
-              placeholder={translations.ip_address || 'IP Address'}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md"
-              required
-            />
-            <input
-              type="number"
-              name="floor"
-              value={formData.floor || ''}
-              onChange={handleChange}
-              placeholder={translations.floor || 'Floor'}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md"
-              required
-            />
-            <select
-              name="building"
-              value={formData.building || ''}
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md"
-              required
-            >
-              <option value="">{translations.select_building || 'Select Building'}</option>
-              <option value="North">{translations.north || 'North'}</option>
-              <option value="South">{translations.south || 'South'}</option>
-              <option value="Pit">{translations.pit || 'Pit'}</option>
-            </select>
-            <select
-              name="connection_speed"
-              value={formData.connection_speed || ''}
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md"
-              required
-            >
-              <option value="10Mbps">10Mbps</option>
-              <option value="100Mbps">100Mbps</option>
-              <option value="1Gbps">1Gbps</option>
-            </select>
-            <select
-              name="ports_count"
-              value={formData.ports_count || ''}
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md"
-            >
-              <option value="8">8</option>
-              <option value="12">12</option>
-              <option value="24">24</option>
-              <option value="48">48</option>
-            </select>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="is_stack"
-                checked={formData.is_stack || false}
-                onChange={handleChange}
-                className="form-checkbox text-blue-600"
-              />
-              {translations.is_stack || 'Is Stack'}
-            </label>
-            <input
-              type="number"
-              name="slots_count"
-              value={formData.slots_count || ''}
-              onChange={handleChange}
-              placeholder={translations.slots_count || 'Slots Count'}
-              className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md"
-            />
-          </form>
-        ) : (
-          <div className="space-y-2">
-            <p><strong>ID:</strong> {router.id}</p>
-            <p><strong>{translations.name || 'Name'}:</strong> {router.name}</p>
-            <p><strong>{translations.ip_address || 'IP Address'}:</strong> {router.ip_address}</p>
-            <p><strong>{translations.floor || 'Floor'}:</strong> {router.floor}</p>
-            <p><strong>{translations.building || 'Building'}:</strong> {router.building}</p>
-            <p><strong>{translations.connection_speed || 'Connection Speed'}:</strong> {router.connection_speed}</p>
-            <p><strong>{translations.ports_count || 'Ports Count'}:</strong> {router.ports_count || 'N/A'}</p>
-            <p><strong>{translations.is_stack || 'Is Stack'}:</strong> {router.is_stack ? translations.yes || 'Yes' : translations.no || 'No'}</p>
-            <p><strong>{translations.slots_count || 'Slots Count'}:</strong> {router.slots_count || 'N/A'}</p>
-          </div>
-        )}
+        {/* טבלה להצגת הנתונים */}
+        <table className="w-full border-collapse border border-gray-500 text-white">
+          <tbody>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.id || 'ID'}</th>
+              <td className="p-3 border border-white">{router.id}</td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.name || 'Name'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <input type="text" name="name" value={formData.name || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md" required />
+                ) : router.name}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.ip_address || 'IP Address'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <input type="text" name="ip_address" value={formData.ip_address || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md" required />
+                ) : router.ip_address}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.floor || 'Floor'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <input type="number" name="floor" value={formData.floor || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md" required />
+                ) : router.floor}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.building || 'Building'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <select name="building" value={formData.building || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md" required>
+                    <option value="">{translations.select_building || 'Select Building'}</option>
+                    <option value="North">{translations.north || 'North'}</option>
+                    <option value="South">{translations.south || 'South'}</option>
+                    <option value="Pit">{translations.pit || 'Pit'}</option>
+                  </select>
+                ) : router.building}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.connection_speed || 'Connection Speed'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <select name="connection_speed" value={formData.connection_speed || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md">
+                    <option value="10Mbps">10Mbps</option>
+                    <option value="100Mbps">100Mbps</option>
+                    <option value="1Gbps">1Gbps</option>
+                  </select>
+                ) : router.connection_speed}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.ports_count || 'Ports Count'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <input type="number" name="ports_count" value={formData.ports_count || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md" />
+                ) : router.ports_count}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.slots_count || 'Slots Count'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <input type="number" name="slots_count" value={formData.slots_count || ''} onChange={handleChange} className="w-full p-2 bg-gray-800 border border-gray-700 rounded-md" />
+                ) : router.slots_count}
+              </td>
+            </tr>
+            <tr>
+              <th className="p-3 border border-white bg-gray-700">{translations.is_stack || 'Is Stack'}</th>
+              <td className="p-3 border border-white">
+                {isEditing ? (
+                  <input type="checkbox" name="is_stack" checked={formData.is_stack || false} onChange={handleChange} className="form-checkbox text-blue-600" />
+                ) : router.is_stack ? translations.yes || 'Yes' : translations.no || 'No'}
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-        <div className="flex justify-between mt-4">
+        {/* כפתורים */}
+        <div className="flex justify-between mt-2">
           {isEditing ? (
-            <button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition">
-              {translations.save || 'Save'}
-            </button>
-          ) : (
-            <button onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-gray-800 text-white px-4 py-2 rounded-md transition">
-              {translations.edit || 'Edit'}
-            </button>
-          )}
-          <button onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition">
-            {translations.delete || 'Delete'}
-          </button>
-          <button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition">
-            {translations.close || 'Close'}
-          </button>
+            <button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 text-sm rounded transition">
+  {translations.save || 'Save'}
+</button>
+) : (
+<button onClick={() => setIsEditing(true)} className="bg-blue-600 hover:bg-gray-800 text-white px-3 py-1 text-sm rounded transition">
+  {translations.edit || 'Edit'}
+</button>
+)}
+<button onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm rounded transition">
+  {translations.delete || 'Delete'}
+</button>
+<button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 text-sm rounded transition">
+  {translations.close || 'Close'}
+</button>
         </div>
       </div>
     </div>

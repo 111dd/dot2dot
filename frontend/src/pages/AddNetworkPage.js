@@ -1,47 +1,39 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useLanguage } from '../contexts/LanguageContext'; // ייבוא תמיכה בשפה
+import { useLanguage } from '../contexts/LanguageContext';
+import './css/AddNetworkPage.css'; // יבוא קובץ ה-CSS
 
 const AddNetworkPage = () => {
+  const { translations } = useLanguage();
   const [network, setNetwork] = useState({
     name: '',
     description: '',
-    color: '#FFFFFF', // צבע ברירת מחדל
+    color: '#FFFFFF',
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // סטטוס טעינה
-  const { translations } = useLanguage(); // שימוש בתרגומים
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNetwork((prevNetwork) => ({
-      ...prevNetwork,
-      [name]: value,
-    }));
-    setErrorMessage(''); // איפוס הודעות שגיאה בשינוי קלט
+    setNetwork((prevNetwork) => ({ ...prevNetwork, [name]: value }));
+    setErrorMessage('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!network.name.trim()) {
       setErrorMessage(translations.network_name_required || 'Network name is required.');
       return;
     }
 
     setIsLoading(true);
-
     try {
-      console.log('Submitting network data:', network); // לוודא שהצבע נשלח
-      const response = await axios.post('http://127.0.0.1:5000/api/networks/', network);
-      console.log('Response from server:', response.data);
+      await axios.post('http://127.0.0.1:5000/api/networks/', network);
       alert(translations.network_added_success || 'Network added successfully!');
       setNetwork({ name: '', description: '', color: '#FFFFFF' });
       setErrorMessage('');
     } catch (error) {
-      console.error('Error adding network:', error);
-      const serverError =
-        error.response?.data?.error ||
+      const serverError = error.response?.data?.error ||
         translations.network_add_failed ||
         'Failed to add network. Please try again.';
       setErrorMessage(serverError);
@@ -51,58 +43,60 @@ const AddNetworkPage = () => {
   };
 
   return (
-    <div>
-      <h1>{translations.add_network || 'Add Network'}</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>{translations.name || 'Name'}:</label>
+    <div className="add-network-page">
+      <h1 className="add-network-title">{translations.add_network || 'Add Network'}</h1>
+      <form onSubmit={handleSubmit} className="add-network-form">
+        <fieldset className="form-group">
+          <label className="form-label">{translations.name || 'Name'}:</label>
           <input
             type="text"
             name="name"
             value={network.name}
             onChange={handleChange}
             required
-            minLength="3" // שם רשת חייב להיות לפחות 3 תווים
+            minLength="3"
+            className="form-input"
             placeholder={translations.enter_network_name || 'Enter network name'}
           />
           {network.name.length > 0 && network.name.length < 3 && (
-            <p style={{ color: 'red' }}>
+            <p className="error-message">
               {translations.name_minimum_length || 'Name must be at least 3 characters.'}
             </p>
           )}
-        </div>
-        <div>
-          <label>{translations.description || 'Description'}:</label>
+        </fieldset>
+
+        <fieldset className="form-group">
+          <label className="form-label">{translations.description || 'Description'}:</label>
           <textarea
             name="description"
             value={network.description}
             onChange={handleChange}
-            placeholder={
-              translations.enter_network_description || 'Enter network description (optional)'
-            }
+            className="form-textarea"
+            placeholder={translations.enter_network_description || 'Enter network description (optional)'}
           />
           {network.description.length > 0 && network.description.length < 5 && (
-            <p style={{ color: 'red' }}>
-              {translations.description_minimum_length ||
-                'Description should be at least 5 characters long.'}
+            <p className="error-message">
+              {translations.description_minimum_length || 'Description should be at least 5 characters long.'}
             </p>
           )}
-        </div>
-        <div>
-          <label>{translations.color || 'Color'}:</label>
+        </fieldset>
+
+        <fieldset className="form-group">
+          <label className="form-label">{translations.color || 'Color'}:</label>
           <input
             type="color"
             name="color"
             value={network.color}
             onChange={handleChange}
+            className="color-picker"
           />
-        </div>
-        <button type="submit" disabled={isLoading}>
-          {isLoading
-            ? translations.adding || 'Adding...'
-            : translations.add_network || 'Add Network'}
+        </fieldset>
+
+        <button type="submit" disabled={isLoading} className="submit-button">
+          {isLoading ? translations.adding || 'Adding...' : translations.add_network || 'Add Network'}
         </button>
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
       </form>
     </div>
   );
