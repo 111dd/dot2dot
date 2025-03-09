@@ -1,144 +1,57 @@
-/* ✅ הגדרת עיצוב כללי */
-body {
-  font-family: 'Roboto', sans-serif;
-  background-color: #1a202c; /* צבע רקע כהה */
-  color: #e2e8f0; /* צבע טקסט בהיר */
-  margin: 0;
-  padding: 0;
-}
-
-/* ✅ מיכל ראשי של הדף */
-.add-point-container {
+.add-point-page__container {
   max-width: 600px;
-  margin: 30px auto;
+  margin: 20px auto;
+  background-color: rgba(30, 41, 59, 0.6);
+  color: #fff;
   padding: 20px;
-  background: #2d3748; /* צבע כהה לקריאה נוחה */
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* ✅ כותרות */
-h1, h2 {
+.add-point-page__title {
   text-align: center;
-  color: #63b3ed;
-  font-size: 22px;
+  font-size: 1.5rem;
   margin-bottom: 15px;
 }
 
-/* ✅ תיבת בחירת נתב */
-.select-router-container {
-  margin-bottom: 15px;
-    background-color: #2d3748;
-
-
-}
-
-/* ✅ שדה חיפוש */
-.search-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #4a5568;
-  background-color: #2d3748;
-  color: #e2e8f0;
-  font-size: 6px;
-}
-
-.search-input::placeholder {
-  color: #a0aec0 ;
-}
-
-/* ✅ טופס הוספת נקודה */
-.point-details-form {
+.add-point-page__form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 15px;
-  background-color: #1f2937;
-  border-radius: 8px;
+  gap: 14px;
 }
 
-/* ✅ תיבות קלט */
-.point-details-form input,
-.point-details-form select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #4a5568;
+.add-point-page__form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-point-page__form-group label {
+  margin-bottom: 3px;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.add-point-page__input,
+.add-point-page__select {
   background-color: #2d3748;
-  color: #e2e8f0;
-  font-size: 14px;
-}
-
-/* ✅ שדות קלט במצב פוקוס */
-.point-details-form input:focus,
-.point-details-form select:focus {
-  border-color: red;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  color: #fff;
+  padding: 6px;
+  font-size: 0.95rem;
   outline: none;
 }
 
-/* ✅ אזור הודעות */
-.success-message, .error-message {
-  text-align: center;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 8px;
-  border-radius: 6px;
-  margin-top: 10px;
-}
-
-.success-message {
-  background-color: #38a169;
-  color: white;
-}
-
-.error-message {
-  background-color: #e53e3e;
-  color: white;
-}
-
-/* ✅ כפתור שליחה */
-.point-details-form button {
-  width: 100%;
-  padding: 10px;
-  background-color: #3182ce;
+.add-point-page__submit-btn {
+  background-color: #4caf50;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 4px;
+  padding: 8px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
 }
 
-.point-details-form button:hover {
-  background-color: #2b6cb0;
-}
-
-/* ✅ עיצוב של הרשימה */
-.router-list {
-  list-style: none;
-  padding: 0;
-}
-
-.router-list li {
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 6px;
-  background-color: #4a5568;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.router-list li:hover {
-  background-color: #2d3748;
-}
-
-/* ✅ עיצוב נתב שנבחר */
-.selected-router-details {
-  padding: 10px;
-  background-color: #2d3748;
-  border-radius: 6px;
-  margin-top: 10px;
-  font-size: 14px;
-  text-align: center;
+.add-point-page__submit-btn:hover {
+  background-color: #45a049;
 }

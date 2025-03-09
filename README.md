@@ -26,7 +26,7 @@ Ensure you have the following installed:
 
 ### 2️⃣ Clone the Repository
 ```sh
- git clone https://github.com/your-username/dot2dot.git
+ git clone https://github.com/111dd/dot2dot.git
  cd dot2dot
 ```
 

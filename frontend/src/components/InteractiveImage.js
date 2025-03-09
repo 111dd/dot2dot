@@ -1,15 +1,17 @@
+// InteractiveImage.js
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../contexts/LanguageContext'; // תמיכה בשפות
-import './InteractiveImage.css'; // ודא שהנתיב נכון
+import './InteractiveImage.css';
 
 const InteractiveImage = () => {
+  const { translations } = useLanguage();
   const navigate = useNavigate();
-  const { translations, currentLanguage } = useLanguage(); // קבלת התרגומים והשפה הנוכחית
 
-  const handleAreaClick = (path) => {
-    console.log(`Navigating to: ${path}`);
-    navigate(path);
+  const handleAreaClick = (buildingName) => {
+    // במקום לנווט ל-/building/South
+    // נעביר פרמטר building כ-query param:  /routers?building=South
+    navigate(`/routers?building=${buildingName}`);
   };
 
   const handleAddPointByRouter = () => {
@@ -18,42 +20,35 @@ const InteractiveImage = () => {
 
   return (
     <div className="interactive-image-container">
-      {/* כותרת בהתאמה לשפה */}
       <h1>{translations.select_building || 'Select a building'}</h1>
 
       <div className="image-wrapper">
-        {/* תמונה */}
         <img
           src="/img/kanrit.webp"
           alt={translations.building_map || "Building Map"}
           className="interactive-image"
         />
 
-        {/* אזורים לחיצים */}
         <div
           className="clickable-area south"
-          onClick={() => handleAreaClick('/building/South')}
+          onClick={() => handleAreaClick('South')}
           title={translations.south_building || "South Building"}
         ></div>
 
         <div
           className="clickable-area north"
-          onClick={() => handleAreaClick('/building/North')}
+          onClick={() => handleAreaClick('North')}
           title={translations.north_building || "North Building"}
         ></div>
 
         <div
           className="clickable-area pit"
-          onClick={() => handleAreaClick('/building/Pit')}
+          onClick={() => handleAreaClick('Pit')}
           title={translations.pit_area || "Pit Area"}
         ></div>
       </div>
 
-      {/* כפתור להוספת נקודה לפי ראוטר */}
-      <button
-        className="add-point-button"
-        onClick={handleAddPointByRouter}
-      >
+      <button className="add-point-button" onClick={handleAddPointByRouter}>
         {translations.add_point_by_router || "Add Point by Router"}
       </button>
     </div>

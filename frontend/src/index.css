@@ -6,128 +6,109 @@ body {
   background-image: url('/public/img/kanrit.webp'); /* נתיב התמונה */
   background-size: cover; /* התאמת התמונה לגודל הדף */
   background-position: center; /* מיקום במרכז */
-  /*background-attachment: fixed; !* התמונה לא תזוז עם הגלילה *!*/
-  /*background-repeat: no-repeat; !* ללא חזרות *!*/
+  background-repeat: no-repeat; /* ללא חזרות */
+  background-attachment: fixed; /* הרקע קבוע בזמן גלילה */
+  min-height: 100vh; /* ודא שהגובה המינימלי הוא כל המסך */
+  margin: 0; /* הסר מרווחים ברירת מחדל */
+  overflow-x: hidden; /* מנע גלילה אופקית מיותרת */
 }
 
 /* ✅ ניווט (Navbar) */
 nav {
-  @apply bg-black text-white shadow-md p-1; /* רקע שחור, טקסט לבן, צל עדין */
+  @apply bg-gray-900 text-white shadow-lg p-2 fixed w-full z-50; /* רקע כהה יותר, צל חזק, קבוע למעלה */
+  top: 0;
 }
 
 nav ul {
-  @apply flex gap-6 list-none justify-center items-center p-0; /* יישור הכפתורים */
+  @apply flex gap-6 list-none justify-center items-center p-0 m-0; /* יישור נקי יותר */
 }
 
 nav ul li {
-  @apply inline; /* מונע שבירת כפתורים לשורות חדשות */
+  @apply inline-block; /* שיפור תצוגה */
 }
 
 nav ul li a {
-  @apply text-gray-300 hover:text-gray-100 transition duration-100 no-underline; /* צבע טקסט אפור בהיר, הופך ללבן בריחוף */
+  @apply text-gray-300 hover:text-white transition-colors duration-300 no-underline font-medium; /* מעבר צבע חלק */
 }
 
 /* ✅ פסקאות */
 p {
-  background-color: rgba(30, 41, 59, 0.9); /* צבע רקע */
-  color: white; /* צבע טקסט */
-  display: inline-block; /* מאפשר יישור */
-  text-align: center;
-  padding: 5px 10px; /* קצת רווח סביב הטקסט */
-  border-radius: 4px; /* פינות מעוגלות (לא חובה) */
-
+  @apply bg-gray-800 text-white inline-block text-center px-4 py-2 rounded-md shadow-sm;
+  backdrop-filter: blur(5px); /* אפקט זכוכית מטושטשת */
 }
 
 /* ✅ קונטיינר ראשי */
 .container {
-  @apply w-11/12 max-w-6xl mx-auto p-1 divide-blue-900 rounded-lg shadow-md;
-  background-color: rgba(30, 41, 59, 0.7);
-  direction: ltr; /* ברירת מחדל שמאל-לימין */
-      text-align: center;
-
+  @apply w-11/12 max-w-6xl mx-auto p-4 mt-20 rounded-lg shadow-lg relative z-10; /* מרווח למעלה בגלל navbar קבוע */
+  background-color: rgba(30, 41, 59, 0.85); /* שקיפות קלה יותר */
+  direction: ltr;
+  text-align: center;
 }
 
 [dir="rtl"] .container {
-  direction: rtl; /* כאשר השפה היא עברית, מעביר את הכיוון לימין */
+  direction: rtl;
 }
 
 /* ✅ טבלאות */
 .container table {
-  @apply w-full border-collapse border border-gray-300 text-black; /* עיצוב כללי של טבלאות */
+  @apply w-full border-collapse border border-gray-400 text-white; /* טקסט לבן לניגודיות טובה יותר */
 }
 
 .container table th {
-  @apply bg-gray-700 p-3 border border-gray-600 text-gray-100 text-left; /* רקע כהה לכותרות */
+  @apply bg-gray-700 p-3 border border-gray-600 text-left font-semibold;
 }
 
 [dir="rtl"] .container table th {
-  text-align: right; /* בעברית הכותרות יהיו מימין */
+  text-align: right;
 }
 
 .container table td {
-  @apply p-4 text-white border border-gray-900; /* עיצוב תוכן הטבלה */
+  @apply p-3 border border-gray-700;
 }
 
 /* ✅ כפתורים */
 button,
 .btn {
-  @apply bg-blue-500 hover:bg-gray-600 text-white font-semibold px-2 py-2 rounded-lg transition duration-200 shadow-sm ;
-    text-align: center;
-
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 shadow-md;
+  text-align: center;
 }
 
 button:hover {
-  @apply shadow-lg bg-blue-500;
+  @apply shadow-lg;
 }
 
 /* ✅ כפתור רגיל */
 .btn {
-  background-color: transparent;
-  border: 2px solid white;
-  color: white;
-  padding: 8px 14px;
+  @apply bg-transparent border-2 border-white text-white hover:bg-white hover:text-black;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 16px;
-  transition: all 0.3s ease-in-out;
-}
-
-.btn:hover {
-  background-color: white;
-  color: black; /* כאשר מרחפים, הכפתור הופך לבן עם טקסט שחור */
 }
 
 /* ✅ כפתור שפה */
 .btn-white {
-  background-color: white;
-  color: black;
-  border: 2px solid white;
-  padding: 8px 14px;
+  @apply bg-white text-black border-2 border-white hover:bg-gray-300 hover:text-black;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 16px;
-  transition: all 0.3s ease-in-out;
-}
-
-.btn-white:hover {
-  background-color: gray;
-  color: white; /* כאשר מרחפים, הכפתור הופך לאפור עם טקסט לבן */
 }
 
 /* ✅ עיצוב תמונות ואזורי לחיצה */
 .image-wrapper {
-  @apply relative inline-block max-w-full overflow-hidden rounded-xl; /* מונע גלישה מהמסגרת */
+  @apply relative inline-block max-w-full overflow-hidden rounded-xl;
 }
 
 .interactive-image {
-  @apply w-full h-auto transition-all duration-300 brightness-90 hover:brightness-100; /* בהירות משתנה בזמן ריחוף */
+  @apply w-full h-auto transition-all duration-300 brightness-90 hover:brightness-110; /* שיפור בהירות בריחוף */
 }
 
 /* ✅ אזורים לחיצים */
 .clickable-area {
-  @apply absolute cursor-pointer rounded-md transition-all duration-300 border border-white/10 bg-transparent;
+  @apply absolute cursor-pointer rounded-md transition-all duration-300 border border-white/20 bg-transparent;
 }
 
 .clickable-area:hover {
-  @apply bg-white/30 border-white/50;
+  @apply bg-white/40 border-white/50;
 }
 
 /* ✅ עיצוב לפי מיקום */
@@ -145,7 +126,7 @@ button:hover {
 
 /* ✅ טופס הוספת נתב */
 .form-container {
-  @apply max-w-2xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg;
+  @apply max-w-2xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg mt-6;
   direction: ltr;
 }
 
@@ -154,21 +135,21 @@ button:hover {
 }
 
 .form-container h2 {
-  @apply text-2xl font-semibold mb-4 text-center;
+  @apply text-2xl font-semibold mb-6 text-center;
 }
 
 .form-container input,
 .form-container select {
-  @apply w-full p-3 my-2 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400;
+  @apply w-full p-3 my-3 rounded-md bg-gray-700 border border-gray-600 text-white placeholder-gray-400;
 }
 
 .form-container input:focus,
 .form-container select:focus {
-  @apply border-blue-500 outline-none;
+  @apply border-blue-500 outline-none ring-2 ring-blue-500;
 }
 
 .form-container label {
-  @apply block font-semibold text-gray-100 mt-4 text-left;
+  @apply block font-semibold text-gray-200 mt-4;
 }
 
 [dir="rtl"] .form-container label {
@@ -176,16 +157,12 @@ button:hover {
 }
 
 .form-container button {
-  @apply w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-md transition-all duration-300;
-}
-
-.form-container button:hover {
-  @apply shadow-md;
+  @apply w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 mt-6 shadow-md hover:shadow-lg;
 }
 
 /* ✅ הודעות שגיאה */
 .error-message {
-  @apply text-red-500 text-sm mt-2;
+  @apply text-red-400 text-sm mt-2 p-2 bg-red-900/50 rounded-md;
 }
 
 /* ✅ תמיכה בשפות RTL ו-LTR */
@@ -193,22 +170,22 @@ html[dir="rtl"] {
   text-align: right;
   direction: rtl;
 }
+
 html[dir="ltr"] {
   text-align: left;
   direction: ltr;
 }
 
-
 /* ✅ מודל (חלון קופץ) */
 .network-modal {
-  @apply fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-md transition-opacity duration-300;
+  @apply fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-300;
   z-index: 50;
   opacity: 1;
 }
 
 /* ✅ תוכן המודל */
 .network-modal__content {
-  @apply bg-gray-900 p-6 rounded-lg shadow-lg w-96 border border-white;
+  @apply bg-gray-800 p-6 rounded-lg shadow-xl w-11/12 max-w-md border border-gray-700;
   direction: ltr;
   transition: transform 0.3s ease-out, opacity 0.3s ease-in-out;
 }
@@ -219,41 +196,45 @@ html[dir="ltr"] {
 
 /* ✅ כותרת המודל */
 .network-modal__title {
-  @apply text-lg font-semibold text-white text-center mb-4;
+  @apply text-xl font-bold text-white text-center mb-5;
 }
 
 /* ✅ טבלה */
 .network-modal__table {
-  @apply w-full border-collapse border border-white text-white;
+  @apply w-full border-collapse border border-gray-600 text-white;
 }
 
 .network-modal__th {
-  @apply bg-gray-200 p-3 border border-white text-white text-left;
+  @apply bg-gray-700 p-3 border border-gray-600 text-left font-medium;
+}
+
+[dir="rtl"] .network-modal__th {
+  text-align: right;
 }
 
 .network-modal__td {
-  @apply p-3 border border-white text-white;
+  @apply p-3 border border-gray-600;
 }
 
 /* ✅ קלטים */
 .network-modal__input,
 .network-modal__textarea {
-  @apply w-full p-2 rounded-md bg-gray-700 border border-white text-white focus:ring-2 focus:ring-blue-400;
+  @apply w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-white focus:ring-2 focus:ring-blue-500;
 }
 
 /* ✅ בורר צבע */
 .network-modal__color-picker {
-  @apply p-1 border border-white rounded;
+  @apply p-1 border border-gray-600 rounded-md;
 }
 
 /* ✅ אזור כפתורים */
 .network-modal__actions {
-  @apply flex justify-between mt-4 gap-3;
+  @apply flex justify-between mt-6 gap-4;
 }
 
 /* ✅ כפתורים */
 .network-modal__button {
-  @apply px-4 py-2 rounded-md transition-all duration-200 border border-white font-semibold;
+  @apply px-4 py-2 rounded-md transition-all duration-300 border border-gray-500 font-semibold text-sm;
 }
 
 /* ✅ כפתור שמירה */
@@ -278,9 +259,33 @@ html[dir="ltr"] {
 
 /* ✅ אפקטים נוספים */
 .network-modal__button:hover {
-  transform: scale(1.05);
+  @apply transform scale-105;
 }
 
 .network-modal__button:active {
-  transform: scale(1);
+  @apply transform scale-95;
 }
+
+/* ✅ תגובה למסכים קטנים */
+@media (max-width: 640px) {
+  nav ul {
+    @apply flex-col gap-3;
+  }
+
+  .container {
+    @apply w-10/12 p-2 mt-16;
+  }
+
+  .container table th,
+  .container table td {
+    @apply p-2 text-sm;
+  }
+
+  .form-container {
+    @apply p-4;
+  }
+
+  .network-modal__content {
+    @apply w-10/12 p-4;
+  }
+} /* סגירת ה-media query */

@@ -1,63 +1,92 @@
-/* ✅ מצמצם את הרוחב הכללי של המודל */
-.modal-content {
-  max-width: 420px; /* הקטנת רוחב */
-  padding: 12px; /* פחות רווחים מסביב */
+/* ──────────────────────────────
+   1) Modal Overlay & Content
+   ────────────────────────────── */
+.router-modal__overlay {
+  /* Typically you’d also do:
+     position: fixed; inset: 0;
+     display: flex; align-items: center; justify-content: center;
+     background-color: rgba(0,0,0,0.5); z-index: 50;
+     But presumably you already have this in your code. */
 }
 
-/* ✅ התאמה של הטבלה */
-.modal-content table {
+/* Reduce the overall width of the modal content */
+.router-modal__content {
+  max-width: 420px; /* Make the modal narrower */
+  padding: 12px;    /* Less padding around content */
+  border: 1px solid white; /* White border if you want a frame */
+}
+
+/* ──────────────────────────────
+   2) Table & White Borders
+   ────────────────────────────── */
+.router-modal__table {
   width: 100%;
-  border-collapse: collapse; /* איחוד גבולות */
-  font-size: 14px; /* טקסט קטן יותר */
+  border-collapse: collapse; /* Merge cell borders */
+  font-size: 14px;           /* Smaller text */
 }
 
-/* ✅ כותרות הטבלה */
-.modal-content th {
-  padding: 4px 8px; /* מרווחים קטנים יותר */
-  text-align: right;
+/* Force white borders on all cells */
+.router-modal__table th,
+.router-modal__table td {
+  border: 1px solid white !important;
+}
+
+/* Style table headers */
+.router-modal__table th {
+  padding: 4px 8px;
+  text-align: right;  /* or left/center as needed */
   font-weight: bold;
   background-color: #2c2c2c;
 }
 
-/* ✅ תאים רגילים בטבלה */
-.modal-content td {
+/* Style table cells */
+.router-modal__table td {
   padding: 4px 8px;
   text-align: right;
-  border-bottom: 1px solid #444; /* קווים להפרדה */
+  /* Use border-bottom if you want an extra line
+     but you already have a border around each cell,
+     so you might omit border-bottom. */
+  /* border-bottom: 1px solid #444; */
 }
 
-/* ✅ התאמה של כפתורי הפעולות */
-.modal-actions {
+/* ──────────────────────────────
+   3) Modal Actions (Buttons)
+   ────────────────────────────── */
+.router-modal__actions {
   display: flex;
   justify-content: space-between;
-  gap: 6px; /* מרווח קטן יותר בין הכפתורים */
-  margin-top: 12px; /* פחות רווח מלמעלה */
+  gap: 6px;       /* smaller gap between buttons */
+  margin-top: 12px;
 }
 
-/* ✅ כפתורים קטנים יותר */
-.modal-actions button {
-  flex: 1; /* שכל הכפתורים יהיו שווים */
-  padding: 5px 8px; /* פחות מרווחים */
-  font-size: 13px; /* טקסט קטן יותר */
+/* Make buttons smaller */
+.router-modal__actions button {
+  flex: 1;        /* All buttons the same width */
+  padding: 5px 8px;  /* less padding */
+  font-size: 13px;   /* smaller font */
+  border: none;      /* if you want no border on buttons */
+  border-radius: 4px; /* slight rounding */
+  transition: background-color 0.2s, opacity 0.2s;
+  cursor: pointer;
 }
 
-/* ✅ התאמה של כפתורים ספציפיים */
-.modal-actions .edit-button {
-  background-color: #1d4ed8; /* כחול */
+/* Example button classes */
+.router-modal__button--edit {
+  background-color: #1d4ed8; /* Blue */
   color: white;
 }
 
-.modal-actions .delete-button {
-  background-color: #dc2626; /* אדום */
+.router-modal__button--delete {
+  background-color: #dc2626; /* Red */
   color: white;
 }
 
-.modal-actions .close-button {
-  background-color: #6b7280; /* אפור */
+.router-modal__button--close {
+  background-color: #6b7280; /* Gray */
   color: white;
 }
 
-/* ✅ כפתור במעבר עכבר */
-.modal-actions button:hover {
+/* Hover effect on all buttons */
+.router-modal__actions button:hover {
   opacity: 0.85;
 }

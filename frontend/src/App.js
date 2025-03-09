@@ -1,3 +1,4 @@
+// App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -6,70 +7,45 @@ import Home from './pages/Home';
 import RoutersPage from './pages/RoutersPage';
 import AddRouterPage from './pages/AddRouterPage';
 import AddEndpointPage from './pages/AddEndpointPage';
-import NotFound from './pages/NotFound';
-import RoutersByBuilding from './pages/RoutersByBuilding';
 import NetworksPage from './pages/NetworksPage';
 import AddNetworkPage from './pages/AddNetworkPage';
-import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import RouterConnectionsPage from './pages/RouterConnectionsPage';
 import LogsPage from './pages/LogsPage';
-import AddPointByRouterPage from './pages/AddPointByRouterPage';
+import NotFound from './pages/NotFound';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 const AppContent = () => {
-  const { language } = useLanguage(); // קבלת השפה מה-Context
+  const { language } = useLanguage();
 
-  // שינוי `dir` של ה-HTML כאשר השפה משתנה
   useEffect(() => {
     document.documentElement.dir = language === 'he' ? 'rtl' : 'ltr';
   }, [language]);
 
   return (
-    <div className={`min-h-screen ${language === 'he' ? 'rtl' : 'ltr'}`}>
-      <Router>
-        {/* ניווט ראשי */}
-        <Navbar />
-
-        {/* עיקר התוכן */}
-        <main className="container mx-auto p-4">
-          <Routes>
-            {/* 🏠 עמוד הבית */}
-            <Route path="/" element={<Home />} />
-
-            {/* 📡 עמודי נתבים */}
-            <Route path="/routers" element={<RoutersPage />} />
-            <Route path="/add-router" element={<AddRouterPage />} />
-            <Route path="/building/:building" element={<RoutersByBuilding />} />
-
-            {/* 🔌 חיבורים ונקודות קצה */}
-            <Route path="/routers/:routerId/connections" element={<RouterConnectionsPage />} />
-            <Route path="/add-endpoint" element={<AddEndpointPage />} />
-            <Route path="/add-point-by-ip" element={<AddPointByRouterPage />} />
-
-            {/* 🌐 עמודי רשתות */}
-            <Route path="/networks" element={<NetworksPage />} />
-            <Route path="/add-network" element={<AddNetworkPage />} />
-
-            {/* 📜 יומן לוגים */}
-            <Route path="/logs" element={<LogsPage />} />
-
-            {/* ❌ עמוד שגיאה */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-
-        {/* פוטר */}
-        <Footer />
-      </Router>
-    </div>
+    <Router>
+      <Navbar />
+      <main className="container mx-auto p-4">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/routers" element={<RoutersPage />} />
+          <Route path="/add-router" element={<AddRouterPage />} />
+          <Route path="/routers/:routerId/connections" element={<RouterConnectionsPage />} />
+          <Route path="/add-endpoint" element={<AddEndpointPage />} />
+          <Route path="/networks" element={<NetworksPage />} />
+          <Route path="/add-network" element={<AddNetworkPage />} />
+          <Route path="/logs" element={<LogsPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
+      <Footer />
+    </Router>
   );
 };
 
-const App = () => {
-  return (
-    <LanguageProvider>
-      <AppContent />
-    </LanguageProvider>
-  );
-};
+const App = () => (
+  <LanguageProvider>
+    <AppContent />
+  </LanguageProvider>
+);
 
 export default App;
