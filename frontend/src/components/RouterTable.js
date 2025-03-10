@@ -24,6 +24,11 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
   // השתמש ב-building מה-URL אם לא סופק prop
   const buildingFilterValue = propBuildingFilterValue || buildingFromUrl;
 
+  // הדפסה חד-פעמית רק בטעינה ראשונית
+  useEffect(() => {
+    console.log('Initial building filter:', buildingFilterValue);
+  }, []); // ריצה חד-פעמית
+
   // נתונים בסיסיים
   const [routers, setRouters] = useState([]);
   const [networks, setNetworks] = useState([]);
@@ -41,25 +46,21 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
   const [selectedRouter, setSelectedRouter] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 1) טוענים נתונים מהשרת
+  // 1) טעינת נתונים מהשרת פעם אחת בלבד
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        // מביאים את כל הנתבים (אפשר להוסיף סינון לפי building ב-API)
-        const routersRes = await axios.get('http://127.0.0.1:5000/api/routers');
-        console.log('Raw routers data:', routersRes.data); // לוג לנתונים מהשרת
+        const [routersRes, networksRes, modelsRes] = await Promise.all([
+          axios.get('http://127.0.0.1:5000/api/routers'),
+          axios.get('http://127.0.0.1:5000/api/networks'),
+          axios.get('http://127.0.0.1:5000/api/models'),
+        ]);
+        console.log('Raw routers data:', routersRes.data); // הדפסה חד-פעמית
         setRouters(routersRes.data);
-
-        if (!networks.length) {
-          const nets = await axios.get('http://127.0.0.1:5000/api/networks');
-          setNetworks(nets.data);
-        }
-        if (!models.length) {
-          const mods = await axios.get('http://127.0.0.1:5000/api/models');
-          setModels(mods.data);
-        }
+        setNetworks(networksRes.data);
+        setModels(modelsRes.data);
       } catch (err) {
         console.error('Error loading data:', err);
         setError('Failed to load data from the server');
@@ -68,7 +69,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
       }
     };
     fetchData();
-  }, [networks.length, models.length]);
+  }, []);
 
   // 2) עדכון הסינון של עמודת building לפי ה-URL או ה-prop
   useEffect(() => {
@@ -80,7 +81,6 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
         return other;
       }
       const newFilters = [...other, { id: 'building', value: buildingFilterValue }];
-      console.log('New column filters:', newFilters);
       return newFilters;
     });
   }, [buildingFilterValue]);
@@ -168,7 +168,8 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
       filterFn: (row, columnId, filterValue) => {
         if (!filterValue) return true;
         const rowValue = row.getValue(columnId);
-        console.log(`Filtering: rowValue=${rowValue}, filterValue=${filterValue}`); // לוג לניטור
+        // הדפסה רק במידה שיש שינוי ב-filterValue
+        if (rowValue) console.log(`Filtering: rowValue=${rowValue}, filterValue=${filterValue}`);
         return rowValue != null && rowValue.toString().toLowerCase() === filterValue.toLowerCase();
       },
     },
@@ -244,7 +245,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     setIsModalOpen(false);
   };
 
-  // לוג זמני לניטור השורות המוצגות
+  // לוג זמני לניטור השורות המוצגות (הדפסה חד-פעמית)
   useEffect(() => {
     console.log('Visible rows:', getRowModel().rows.map((row) => row.original));
   }, [getRowModel]);

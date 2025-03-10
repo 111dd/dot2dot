@@ -39,7 +39,7 @@ p {
 
 /* ✅ קונטיינר ראשי */
 .container {
-  @apply w-11/12 max-w-6xl mx-auto p-4 mt-20 rounded-lg shadow-lg relative z-10; /* מרווח למעלה בגלל navbar קבוע */
+  @apply w-11/12 max-w-6xl mx-auto p-4 mt-32 rounded-lg shadow-lg relative z-10; /* מרווח למעלה בגלל navbar קבוע */
   background-color: rgba(30, 41, 59, 0.85); /* שקיפות קלה יותר */
   direction: ltr;
   text-align: center;
