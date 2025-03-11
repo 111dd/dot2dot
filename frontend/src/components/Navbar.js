@@ -14,7 +14,6 @@ const Navbar = () => {
   return (
     <nav className="navbar-container">
       <div className="navbar-content">
-
         <div className="navbar-logo">D2D</div>
 
         {/* תפריט גדול (Desktop) */}
@@ -26,7 +25,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link to="/routers" className="navbar-button">
-              {translations.routers || 'Switch'}
+              {translations.routers || 'Switches'}
             </Link>
           </li>
           <li>
@@ -41,7 +40,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link to="/add-router" className="navbar-button">
-              {translations.add_router || 'Add Router'}
+              {translations.add_router || 'Add Switch'}
             </Link>
           </li>
           <li>
@@ -76,7 +75,7 @@ const Navbar = () => {
                 className="navbar-dropdown-link"
                 onClick={() => setIsOpen(false)}
               >
-                {translations.routers || 'Switch'}
+                {translations.routers || 'Switches'}
               </Link>
             </li>
             <li>
@@ -103,7 +102,7 @@ const Navbar = () => {
                 className="navbar-dropdown-link"
                 onClick={() => setIsOpen(false)}
               >
-                {translations.add_router || 'Add Router'}
+                {translations.add_router || 'Add Switch'}
               </Link>
             </li>
             <li>

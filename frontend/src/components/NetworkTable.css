@@ -1,150 +1,107 @@
-/* NetworkTable.css */
+/* src/components/NetworkTable.css */
 
 /* מיכל הגלילה */
 .table-container {
-  max-height: 500px; /* קבע כאן את הגובה הרצוי */
-  overflow-y: auto;  /* גלילה אנכית */
-  overflow-x: auto;  /* גלילה אופקית אם הטבלה רחבה */
-  margin: 20px 0;
+  @apply max-h-[500px] overflow-y-auto overflow-x-auto my-5 rounded-lg shadow-md;
   border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* הטבלה */
 .network-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: Arial, sans-serif;
-  background-color: #fff;
+  @apply w-full border-collapse bg-white;
+  font-family: 'Arial', sans-serif;
 }
 
 /* כותרת הטבלה עם רקע דביק בחלק העליון */
 .network-table thead th {
+  @apply sticky top-0 bg-gray-700 text-white p-3 text-center border border-gray-600 font-semibold;
   position: sticky;
   top: 0;
-  background-color: #4CAF50; /* רקע לראש העמודות */
-  color: white;
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ddd;
   z-index: 2;
 }
 
 /* עיצוב גוף הטבלה */
 .network-table tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  @apply bg-gray-50;
 }
 
 .network-table tbody tr:nth-child(even) {
-  background-color: #ffffff;
+  @apply bg-white;
 }
 
 .network-table tbody tr:hover {
-  background-color: #ddd; /* הדגשה בעת מעבר עכבר */
+  @apply bg-gray-200 transition-colors duration-200;
 }
 
 /* התאים עצמם */
 .network-table tbody td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-  font-size: 14px;
+  @apply p-3 border border-gray-700 text-center text-sm;
 }
 
 /* כפתור פעולות */
 .network-table tbody td button {
-  background-color: #4CAF50; /* צבע ירוק */
-  color: white;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
+  @apply bg-blue-500 text-white border-none px-3 py-1 rounded-md cursor-pointer text-xs;
 }
 
 .network-table tbody td button:hover {
-  background-color: #45a049;
+  @apply bg-blue-600;
 }
 
 .network-table tbody td button:active {
-  background-color: #3e8e41;
+  @apply bg-blue-700;
 }
 
 /* אזור החיפוש וכפתור "הוספת רשת" */
 .table-header {
-  width: 60%;
-  margin: 20px auto;
-  padding: 10px 16px;
-
-  display: flex;
-  align-items: center;
-  /* gap יוצר רווח מובנה בין כל האלמנטים הצאצאים */
-  gap: 30px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  @apply w-3/4 mx-auto p-2 flex items-center gap-4 shadow-md rounded;
 }
 
 .global-filter {
-  padding: 5px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  @apply p-1 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500;
 }
 
 .add-network-button {
-  width: 50%;
-  /* רקע גרדיאנט מודרני */
-  color: #fff;
-  border: none;
-  padding: 6px 12px; /* מרווח נוח */
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-
-  /* הנפשה עדינה */
+  @apply bg-blue-500 text-blue-950 border-none px-3 py-1 rounded-md cursor-pointer text-sm font-medium;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-  /* צל עדין כברירת מחדל */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* שינוי בהובר – הקטן/הגדל והצל מחמיא יותר */
 .add-network-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  @apply transform scale-105 shadow-lg;
 }
 
-/* בעת לחיצה, הכפתור "יורד" בחזרה קלות */
 .add-network-button:active {
-  transform: translateY(0px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  @apply transform scale-95 shadow-md;
 }
 
 /* רספונסיביות למובייל */
 @media (max-width: 768px) {
   .network-table thead {
-    display: none; /* הסתרת כותרות במובייל */
+    @apply hidden;
   }
 
   .network-table tbody td {
-    display: block;
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
+    @apply block text-right pl-[50%] relative;
   }
 
   .network-table tbody td::before {
+    @apply content-[''] absolute left-0 w-[50%] pl-2 font-bold text-left;
     content: attr(data-label);
-    position: absolute;
-    left: 0;
-    width: 50%;
-    padding-left: 10px;
-    font-weight: bold;
-    text-align: left;
   }
 
   .table-container {
-    border: none;
-    box-shadow: none;
+    @apply border-0 shadow-none;
+  }
+
+  .table-header {
+    @apply w-full flex-col gap-2;
+  }
+
+  .global-filter {
+    @apply w-full;
+  }
+
+  .add-network-button {
+    @apply w-full;
   }
 }

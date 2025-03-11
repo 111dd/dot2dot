@@ -1,4 +1,3 @@
-// NetworkTable.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import {
@@ -9,6 +8,7 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import NetworkModal from './NetworkModal';
 import { useLanguage } from '../contexts/LanguageContext';
 import './NetworkTable.css';
@@ -65,9 +65,14 @@ const NetworkTable = () => {
         id: 'actions',
         header: translations.actions || 'Actions',
         cell: ({ row }) => (
-          <button onClick={() => handleMoreClick(row.original)}>
+          <motion.button
+            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleMoreClick(row.original)}
+            className="navbar-button"
+          >
             {translations.more || 'More'}
-          </button>
+          </motion.button>
         ),
       },
     ],
@@ -88,10 +93,7 @@ const NetworkTable = () => {
         if (typeof cellValue === 'number') {
           return cellValue === Number(filterValue);
         }
-        return cellValue
-          ?.toString()
-          .toLowerCase()
-          .includes(filterValue.toLowerCase());
+        return cellValue?.toString().toLowerCase().includes(filterValue.toLowerCase());
       },
     },
     globalFilterFn: 'auto',
@@ -121,23 +123,31 @@ const NetworkTable = () => {
 
   const handleUpdateNetwork = (updatedNetwork) => {
     setNetworks((prev) =>
-      prev.map((network) =>
-        network.id === updatedNetwork.id ? updatedNetwork : network
-      )
+      prev.map((network) => (network.id === updatedNetwork.id ? updatedNetwork : network))
     );
     setIsModalOpen(false);
   };
 
   if (isLoading) {
-    return <div>{translations.loading || 'Loading...'}</div>;
+    return <div className="text-gray-100 text-center py-4">Loading...</div>;
   }
 
   if (error) {
-    return <div style={{ color: 'red' }}>{error}</div>;
+    return <div className="text-red-400 text-center py-4">{error}</div>;
   }
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: 'easeIn' }}
+      className="container"
+    >
+      {/* כותרת רשמית */}
+      <h1 className="text-4xl md:text-5xl font-semibold text-center text-gray-100 mb-8 px-4">
+        {translations.networks || 'Networks'}
+      </h1>
+
       <div className="table-header">
         <input
           type="text"
@@ -146,12 +156,14 @@ const NetworkTable = () => {
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="global-filter"
         />
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/add-network')}
           className="add-network-button"
         >
           {translations.add_network || 'Add Network'}
-        </button>
+        </motion.button>
       </div>
 
       <div className="table-container">
@@ -160,7 +172,12 @@ const NetworkTable = () => {
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
+                  <th
+                    key={header.id}
+                    onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                    style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                    className="bg-gray-700 p-3 border border-gray-600 text-left font-semibold"
+                  >
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
@@ -171,12 +188,10 @@ const NetworkTable = () => {
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                style={{
-                  backgroundColor: row.original.color || '#FFFFFF',
-                }}
+                style={{ backgroundColor: row.original.color || '#FFFFFF' }}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
+                  <td key={cell.id} className="p-3 border border-gray-700">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -194,7 +209,7 @@ const NetworkTable = () => {
           onDelete={handleDeleteNetwork}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

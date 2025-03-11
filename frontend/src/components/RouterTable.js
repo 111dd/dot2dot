@@ -8,45 +8,45 @@ import {
   flexRender,
 } from '@tanstack/react-table';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import RouterModal from './RouterModal';
 import { useLanguage } from '../contexts/LanguageContext';
 import './RouterTable.css';
+
+// פונקציה חדשה להמרת שמות בניינים לתרגום מלא
+const getTranslatedBuilding = (buildingValue, translations) => {
+  const buildingTranslations = {
+    North: translations.switches_in_north || 'Switches in North Building',
+    South: translations.switches_in_south || 'Switches in South Building',
+    Pit: translations.switches_in_pit || 'Switches in Pit',
+    '': translations.switches_in_all_buildings || 'Switches in All Buildings',
+  };
+  return buildingTranslations[buildingValue] || buildingValue;
+};
 
 const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
   const { translations } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // קרא את ה-query parameter מה-URL
   const queryParams = new URLSearchParams(location.search);
   const buildingFromUrl = queryParams.get('building') || '';
-
-  // השתמש ב-building מה-URL אם לא סופק prop
   const buildingFilterValue = propBuildingFilterValue || buildingFromUrl;
 
-  // הדפסה חד-פעמית רק בטעינה ראשונית
   useEffect(() => {
     console.log('Initial building filter:', buildingFilterValue);
-  }, []); // ריצה חד-פעמית
+  }, [buildingFilterValue]);
 
-  // נתונים בסיסיים
   const [routers, setRouters] = useState([]);
   const [networks, setNetworks] = useState([]);
   const [models, setModels] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // סינון גלובלי (לכל העמודות)
   const [globalFilter, setGlobalFilter] = useState('');
-
-  // פילטרים לעמודות (React Table)
   const [columnFilters, setColumnFilters] = useState([]);
-
-  // מצבי מודאל
   const [selectedRouter, setSelectedRouter] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // 1) טעינת נתונים מהשרת פעם אחת בלבד
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -57,7 +57,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
           axios.get('http://127.0.0.1:5000/api/networks'),
           axios.get('http://127.0.0.1:5000/api/models'),
         ]);
-        console.log('Raw routers data:', routersRes.data); // הדפסה חד-פעמית
+        console.log('Raw routers data:', routersRes.data);
         setRouters(routersRes.data);
         setNetworks(networksRes.data);
         setModels(modelsRes.data);
@@ -71,7 +71,6 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     fetchData();
   }, []);
 
-  // 2) עדכון הסינון של עמודת building לפי ה-URL או ה-prop
   useEffect(() => {
     console.log('Setting column filter for building:', buildingFilterValue);
     setColumnFilters((oldFilters) => {
@@ -85,7 +84,6 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     });
   }, [buildingFilterValue]);
 
-  // פונקציות עזר עם useCallback
   const getNetworkDetails = useCallback(
     (networkId) => networks.find((net) => net.id === networkId) || {},
     [networks]
@@ -96,7 +94,6 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     [models]
   );
 
-  // עיבוד הסופי לצורך הטבלה
   const data = useMemo(() => {
     return routers.map((router) => {
       const modelName = router.model_id
@@ -114,7 +111,6 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     });
   }, [routers, translations, getModelDetails, getNetworkDetails]);
 
-  // הגדרת העמודות
   const columns = useMemo(() => [
     {
       accessorKey: 'id',
@@ -168,7 +164,6 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
       filterFn: (row, columnId, filterValue) => {
         if (!filterValue) return true;
         const rowValue = row.getValue(columnId);
-        // הדפסה רק במידה שיש שינוי ב-filterValue
         if (rowValue) console.log(`Filtering: rowValue=${rowValue}, filterValue=${filterValue}`);
         return rowValue != null && rowValue.toString().toLowerCase() === filterValue.toLowerCase();
       },
@@ -182,26 +177,32 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
       id: 'actions',
       header: translations.actions || 'Actions',
       cell: ({ row }) => (
-        <button onClick={() => handleMoreClick(row.original)}>
+        <motion.button
+          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => handleMoreClick(row.original)}
+          className="bg-blue-500 text-white font-medium px-4 py-2 rounded-md border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
           {translations.more || 'More'}
-        </button>
+        </motion.button>
       ),
     },
     {
       id: 'connections',
       header: translations.view_connections || 'View Connections',
       cell: ({ row }) => (
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate(`/routers/${row.original.id}/connections`)}
-          className="view-connections-button"
+          className="bg-blue-500 text-white font-medium px-4 py-2 rounded-md border border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
         >
           {translations.view_connections || 'View Connections'}
-        </button>
+        </motion.button>
       ),
     },
   ], [translations, navigate]);
 
-  // הגדרת טבלת React Table
   const {
     getHeaderGroups,
     getRowModel,
@@ -229,15 +230,16 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     globalFilterFn: 'auto',
   });
 
-  // טיפול ב-Modal
   const handleMoreClick = (router) => {
     setSelectedRouter(router);
     setIsModalOpen(true);
   };
+
   const handleCloseModal = () => {
     setSelectedRouter(null);
     setIsModalOpen(false);
   };
+
   const handleUpdateRouter = (updatedRouter) => {
     setRouters((prev) =>
       prev.map((r) => (r.id === updatedRouter.id ? updatedRouter : r))
@@ -245,24 +247,33 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     setIsModalOpen(false);
   };
 
-  // לוג זמני לניטור השורות המוצגות (הדפסה חד-פעמית)
   useEffect(() => {
     console.log('Visible rows:', getRowModel().rows.map((row) => row.original));
   }, [getRowModel]);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
+  if (isLoading) return <div className="text-gray-100 text-center py-4">Loading...</div>;
+  if (error) return <div className="text-red-400 text-center py-4">{error}</div>;
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: 'easeIn' }}
+      className="container"
+    >
+      {/* כותרת רשמית עם תרגום מלא */}
+      <h1 className="text-4xl md:text-5xl font-semibold text-center text-gray-100 mb-8 px-4">
+        {getTranslatedBuilding(buildingFilterValue, translations)}
+      </h1>
+
       {/* סינון גלובלי */}
-      <div className="table-header mb-4 px-2 py-1">
+      <div className="mb-4 px-2 py-1">
         <input
           type="text"
           placeholder={translations.global_search || 'Global Search...'}
           value={globalFilter || ''}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="global-filter"
+          className="w-full p-2 bg-gray-700 border border-gray-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -280,6 +291,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
                       key={header.id}
                       onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                       style={{ cursor: canSort ? 'pointer' : 'default' }}
+                      className="bg-gray-700 p-3 border border-gray-600 text-left font-semibold"
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {canSort && (
@@ -299,7 +311,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
               return (
                 <tr key={row.id} style={{ backgroundColor: bgColor }}>
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
+                    <td key={cell.id} className="p-3 border border-gray-700">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -322,7 +334,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
           }}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

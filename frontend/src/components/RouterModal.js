@@ -3,9 +3,20 @@ import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 
 const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
-  const { translations } = useLanguage();
+  const { translations, language } = useLanguage(); // הוספתי language
   const [formData, setFormData] = useState({ ...router });
   const [isEditing, setIsEditing] = useState(false);
+
+  // פונקציה לתרגום שמות בניינים
+  const getTranslatedBuilding = (buildingValue) => {
+    const buildingTranslations = {
+      North: language === 'he' ? (translations.switches_in_north || 'מגדל הצפוני') : (translations.switches_in_north || 'North Building'),
+      South: language === 'he' ? (translations.switches_in_south || 'מגדל הדרומי') : (translations.switches_in_south || 'South Building'),
+      Pit: language === 'he' ? (translations.switches_in_pit || 'בור') : (translations.switches_in_pit || 'Pit'),
+      '': language === 'he' ? (translations.switches_in_all_buildings || 'כל הבניינים') : (translations.switches_in_all_buildings || 'All Buildings'),
+    };
+    return buildingTranslations[buildingValue] || buildingValue;
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -145,7 +156,7 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
                     <option value="Pit">{translations.pit || 'Pit'}</option>
                   </select>
                 ) : (
-                  router.building
+                  getTranslatedBuilding(router.building) // תרגום מלא של הבניין
                 )}
               </td>
             </tr>

@@ -1,4 +1,3 @@
-// App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -24,7 +23,7 @@ const AppContent = () => {
   return (
     <Router>
       <Navbar />
-      <main className="container mx-auto p-4">
+      <main>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/routers" element={<RoutersPage />} />

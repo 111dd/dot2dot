@@ -1,5 +1,4 @@
-// LogsPage.jsx
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react'; // הוספנו useCallback
 import axios from 'axios';
 import {
   useReactTable,
@@ -8,33 +7,36 @@ import {
   getFilteredRowModel,
   flexRender,
 } from '@tanstack/react-table';
-import { useLanguage } from '../contexts/LanguageContext'; // תמיכה בשפות
-import './css/LogsPage.css'; // קובץ CSS
+import { useLanguage } from '../contexts/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import './css/LogsPage.css';
 
 const LogsPage = () => {
   const { translations } = useLanguage();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); // 🔍 משתנה חיפוש
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // עטפנו את refreshLogs ב-useCallback כדי למנוע יצירה מחדש
+  const refreshLogs = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://127.0.0.1:5000/api/logs');
+      setLogs(response.data);
+      setErrorMessage('');
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+      setErrorMessage(translations.error_loading_logs || 'Failed to load logs.');
+    } finally {
+      setLoading(false);
+    }
+  }, [translations]); // translations הוא תלות כי הוא משמש בתוך refreshLogs
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:5000/api/logs');
-        setLogs(response.data);
-      } catch (error) {
-        console.error('Error fetching logs:', error);
-        setErrorMessage(translations.error_loading_logs || 'Failed to load logs.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    refreshLogs();
+  }, [refreshLogs]); // הוספנו את refreshLogs כתלות
 
-    fetchLogs();
-  }, [translations]);
-
-  // 🔍 מסנן את הנתונים לפי ערך החיפוש
   const filteredLogs = useMemo(() => {
     return logs.filter((log) =>
       Object.values(log).some(
@@ -66,26 +68,54 @@ const LogsPage = () => {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  if (loading) {
-    return <p className="logs-page__loading">{translations.loading || 'Loading logs...'}</p>;
-  }
-
-  if (errorMessage) {
-    return <p className="logs-page__error">{errorMessage}</p>;
-  }
+  const messageVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
 
   return (
     <div className="logs-page">
       <h2>{translations.logs || 'Logs'}</h2>
 
-      {/* 🔍 שדה חיפוש */}
-      <input
-        type="text"
-        placeholder={translations.global_search || 'Search logs...'}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="logs-page__search-input"
-      />
+      <div className="logs-page__search-container">
+        <input
+          type="text"
+          placeholder={translations.global_search || 'Search logs...'}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="logs-page__search-input"
+        />
+        <button onClick={refreshLogs} className="logs-page__refresh-button">
+          {translations.refresh || 'Refresh'}
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {loading && (
+          <motion.p
+            key="loading"
+            className="logs-page__loading"
+            variants={messageVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            {translations.loading || 'Loading logs...'}
+          </motion.p>
+        )}
+        {errorMessage && !loading && (
+          <motion.p
+            key="error"
+            className="logs-page__error"
+            variants={messageVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            {errorMessage}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       <div className="logs-page__table-container">
         <table className="logs-page__table">

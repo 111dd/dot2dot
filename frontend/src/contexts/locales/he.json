@@ -155,5 +155,13 @@
   "invalid_ip": "כתובת IP לא תקינה.",
   "router_name_ip_required": "שם וכתובת IP הם שדות חובה.",
   "router_added_success": "הסוויצ׳ נוסף בהצלחה!",
-  "router_add_failed": "נכשל בהוספת סוויצ׳. אנא נסה שוב."
+  "router_add_failed": "נכשל בהוספת סוויצ׳. אנא נסה שוב.",
+  "in": "ב",
+  "all_buildings": "כל הבניינים",
+  "switches_in_north": "במגדל הצפוני",
+  "switches_in_south": "מגדל הדרומי",
+  "switches_in_pit": "סוויצ'ים בבור",
+  "switches_in_all_buildings": "סוויצ'ים בכל הבניינים",
+  "rit_prefix_added_success": "קידומת RIT נוספה בהצלחה!"
+
 }

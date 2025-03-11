@@ -1,128 +1,38 @@
-/* רקע כחלחל כהה לניווט */
+/* src/components/Navbar.css */
+
 .navbar-container {
-  background-color: #1e293b;
-  width: 100%;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-  font-family: sans-serif;
+  @apply bg-gray-900 text-white shadow-lg p-2 fixed w-full z-50;
+  top: 0;
 }
 
-/* תוכן ה-navbar */
 .navbar-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.5rem 1rem;
-  display: flex;
-  align-items: center;
-  position: relative;
-  height: 60px;
-  justify-content: space-evenly;
+  @apply flex justify-between items-center max-w-6xl mx-auto px-4;
 }
 
-/* לוגו שמאלי */
 .navbar-logo {
-  color: #fff;
-  font-size: 1.2rem;
-  font-weight: bold;
+  @apply text-xl font-bold;
 }
 
-/* תפריט גדול (Desktop) */
 .navbar-links-desktop {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
+  @apply hidden md:flex gap-6 list-none p-0 m-0;
 }
 
-/* כפתורים כלליים */
 .navbar-button {
-  background-color: #2d3748;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  @apply text-gray-200 hover:text-white transition-colors duration-300 no-underline font-medium px-2 py-1 rounded;
 }
 
-.navbar-button:hover {
-  background-color: #3b4252;
-}
-
-/* כפתור תפריט במסכים קטנים */
 .navbar-menu-button {
-  display: none;
-  background-color: #2d3748;
-  color: #fff;
-  border-radius: 8px;
-  /*padding קודם היה 0.5rem 1rem, כעת צמצמנו*/
-  padding: 0.3rem 0.8rem;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  @apply md:hidden text-white bg-gray-800 px-3 py-2 rounded hover:bg-gray-700 transition-colors duration-300 focus:outline-none;
 }
 
-.navbar-menu-button:hover {
-  background-color: #3b4252;
-}
-
-.navbar-menu-button:hover {
-  background-color: #3b4252;
-}
-
-/* תפריט Dropdown במסכים קטנים */
 .navbar-dropdown {
-  background-color: #1e293b; /* רקע דומה ל-navbar עצמו */
-  padding: 0.5rem 1rem;
+  @apply md:hidden bg-gray-800 p-4 rounded shadow-lg mt-2;
 }
 
 .navbar-dropdown ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  @apply list-none p-0 m-0;
 }
 
-/* לינקים בתפריט הנפתח */
 .navbar-dropdown-link {
-  background-color: #2d3748;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
-  padding: 0.5rem 1rem;
-  font-weight: 500;
-  display: inline-block;
-  transition: background-color 0.2s;
-  text-align: left;
-}
-
-.navbar-dropdown-link:hover {
-  background-color: #3b4252;
-}
-
-/* רספונסיביות */
-@media (max-width: 768px) {
-  /* מסתירים את תפריט הדסקטופ במסך צר */
-  .navbar-links-desktop {
-    display: none;
-  }
-  /* מציגים את כפתור Menu במסך צר */
-  .navbar-menu-button {
-    display: block;
-  }
-}
-
-@media (min-width: 769px) {
-  /* תפריט הנפתח לא יוצג במסכים גדולים */
-  .navbar-dropdown {
-    display: none;
-  }
+  @apply block text-gray-200 hover:text-white transition-colors duration-300 py-2 px-4 rounded hover:bg-gray-700 no-underline;
 }
