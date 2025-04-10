@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react'; // הוספנו useCallback
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -17,8 +18,8 @@ const LogsPage = () => {
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [pageSize, setPageSize] = useState(10);
 
-  // עטפנו את refreshLogs ב-useCallback כדי למנוע יצירה מחדש
   const refreshLogs = useCallback(async () => {
     setLoading(true);
     try {
@@ -31,11 +32,11 @@ const LogsPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [translations]); // translations הוא תלות כי הוא משמש בתוך refreshLogs
+  }, [translations]);
 
   useEffect(() => {
     refreshLogs();
-  }, [refreshLogs]); // הוספנו את refreshLogs כתלות
+  }, [refreshLogs]);
 
   const filteredLogs = useMemo(() => {
     return logs.filter((log) =>
@@ -66,6 +67,8 @@ const LogsPage = () => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize } },
   });
 
   const messageVariants = {
@@ -73,28 +76,61 @@ const LogsPage = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
-  return (
-    <div className="logs-page">
-      <h2>{translations.logs || 'Logs'}</h2>
+  const rowVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+  };
 
-      <div className="logs-page__search-container">
+  // פונקציה לעדכון ה-pageSize
+  const handlePageSizeChange = (newPageSize) => {
+    setPageSize(newPageSize);
+    table.setPageSize(newPageSize); // עדכון ה-pageSize בטבלה
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: 'easeInOut' }}
+      className="container logs-page"
+    >
+      <h1 className="logs-page__title">
+        {translations.logs || 'Logs'}
+      </h1>
+
+      <div className="logs-controls">
         <input
           type="text"
           placeholder={translations.global_search || 'Search logs...'}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="logs-page__search-input"
+          className="logs-search-input"
         />
-        <button onClick={refreshLogs} className="logs-page__refresh-button">
+        <motion.button
+          whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+          whileTap={{ scale: 0.95 }}
+          onClick={refreshLogs}
+          className="logs-action-button"
+        >
           {translations.refresh || 'Refresh'}
-        </button>
+        </motion.button>
+        <select
+          value={pageSize}
+          onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+          className="logs-page-size"
+        >
+          <option value={5}>5</option>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+        </select>
       </div>
 
       <AnimatePresence>
         {loading && (
           <motion.p
             key="loading"
-            className="logs-page__loading"
+            className="logs-loading-message"
             variants={messageVariants}
             initial="hidden"
             animate="visible"
@@ -106,7 +142,7 @@ const LogsPage = () => {
         {errorMessage && !loading && (
           <motion.p
             key="error"
-            className="logs-page__error"
+            className="logs-error-message"
             variants={messageVariants}
             initial="hidden"
             animate="visible"
@@ -117,56 +153,64 @@ const LogsPage = () => {
         )}
       </AnimatePresence>
 
-      <div className="logs-page__table-container">
-        <table className="logs-page__table">
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    className={
-                      header.column.getCanSort() ? 'logs-page__sortable-header' : ''
-                    }
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {header.column.getCanSort() && (
-                      <span className="logs-page__sort-indicator">
-                        {header.column.getIsSorted() === 'asc'
-                          ? ' 🔼'
-                          : header.column.getIsSorted() === 'desc'
-                          ? ' 🔽'
-                          : ''}
-                      </span>
-                    )}
-                  </th>
-                ))}
-              </tr>
+      <div className="logs-table-container">
+        <table className="logs-table"><thead>{table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th
+                key={header.id}
+                onClick={header.column.getToggleSortingHandler()}
+                style={{ cursor: header.column.getCanSort() ? 'pointer' : 'default' }}
+                className={header.column.getCanSort() ? 'logs-sortable-header' : ''}
+                {...(header.column.getIsSorted() ? { 'aria-sort': header.column.getIsSorted() } : {})}
+              >
+                {flexRender(header.column.columnDef.header, header.getContext())}
+              </th>
             ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={columns.length} className="logs-page__no-data">
-                  {translations.no_data_available || 'No data available'}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+          </tr>
+        ))}</thead><tbody>{table.getRowModel().rows.map((row) => (
+          <motion.tr
+            key={row.id}
+            variants={rowVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+          >
+            {row.getVisibleCells().map((cell) => (
+              <td key={cell.id} data-label={cell.column.columnDef.header}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </motion.tr>
+        ))}{!table.getRowModel().rows.length && (
+          <tr>
+            <td colSpan={columns.length} className="logs-no-data">
+              {translations.no_data_available || 'No data available'}
+            </td>
+          </tr>
+        )}</tbody></table>
+        <div className="logs-controls logs-pagination">
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+            className="logs-action-button"
+          >
+            {translations.previous || 'Previous'}
+          </button>
+          <span className="logs-pagination-info">
+            {translations.page || 'Page'} {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </span>
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+            className="logs-action-button"
+          >
+            {translations.next || 'Next'}
+          </button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -74,20 +74,30 @@ p {
    5. טבלאות
    ========================================================================== */
 
-.container table {
+/* הגבלת הסגנון לטבלאות שאינן logs-page__table */
+.container table:not(.logs-page__table) {
   @apply w-full border-collapse border border-gray-400 text-white;
 }
 
-.container table th {
+.container table:not(.logs-page__table) th {
   @apply bg-gray-700 p-3 border border-gray-600 text-left font-semibold;
 }
 
-[dir="rtl"] .container table th {
+[dir="rtl"] .container table:not(.logs-page__table) th {
   text-align: right;
 }
 
-.container table td {
+.container table:not(.logs-page__table) td {
   @apply p-3 border border-gray-700;
+}
+
+/* הסרת השפעה על logs-page__table */
+.container table.logs-page__table,
+.container table.logs-page__table th,
+.container table.logs-page__table td {
+  background: unset !important;
+  color: unset !important;
+  border: unset !important;
 }
 
 /* ==========================================================================
@@ -305,8 +315,8 @@ html[dir="ltr"] {
     @apply w-10/12 p-2 mt-16;
   }
 
-  .container table th,
-  .container table td {
+  .container table:not(.logs-page__table) th,
+  .container table:not(.logs-page__table) td {
     @apply p-2 text-sm;
   }
 
@@ -324,8 +334,8 @@ html[dir="ltr"] {
     @apply w-10/12 p-3 mt-24;
   }
 
-  .container table th,
-  .container table td {
+  .container table:not(.logs-page__table) th,
+  .container table:not(.logs-page__table) td {
     @apply p-2 text-base;
   }
 }
