@@ -1,57 +1,146 @@
+/* AddPointByRouterPage.css */
+
+/* מיכל הדף */
 .add-point-page__container {
   max-width: 600px;
-  margin: 20px auto;
-  background-color: rgba(30, 41, 59, 0.6);
-  color: #fff;
-  padding: 20px;
-  border-radius: 8px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: rgba(26, 32, 44, 0.9);; /* רקע כהה כדי שהטקסט הלבן יהיה קריא */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.8);
+  min-height: 50vh; /* כדי שהדף יתמלא בצורה יפה */
+  margin-top: 8rem;
 }
 
+/* כותרת הדף */
 .add-point-page__title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: bold;
+  color: #ffffff; /* לבן כדי שיהיה קריא על הרקע הכהה */
+  margin-bottom: 1.5rem;
   text-align: center;
-  font-size: 1.5rem;
-  margin-bottom: 15px;
 }
 
+/* טופס */
 .add-point-page__form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 1.5rem; /* ריווח בין השדות */
 }
 
+/* קבוצת שדות (label + input/select) */
 .add-point-page__form-group {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
 }
 
+/* תוויות */
 .add-point-page__form-group label {
-  margin-bottom: 3px;
-  font-weight: 600;
-  color: #cbd5e1;
-}
-
-.add-point-page__input,
-.add-point-page__select {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
-  border-radius: 4px;
-  color: #fff;
-  padding: 6px;
-  font-size: 0.95rem;
-  outline: none;
-}
-
-.add-point-page__submit-btn {
-  background-color: #4caf50;
-  color: #fff;
   font-size: 1rem;
+  font-weight: 500;
+  color: #e2e8f0; /* צבע בהיר כדי שיהיה קריא על הרקע הכהה */
+}
+
+/* שדות קלט */
+.add-point-page__form-group input,
+.add-point-page__form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #2d3748; /* רקע כהה לשדות */
+  color: #ffffff; /* טקסט לבן */
+  border: 1px solid #4a5568;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.add-point-page__form-group input:focus,
+.add-point-page__form-group select:focus {
+  outline: none;
+  border-color: #63b3ed; /* גבול כחול בעת פוקוס */
+  box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.3);
+}
+
+/* סגנונות עבור react-select */
+.add-point-page__select__control {
+  border: 1px solid #4a5568 !important;
+  background-color: #2d3748 !important; /* רקע כהה לשדה בחירה */
+  color: #ffffff !important;
+  border-radius: 0.375rem !important;
+  padding: 0.25rem !important;
+  min-height: 38px !important; /* גובה דומה לשדות קלט רגילים */
+}
+
+.add-point-page__select__menu {
+  background-color: #2d3748 !important; /* רקע כהה לתפריט הנפתח */
+  color: #ffffff !important;
+  border: 1px solid #4a5568 !important;
+  border-radius: 0.375rem !important;
+  margin-top: 0.25rem !important;
+}
+
+.add-point-page__select__option {
+  background-color: #2d3748 !important; /* רקע כהה לאפשרויות */
+  color: #ffffff !important;
+}
+
+.add-point-page__select__option--is-focused,
+.add-point-page__select__option--is-selected {
+  background-color: #4a5568 !important; /* רקע מעט בהיר יותר בעת בחירה/הובר */
+  color: #ffffff !important;
+}
+
+.add-point-page__select__single-value {
+  color: #ffffff !important; /* טקסט לבן לערך שנבחר */
+}
+
+.add-point-page__select__placeholder {
+  color: #a0aec0 !important; /* טקסט אפור ל-placeholder */
+}
+
+.add-point-page__select__input input {
+  color: #ffffff !important; /* טקסט לבן בעת חיפוש */
+}
+
+/* כפתורים */
+.add-point-page__submit-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #48bb78; /* ירוק לכפתור "Add Point" */
+  color: #ffffff;
+  border-radius: 0.375rem;
   font-weight: 600;
-  border: none;
-  border-radius: 4px;
-  padding: 8px;
-  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
 .add-point-page__submit-btn:hover {
-  background-color: #45a049;
+  background-color: #38a169; /* גוון כהה יותר בהובר */
+}
+
+.add-point-page__form-group button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+/* הודעות שגיאה והצלחה */
+.add-point-page__error {
+  color: #f56565; /* אדום להודעות שגיאה */
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.add-point-page__success {
+  color: #48bb78; /* ירוק להודעות הצלחה */
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* טעינה */
+.add-point-page__loading {
+  color: #a0aec0;
+  font-size: 1rem;
+  text-align: center;
 }

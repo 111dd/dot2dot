@@ -11,6 +11,8 @@ import AddNetworkPage from './pages/AddNetworkPage';
 import RouterConnectionsPage from './pages/RouterConnectionsPage';
 import LogsPage from './pages/LogsPage';
 import NotFound from './pages/NotFound';
+import AddPointByRouterPage from './pages/AddPointByRouterPage';
+
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 
 const AppContent = () => {
@@ -32,6 +34,7 @@ const AppContent = () => {
           <Route path="/add-endpoint" element={<AddEndpointPage />} />
           <Route path="/networks" element={<NetworksPage />} />
           <Route path="/add-network" element={<AddNetworkPage />} />
+            <Route path="/add-point-by-router" element={<AddPointByRouterPage />} />
           <Route path="/logs" element={<LogsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
