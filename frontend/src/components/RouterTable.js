@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import RouterModal from './RouterModal';
 import { useLanguage } from '../contexts/LanguageContext';
+import * as XLSX from 'xlsx'; // ייבוא הספרייה החדשה
 import './NetworkTable.css';
 
 // פונקציה חדשה להמרת שמות בניינים לתרגום מלא
@@ -36,6 +37,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
   const [routers, setRouters] = useState([]);
   const [networks, setNetworks] = useState([]);
   const [models, setModels] = useState([]);
+  const [endpoints, setEndpoints] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -47,17 +49,19 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [routersRes, networksRes, modelsRes] = await Promise.all([
+        const [routersRes, networksRes, modelsRes, endpointsRes] = await Promise.all([
           axios.get('http://127.0.0.1:5000/api/routers'),
           axios.get('http://127.0.0.1:5000/api/networks'),
           axios.get('http://127.0.0.1:5000/api/models'),
+          axios.get('http://127.0.0.1:5000/api/endpoints'),
         ]);
         console.log('Raw routers data:', routersRes.data);
         setRouters(routersRes.data);
         setNetworks(networksRes.data);
         setModels(modelsRes.data);
+        setEndpoints(endpointsRes.data);
       } catch (err) {
-        console.error('Error fetching routers:', err);
+        console.error('Error fetching data:', err);
         setError(translations.error_loading_data || 'Failed to load data from the server.');
       } finally {
         setIsLoading(false);
@@ -249,6 +253,92 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
     }
   };
 
+  // פונקציה חדשה לייצוא ל-XLSX עם הדגשת שורות הנתבים
+  const exportToXLSX = () => {
+    // יצירת גיליון חדש
+    const wsData = [];
+
+    // כותרות
+    wsData.push(['Router ID', 'Model', 'Name', 'IP Address', 'Floor', 'Building', 'Network', 'Network Color']);
+    wsData.push(['Endpoint ID', 'Technician Name', 'Point Location', 'Destination Room', 'Connected Port Number', 'RIT Port Number', 'Router ID']);
+
+    // נתונים
+    const routerRows = [];
+    let currentRow = 2; // מתחילים משורה 3 (אחרי הכותרות)
+
+    routers.forEach((router) => {
+      const modelName = router.model_id
+        ? getModelDetails(router.model_id).model_name
+        : router.model || translations.unknown;
+      const { name: networkName, color: networkColor } =
+        getNetworkDetails(router.network_id) || {};
+
+      // שורת הנתב
+      wsData.push([
+        router.id,
+        modelName,
+        router.name,
+        router.ip_address,
+        router.floor,
+        router.building,
+        networkName || translations.unknown,
+        networkColor || '#FFFFFF',
+      ]);
+      routerRows.push(currentRow); // שמירת שורת הנתב להדגשה
+
+      // מציאת כל הנקודות ששייכות לנתב זה
+      const routerEndpoints = endpoints.filter((endpoint) => endpoint.router_id === router.id);
+      routerEndpoints.forEach((endpoint) => {
+        wsData.push([
+          endpoint.id,
+          endpoint.technician_name,
+          endpoint.point_location,
+          endpoint.destination_room || '',
+          endpoint.connected_port_number,
+          endpoint.rit_port_number || '',
+          endpoint.router_id,
+        ]);
+        currentRow++;
+      });
+
+      // שורה ריקה להפרדה
+      wsData.push([]);
+      currentRow += 2; // דלג על השורה הריקה
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // החלת סגנון הדגשה על שורות הנתבים
+    routerRows.forEach((row) => {
+      ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].forEach((col) => {
+        const cellRef = `${col}${row}`;
+        if (!ws[cellRef]) return;
+        ws[cellRef].s = {
+          font: { bold: true },
+          fill: { fgColor: { rgb: 'FFFFE0' } }, // רקע צהוב בהיר
+          alignment: { horizontal: 'center' },
+        };
+      });
+    });
+
+    // התאמת רוחב העמודות
+    const colWidths = [
+      { wch: 10 }, // Router ID
+      { wch: 15 }, // Model
+      { wch: 15 }, // Name
+      { wch: 15 }, // IP Address
+      { wch: 10 }, // Floor
+      { wch: 15 }, // Building
+      { wch: 15 }, // Network
+      { wch: 15 }, // Network Color
+    ];
+    ws['!cols'] = colWidths;
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Routers and Endpoints');
+    XLSX.writeFile(wb, 'routers_and_endpoints_export.xlsx');
+  };
+
   if (isLoading) {
     return <div className="text-gray-100 text-center py-4">Loading...</div>;
   }
@@ -285,6 +375,14 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
         >
           {translations.add_router || 'Add Router'}
         </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+          whileTap={{ scale: 0.95 }}
+          onClick={exportToXLSX}
+          className="export-button"
+        >
+          {translations.export_to_xlsx || 'Export to Excel'}
+        </motion.button>
       </div>
 
       <div className="table-container">
@@ -309,7 +407,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
             {table.getRowModel().rows.map((row) => (
               <motion.tr
                 key={row.id}
-                initial={{ opacity: 0, y: 10 }} // וידאתי שהפרופרטים מופרדים בפסיקים
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2 }}
                 style={{ backgroundColor: row.original.networkColor || '#FFFFFF' }}
