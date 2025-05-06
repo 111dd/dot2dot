@@ -22,7 +22,7 @@ migrate = Migrate(app, db)
 
 # הגדרת CORS
 CORS(app, resources={r"/api/*": {
-    "origins": ["http://localhost:3000"],
+    "origins": ["http://localhost:3000", "*"],
     "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     "allow_headers": ["Content-Type", "Authorization"],
     "supports_credentials": False
@@ -69,4 +69,4 @@ app.register_blueprint(model_bp, url_prefix='/api/models')
 app.register_blueprint(log_bp, url_prefix='/api/logs')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.1', port=5000, debug=True)
+    app.run(host='localhost', port=5000, debug=True)
