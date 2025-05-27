@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import './css/AddNetworkPage.css';
+import API_BASE_URL from '../config';
+
 
 const AddNetworkPage = () => {
   const { translations, language } = useLanguage();
@@ -29,7 +31,7 @@ const AddNetworkPage = () => {
 
     setIsLoading(true);
     try {
-      await axios.post('http://127.0.0.1:5000/api/networks/', network);
+      await axios.post(`${API_BASE_URL}/api/networks/`, network);
       alert(translations.network_added_success || 'Network added successfully!');
       setNetwork({ name: '', description: '', color: '#FFFFFF' });
       setErrorMessage('');

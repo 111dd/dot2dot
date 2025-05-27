@@ -4,6 +4,8 @@ import Select from 'react-select';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import './css/AddPointByRouterPage.css';
+import API_BASE_URL from '../config';
+
 
 const AddPointByRouterPage = () => {
   const { translations } = useLanguage();
@@ -25,7 +27,6 @@ const AddPointByRouterPage = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000';
 
   useEffect(() => {
     const fetchData = async () => {

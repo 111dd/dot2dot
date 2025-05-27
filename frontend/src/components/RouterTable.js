@@ -12,7 +12,10 @@ import { motion } from 'framer-motion';
 import RouterModal from './RouterModal';
 import { useLanguage } from '../contexts/LanguageContext';
 import * as XLSX from 'xlsx'; // ייבוא הספרייה החדשה
-import './NetworkTable.css';
+import './RouterTable.css';
+import API_BASE_URL from '../config';
+
+console.log("API_BASE_URL is:", API_BASE_URL);
 
 // פונקציה חדשה להמרת שמות בניינים לתרגום מלא
 const getTranslatedBuilding = (buildingValue, translations) => {
@@ -50,10 +53,10 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
       setIsLoading(true);
       try {
         const [routersRes, networksRes, modelsRes, endpointsRes] = await Promise.all([
-          axios.get('http://127.0.0.1:5000/api/routers'),
-          axios.get('http://127.0.0.1:5000/api/networks'),
-          axios.get('http://127.0.0.1:5000/api/models'),
-          axios.get('http://127.0.0.1:5000/api/endpoints'),
+          axios.get(`${API_BASE_URL}/api/routers`),
+          axios.get(`${API_BASE_URL}/api/networks`),
+          axios.get(`${API_BASE_URL}/api/models`),
+          axios.get(`${API_BASE_URL}/api/endpoints`),
         ]);
         console.log('Raw routers data:', routersRes.data);
         setRouters(routersRes.data);
@@ -244,7 +247,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
   const handleDeleteRouter = async (id) => {
     if (window.confirm(translations.confirm_delete || 'Are you sure you want to delete this router?')) {
       try {
-        await axios.delete(`http://127.0.0.1:5000/api/routers/${id}`);
+        await axios.delete(`${API_BASE_URL}/api/routers/${id}`);
         setRouters((prev) => prev.filter((r) => r.id !== id));
       } catch (error) {
         console.error('Error deleting router:', error);
@@ -346,6 +349,7 @@ const RouterTable = ({ buildingFilterValue: propBuildingFilterValue }) => {
   if (error) {
     return <div className="text-red-400 text-center py-4">{error}</div>;
   }
+  console.log("API_BASE_URL is:", API_BASE_URL);
 
   return (
     <motion.div

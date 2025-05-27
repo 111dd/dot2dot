@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
+import API_BASE_URL from '../config';
+
 
 const RouterForm = () => {
   const { translations } = useLanguage();
@@ -24,7 +26,7 @@ const RouterForm = () => {
 
   useEffect(() => {
     axios
-      .get('http://127.0.0.1:5000/api/networks')
+      .get(`${API_BASE_URL}/api/networks`)
       .then((response) => {
         setNetworks(response.data);
       })
@@ -59,7 +61,7 @@ const RouterForm = () => {
     };
 
     axios
-      .post('http://127.0.0.1:5000/api/routers', cleanedData)
+      .post(`${API_BASE_URL}/api/routers`, cleanedData)
       .then((response) => {
         console.log('Response from server:', response.data);
         alert(translations.router_added_successfully || 'Router added successfully!');

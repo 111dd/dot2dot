@@ -4,10 +4,14 @@
   border: 1px solid #ddd;
 }
 
+/* טעינת גופן Assistant */
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600&display=swap');
+
+
 /* הטבלה */
 .network-table {
   @apply w-full border-collapse bg-white;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Assistant' !important;
 }
 
 /* כותרת הטבלה עם רקע דביק בחלק העליון */

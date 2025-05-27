@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { motion } from 'framer-motion'; // הוספנו כדי ליצור אנימציה לפתיחת ה-Dropdown
+import { motion } from 'framer-motion';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -12,7 +12,6 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  // הגדרת אנימציה לפתיחה וסגירה של ה-Dropdown
   const dropdownVariants = {
     hidden: { opacity: 0, height: 0, transition: { duration: 0.3 } },
     visible: { opacity: 1, height: 'auto', transition: { duration: 0.3 } },
@@ -21,42 +20,45 @@ const Navbar = () => {
   return (
     <nav className="navbar-container">
       <div className="navbar-content">
-        <div className="navbar-logo">D2D</div>
+        <div className="navbar-logo">
+
+          <img src="/img/Ofek_Logo.png" alt="D2D Logo" className="navbar-logo-img" />
+        <h1 style={{ padding: '20px' }}>החפשן של מע״ת</h1></div>
 
         {/* תפריט גדול (Desktop) */}
         <ul className="navbar-links-desktop">
           <li>
-            <Link to="/" className="navbar-button">
+            <Link to="/" className="navbar-custom-button">
               {translations.home || 'Home'}
             </Link>
           </li>
           <li>
-            <Link to="/routers" className="navbar-button">
+            <Link to="/routers" className="navbar-custom-button">
               {translations.routers || 'Switches'}
             </Link>
           </li>
           <li>
-            <Link to="/networks" className="navbar-button">
+            <Link to="/networks" className="navbar-custom-button">
               {translations.networks || 'Networks'}
             </Link>
           </li>
           <li>
-            <Link to="/logs" className="navbar-button">
+            <Link to="/logs" className="navbar-custom-button">
               {translations.logs || 'Logs'}
             </Link>
           </li>
           <li>
-            <Link to="/add-router" className="navbar-button">
+            <Link to="/add-router" className="navbar-custom-button">
               {translations.add_router || 'Add Switch'}
             </Link>
           </li>
           <li>
-            <Link to="/add-point-by-router" className="navbar-button">
+            <Link to="/add-point-by-router" className="navbar-custom-button">
               {translations.add_point || 'Add Point'}
             </Link>
           </li>
           <li>
-            <button onClick={toggleLanguage} className="navbar-button">
+            <button onClick={toggleLanguage} className="navbar-custom-button">
               {language === 'en' ? 'EN' : 'HE'}
             </button>
           </li>
@@ -74,7 +76,7 @@ const Navbar = () => {
 
       {/* תפריט Dropdown במסך קטן, מוצג עם אנימציה */}
       <motion.div
-        className="navbar-dropdown"
+        className={`navbar-dropdown ${isOpen ? 'active' : ''}`}
         initial="hidden"
         animate={isOpen ? 'visible' : 'hidden'}
         variants={dropdownVariants}
@@ -84,7 +86,7 @@ const Navbar = () => {
             <li>
               <Link
                 to="/"
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
                 onClick={() => setIsOpen(false)}
               >
                 {translations.home || 'Home'}
@@ -93,7 +95,7 @@ const Navbar = () => {
             <li>
               <Link
                 to="/routers"
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
                 onClick={() => setIsOpen(false)}
               >
                 {translations.routers || 'Switches'}
@@ -102,7 +104,7 @@ const Navbar = () => {
             <li>
               <Link
                 to="/networks"
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
                 onClick={() => setIsOpen(false)}
               >
                 {translations.networks || 'Networks'}
@@ -111,7 +113,7 @@ const Navbar = () => {
             <li>
               <Link
                 to="/logs"
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
                 onClick={() => setIsOpen(false)}
               >
                 {translations.logs || 'Logs'}
@@ -120,7 +122,7 @@ const Navbar = () => {
             <li>
               <Link
                 to="/add-router"
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
                 onClick={() => setIsOpen(false)}
               >
                 {translations.add_router || 'Add Switch'}
@@ -129,7 +131,7 @@ const Navbar = () => {
             <li>
               <Link
                 to="/add-point-by-router"
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
                 onClick={() => setIsOpen(false)}
               >
                 {translations.add_point || 'Add Point'}
@@ -141,7 +143,7 @@ const Navbar = () => {
                   toggleLanguage();
                   setIsOpen(false);
                 }}
-                className="navbar-dropdown-link"
+                className="navbar-custom-button"
               >
                 {language === 'en' ? 'EN' : 'HE'}
               </button>

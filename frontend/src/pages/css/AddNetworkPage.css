@@ -2,14 +2,19 @@
    1. עיצוב כללי של הדף
    ========================================================================== */
 .add-network-page {
-  max-width: 600px;
-  margin: 3rem auto;
-  margin-top: 8rem;
-  padding: 1.5rem;
-  background: linear-gradient(145deg, #1e293b, #172554);
-  color: #e2e8f0;
-  border-radius: 1rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(96, 165, 250, 0.1);
+  max-width: 650px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  color: #f1f5f9;
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 15px rgba(59, 130, 246, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-network-page:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.2);
 }
 
 /* כיוון דינמי לפי שפה */
@@ -27,26 +32,46 @@
    2. כותרת הדף
    ========================================================================== */
 .add-network-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #60a5fa;
+  font-family: 'Poppins', sans-serif;
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #93c5fd;
   text-align: inherit;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  text-shadow: 0 2px 10px rgba(96, 165, 250, 0.3);
+  letter-spacing: 0.15em;
+  background: linear-gradient(90deg, #93c5fd, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 3px 15px rgba(59, 130, 246, 0.4);
+  animation: fadeInTitle 1s ease-in-out;
+}
+
+@keyframes fadeInTitle {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================================
    3. מיכל הטופס
    ========================================================================== */
 .form-container {
-  background: #2d3b52;
-  padding: 2.5rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(96, 165, 250, 0.05);
-  border: 1px solid rgba(96, 165, 250, 0.2);
+  background: #1e2a47;
+  padding: 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), inset 0 0 12px rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  transition: background 0.3s ease;
+}
+
+.form-container:hover {
+  background: #223155;
 }
 
 /* ==========================================================================
@@ -55,7 +80,7 @@
 .add-network-form {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 /* קבוצת שדות */
@@ -70,47 +95,49 @@
 
 /* כוכבית לשדות חובה */
 .required-star {
-  color: #f87171;
-  margin-left: 0.25rem;
+  color: #f472b6;
+  margin-left: 0.3rem;
+  font-size: 1.1rem;
 }
 
 /* תוויות צפות */
 .form-label {
   position: absolute;
-  top: 1rem;
+  top: 1.2rem;
+  font-family: 'Poppins', sans-serif;
   font-size: 1rem;
   font-weight: 500;
-  color: #a1b1c9;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: #94a3b8;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   pointer-events: none;
 }
 
 /* התאמת מיקום התווית לפי כיוון */
 .add-network-page.ltr .form-label {
-  left: 1rem;
+  left: 1.2rem;
 }
 
 .add-network-page.rtl .form-label {
-  right: 1rem;
+  right: 1.2rem;
 }
 
 /* שדות קלט */
 .form-input,
 .form-textarea {
   width: 100%;
-  padding: 1.75rem 1rem 0.75rem 1rem;
-  border: 1px solid rgba(96, 165, 250, 0.2);
-  border-radius: 0.5rem;
-  background: #1f2a44;
-  color: #e2e8f0;
+  padding: 1.8rem 1.2rem 0.8rem 1.2rem;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 0.75rem;
+  background: #1a243b;
+  color: #f1f5f9;
   font-size: 1rem;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   transition: all 0.3s ease;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.25);
 }
 
 .form-textarea {
-  min-height: 120px;
+  min-height: 140px;
   resize: vertical;
 }
 
@@ -119,24 +146,26 @@
 .form-input:not(:placeholder-shown) + .form-label,
 .form-textarea:focus + .form-label,
 .form-textarea:not(:placeholder-shown) + .form-label {
-  top: 0.25rem;
-  font-size: 0.75rem;
-  color: #60a5fa;
+  top: 0.3rem;
+  font-size: 0.8rem;
+  color: #93c5fd;
   font-weight: 600;
+  transform: translateY(-2px);
 }
 
 .form-input:focus,
 .form-textarea:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 12px rgba(96, 165, 250, 0.4), inset 0 2px 8px rgba(0, 0, 0, 0.2);
-  background: #233554;
+  border-color: #3b82f6;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.25);
+  background: #1f2e4f;
+  transform: scale(1.01);
 }
 
 /* שדה בחירת צבע */
 .color-group {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
 /* התאמת סדר התווית ושדה הצבע לפי כיוון */
@@ -150,38 +179,43 @@
 
 .color-label {
   position: static;
-  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
   font-weight: 500;
   color: #e2e8f0;
 }
 
 .color-picker {
-  width: 60px;
-  height: 60px;
-  border: 2px solid rgba(96, 165, 250, 0.3);
-  border-radius: 0.5rem;
+  width: 70px;
+  height: 70px;
+  border: 2px solid rgba(59, 130, 246, 0.4);
+  border-radius: 0.75rem;
   background: none;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .color-picker:hover {
-  border-color: #60a5fa;
-  box-shadow: 0 0 12px rgba(96, 165, 250, 0.5);
+  border-color: #3b82f6;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  transform: scale(1.05);
 }
 
 /* הודעות שגיאה */
 .error-message {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.1);
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  border: 1px solid rgba(248, 113, 113, 0.3);
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.9rem;
+  color: #f472b6;
+  background: rgba(244, 114, 182, 0.15);
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(244, 114, 182, 0.3);
+  animation: slideInError 0.5s ease;
 }
 
 /* התאמת סדר האייקון והטקסט בהודעות שגיאה לפי כיוון */
@@ -194,57 +228,90 @@
 }
 
 .error-icon {
-  font-size: 1rem;
-  animation: bounce 0.5s ease infinite;
+  font-size: 1.1rem;
+  animation: pulse 1s ease infinite;
 }
 
 /* אנימציית קפיצה לאייקון שגיאה */
-@keyframes bounce {
+@keyframes pulse {
   0%, 100% {
-    transform: translateY(0);
+    transform: scale(1);
   }
   50% {
-    transform: translateY(-5px);
+    transform: scale(1.2);
+  }
+}
+
+@keyframes slideInError {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .general-error {
   text-align: center;
-  padding: 0.75rem;
-  background: rgba(248, 113, 113, 0.15);
-  border-radius: 0.5rem;
-  border: 1px solid rgba(248, 113, 113, 0.4);
+  padding: 1rem;
+  background: rgba(244, 114, 182, 0.2);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(244, 114, 182, 0.4);
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
 }
 
 /* כפתור שליחה */
 .submit-button {
-  padding: 0.75rem 2.5rem;
-  background: linear-gradient(90deg, #60a5fa, #1e40af);
+  padding: 1rem 3rem;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
   color: #ffffff;
   border: none;
-  border-radius: 0.5rem;
-  font-size: 1.1rem;
+  border-radius: 0.75rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
   transition: all 0.3s ease;
   align-self: center;
-  box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.submit-button:hover::before {
+  left: 100%;
 }
 
 .submit-button:hover {
-  background: linear-gradient(90deg, #1e40af, #60a5fa);
-  box-shadow: 0 6px 20px rgba(96, 165, 250, 0.5);
+  background: linear-gradient(90deg, #1d4ed8, #3b82f6);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+  transform: translateY(-2px);
 }
 
 .submit-button:active {
-  box-shadow: 0 2px 10px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  transform: translateY(0);
 }
 
 .submit-button:disabled {
-  background: #4b5e81;
+  background: #6b7280;
   box-shadow: none;
   cursor: not-allowed;
+  transform: none;
 }
 
 /* ==========================================================================
@@ -252,17 +319,19 @@
    ========================================================================== */
 @media (max-width: 768px) {
   .add-network-page {
-    margin: 1.5rem auto;
-    padding: 1rem;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    max-width: 90%;
   }
 
   .form-container {
-    padding: 1.5rem;
+    padding: 2rem;
   }
 
   .color-group {
     flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
   }
 
   .add-network-page.rtl .color-group {
@@ -270,11 +339,45 @@
   }
 
   .add-network-title {
-    font-size: 2rem;
+    font-size: 2.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .form-input,
+  .form-textarea {
+    padding: 1.5rem 1rem 0.5rem 1rem;
+    font-size: 0.95rem;
   }
 
   .submit-button {
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
+    padding: 0.8rem 2.5rem;
+    font-size: 1.1rem;
+  }
+
+  .color-picker {
+    width: 55px;
+    height: 55px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-network-title {
+    font-size: 1.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  .form-container {
+    padding: 1.5rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  .form-input:focus + .form-label,
+  .form-input:not(:placeholder-shown) + .form-label,
+  .form-textarea:focus + .form-label,
+  .form-textarea:not(:placeholder-shown) + .form-label {
+    font-size: 0.7rem;
   }
 }

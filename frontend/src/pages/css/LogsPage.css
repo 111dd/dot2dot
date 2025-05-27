@@ -5,10 +5,10 @@
   max-width: 1200px;
   margin: 3rem auto;
   padding: 1.5rem;
-  background: linear-gradient(145deg, #1e293b, #172554);
-  color: #e2e8f0;
+  background-color: #2E406F; /* התאם למיכלים כהים */
+  color: #E6E6E6; /* צבע טקסט בהיר */
   border-radius: 0.75rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.20); /* צל עדין */
   margin-top: 4rem;
 }
 
@@ -16,10 +16,10 @@
    2. כותרת הדף
    ========================================================================== */
 .logs-page__title {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Assistant'; /* התאם לפונט של האתר */
   font-size: 2.25rem;
   font-weight: 700;
-  color: #60a5fa;
+  color: #E6E6E6; /* התאם לטקסט */
   text-align: center;
   margin-bottom: 1.5rem;
   text-transform: uppercase;
@@ -35,53 +35,56 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem;
-  background: #2d3b52;
+  background: #3D538F; /* גוון כהה יותר */
   border-radius: 0.5rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin-bottom: 1.5rem;
 }
 
 .logs-search-input,
 .logs-page-size {
   padding: 0.5rem 1rem;
-  border: 1px solid #4b5e81;
+  border: 1px solid #2E406F; /* גבול כהה */
   border-radius: 0.375rem;
-  background-color: #334155;
-  color: #e2e8f0;
+  background-color: #3D538F; /* התאם לרקע */
+  color: #E6E6E6;
   font-size: 0.875rem;
+  font-family: 'Assistant';
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .logs-search-input:focus,
 .logs-page-size:focus {
-  border-color: #60a5fa;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  border-color: #4C68B2; /* צבע ראשי */
+  box-shadow: 0 0 0 3px rgba(76, 104, 178, 0.2);
   outline: none;
 }
 
 .logs-action-button {
   padding: 0.5rem 1.25rem;
-  background: linear-gradient(90deg, #60a5fa, #1e40af);
-  color: #ffffff;
+  background-color: #4C68B2; /* התאם לכפתורים החדשים */
+  color: #E6E6E6;
   border: none;
   border-radius: 0.375rem;
   font-weight: 500;
+  font-family: 'Assistant';
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .logs-action-button:hover {
+  background-color: #3D538F; /* גוון כהה יותר */
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+  box-shadow: 0 4px 8px rgba(46, 64, 111, 0.3);
 }
 
 .logs-action-button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(96, 165, 250, 0.2);
+  box-shadow: 0 2px 4px rgba(46, 64, 111, 0.2);
 }
 
 .logs-action-button:disabled {
-  background: #4b5e81;
+  background: #2E406F; /* התאם לרקע כהה */
   cursor: not-allowed;
 }
 
@@ -92,29 +95,30 @@
 .logs-error-message {
   text-align: center;
   padding: 1rem;
-  background-color: #2d3b52;
+  background-color: #3D538F;
   border-radius: 0.375rem;
   margin-bottom: 1rem;
   font-size: 0.875rem;
+  font-family: 'Assistant';
 }
 
 .logs-error-message {
-  color: #f87171;
-  border: 1px solid #f87171;
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
 }
 
 /* ==========================================================================
    5. מיכל הטבלה
    ========================================================================== */
 .logs-table-container {
-  max-height: 450px; /* גובה קטן יותר לטבלה קומפקטית */
+  max-height: 450px;
   overflow-y: auto;
   overflow-x: auto;
   border-radius: 0.5rem;
-  background: #1e293b;
+  background: #2E406F; /* התאם למיכלים כהים */
   margin-bottom: 1.5rem;
-  border: 1px solid rgba(96, 165, 250, 0.2);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid #3D538F;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* סגנון סרגל גלילה */
@@ -124,17 +128,17 @@
 }
 
 .logs-table-container::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: #2E406F;
   border-radius: 0.5rem;
 }
 
 .logs-table-container::-webkit-scrollbar-thumb {
-  background: #4b5e81;
+  background: #3D538F;
   border-radius: 0.5rem;
 }
 
 .logs-table-container::-webkit-scrollbar-thumb:hover {
-  background: #60a5fa;
+  background: #4C68B2;
 }
 
 /* ==========================================================================
@@ -143,28 +147,28 @@
 .logs-table {
   width: 100%;
   border-collapse: collapse;
-  background: #1e293b;
-  font-family: 'Inter', sans-serif;
-  color: #e2e8f0;
+  background: #2E406F;
+  font-family: 'Assistant';
+  color: #E6E6E6;
 }
 
 .logs-table thead th {
   position: sticky;
   top: 0;
-  background: linear-gradient(90deg, #1e3a8a, #2d3b52);
-  color: #e2e8f0;
-  padding: 0.4rem 0.6rem; /* ריווח קטן יותר */
-  text-align: right; /* יישור לימין לעברית (RTL) */
+  background: #3D538F; /* גוון כהה יותר */
+  color: #E6E6E6;
+  padding: 0.4rem 0.6rem;
+  text-align: right;
   font-size: 0.9rem;
   font-weight: 600;
-  border-bottom: 1px solid #60a5fa;
+  border-bottom: 1px solid #4C68B2;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: background 0.3s ease;
 }
 
 .logs-table thead th:hover {
-  background: linear-gradient(90deg, #1e40af, #3b5b9a);
+  background: #2E406F; /* התאם לרקע */
 }
 
 .logs-table tbody tr {
@@ -173,22 +177,22 @@
 }
 
 .logs-table tbody tr:nth-child(odd) {
-  background-color: #2d3b52;
+  background-color: #3D538F;
 }
 
 .logs-table tbody tr:nth-child(even) {
-  background-color: #1f2a44;
+  background-color: #2E406F;
 }
 
 .logs-table tbody tr:hover {
-  background-color: #3b5b9a;
+  background-color: #4C68B2;
 }
 
 .logs-table tbody td {
-  padding: 0.4rem 0.6rem; /* ריווח קטן יותר */
-  border-bottom: 1px solid #4b5e81;
-  text-align: right; /* יישור לימין לעברית (RTL) */
-  font-size: 0.9rem; /* טקסט מעט גדול יותר לקריאות */
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #3D538F;
+  text-align: right;
+  font-size: 0.9rem;
   transition: background-color 0.3s ease;
 }
 
@@ -205,18 +209,18 @@
 /* כותרות ניתנות למיון */
 .logs-sortable-header {
   position: relative;
-  padding-left: 1.5rem; /* שינוי ל-left כי הטבלה ב-RTL */
+  padding-left: 1.5rem;
   cursor: pointer;
 }
 
 .logs-sortable-header[aria-sort]:after {
   content: '↑';
   position: absolute;
-  left: 0.5rem; /* שינוי ל-left כי הטבלה ב-RTL */
+  left: 0.5rem;
   top: 50%;
   transform: translateY(-50%);
   font-size: 0.8rem;
-  color: #60a5fa;
+  color: #4C68B2;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
@@ -233,8 +237,8 @@
 .logs-no-data {
   text-align: center;
   padding: 1rem;
-  color: #94a3b8;
-  background: #1e293b;
+  color: #B0B0B0; /* אפור בהיר יותר */
+  background: #2E406F;
   font-size: 0.9rem;
 }
 
@@ -245,14 +249,14 @@
   display: flex;
   justify-content: center;
   padding: 0.75rem;
-  background: #2d3b52;
+  background: #3D538F;
   border-radius: 0.375rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .logs-pagination-info {
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: #B0B0B0; /* אפור בהיר יותר */
 }
 
 /* ==========================================================================
@@ -280,7 +284,7 @@
   .logs-table tbody tr {
     display: block;
     margin-bottom: 0.5rem;
-    border-bottom: 1px solid #4b5e81;
+    border-bottom: 1px solid #3D538F;
   }
 
   .logs-table tbody td {
@@ -290,13 +294,13 @@
     text-align: right;
     padding: 0.3rem 0.5rem;
     font-size: 0.85rem;
-    border-bottom: 1px solid rgba(75, 94, 129, 0.3);
+    border-bottom: 1px solid rgba(61, 83, 143, 0.3); /* התאם לגוון */
   }
 
   .logs-table tbody td:before {
     content: attr(data-label);
     font-weight: 600;
-    color: #60a5fa;
+    color: #4C68B2;
     padding-right: 0.5rem;
   }
 

@@ -1,9 +1,10 @@
 import React from 'react';
+import './Footer.css';
 
 const Footer = () => {
   return (
-    <footer style= {{textAlign: "center"}}>
-      <p>© 2024 Network Documentation App</p>
+    <footer className="footer-container">
+      <p> IAF - Ofek 324 ©</p>
     </footer>
   );
 };

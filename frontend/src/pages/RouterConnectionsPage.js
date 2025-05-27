@@ -1,3 +1,4 @@
+import API_BASE_URL from './../config';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -13,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './css/RouterConnectionsPage.css';
 
 // בסיס ה-URL של ה-Backend
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://127.0.0.1:5000';
+// const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || `${API_BASE_URL}`;
 
 // פונקציה חדשה להמרת שמות בניינים לתרגום מלא
 const getTranslatedBuilding = (buildingValue, translations) => {

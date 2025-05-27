@@ -49,7 +49,7 @@ SQLALCHEMY_DATABASE_URI=postgresql://dordavid:your_password@localhost/network_db
 ```sh
 flask run
 ```
-By default, the backend runs on `http://127.0.0.1:5000/`.
+By default, the backend runs on `${API_BASE_URL}/`.
 
 ### 4️⃣ Frontend Setup
 #### 📦 Install Dependencies

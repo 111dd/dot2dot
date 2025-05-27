@@ -1,77 +1,115 @@
-/* src/components/NetworkTable.css */
-
 /* מיכל הגלילה */
 .table-container {
   @apply max-h-[500px] overflow-y-auto overflow-x-auto my-5 rounded-lg shadow-md;
-  border: 1px solid #ddd;
+  background-color: #2E406F; /* התאם למיכלים כהים */
+  border: 1px solid #3D538F; /* גבול כהה */
 }
 
 /* הטבלה */
 .network-table {
-  @apply w-full border-collapse bg-white;
-  font-family: 'Arial', sans-serif;
+  @apply w-full border-collapse;
+  background-color: #2E406F; /* התאם למיכלים כהים */
+  font-family: 'Assistant';
 }
 
 /* כותרת הטבלה עם רקע דביק בחלק העליון */
 .network-table thead th {
-  @apply sticky top-0 bg-gray-700 text-white p-3 text-center border border-gray-600 font-semibold;
+  @apply sticky top-0 p-3 text-center font-semibold;
   position: sticky;
   top: 0;
   z-index: 2;
+  background-color: #3D538F; /* גוון כהה יותר */
+  color: #E6E6E6; /* טקסט בהיר */
+  border: 1px solid #2E406F; /* גבול כהה */
 }
 
 /* עיצוב גוף הטבלה */
 .network-table tbody tr:nth-child(odd) {
-  @apply bg-gray-50;
+  background-color: #3D538F; /* גוון מעט בהיר יותר */
 }
 
 .network-table tbody tr:nth-child(even) {
-  @apply bg-white;
+  background-color: #2E406F; /* התאם לרקע */
 }
 
 .network-table tbody tr:hover {
-  @apply bg-gray-200 transition-colors duration-200;
+  background-color: #4C68B2; /* צבע ראשי ב-Hover */
+  transition: background-color 0.2s ease;
 }
 
 /* התאים עצמם */
 .network-table tbody td {
-  @apply p-3 border border-gray-700 text-center text-sm;
+  @apply p-3 text-center text-sm;
+  border: 20px solid #3D538F; /* גבול כהה */
+  color: #E6E6E6; /* טקסט בהיר */
 }
 
 /* כפתור פעולות */
 .network-table tbody td button {
-  @apply bg-blue-500 text-white border-none px-3 py-1 rounded-md cursor-pointer text-xs;
+  background-color: #4C68B2; /* התאם לכפתורים החדשים */
+  color: #E6E6E6;
+  border: none;
+  padding: 0.25rem 0.75rem; /* הקטן מ-px-3 py-1 */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem; /* התאם ל-text-xs */
+  font-family: 'Assistant';
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .network-table tbody td button:hover {
-  @apply bg-blue-600;
+  background-color: #3D538F; /* גוון כהה יותר */
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .network-table tbody td button:active {
-  @apply bg-blue-700;
+  background-color: #2E406F; /* גוון כהה מאוד */
+  transform: scale(0.95);
 }
 
 /* אזור החיפוש וכפתור "הוספת רשת" */
 .table-header {
-  @apply w-3/4 mx-auto p-2 flex items-center gap-4 shadow-md rounded;
+  @apply w-3/4 mx-auto  flex items-center ;
+  background-color: #2E406F; /* התאם למיכלים כהים */
 }
 
 .global-filter {
-  @apply p-1 border border-gray-600 rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500;
+  @apply p-1 border rounded-md focus:outline-none focus:ring-2;
+  border-color: #2E406F; /* גבול כהה */
+  background-color: #3D538F; /* רקע כהה */
+  color: #E6E6E6; /* טקסט בהיר */
+  font-family: 'Assistant';
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.global-filter:focus {
+  border-color: #4C68B2; /* צבע ראשי */
+  box-shadow: 0 0 0 3px rgba(76, 104, 178, 0.2); /* טבעת פוקוס */
+  outline: none;
+}
 .add-network-button {
-  @apply bg-blue-500 text-blue-950 border-none px-3 py-1 rounded-md cursor-pointer text-sm font-medium;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: #4C68B2; /* התאם לכפתורים החדשים */
+  color: #E6E6E6; /* שנה מ-text-blue-950 לבהיר */
+  border: none;
+  padding: 0.25rem 0.75rem; /* הקטן מ-px-3 py-1 */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem; /* התאם ל-text-sm */
+  font-family: 'Assistant';
+  font-weight: 500;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .add-network-button:hover {
-  @apply transform scale-105 shadow-lg;
+  background-color: #3D538F; /* גוון כהה יותר */
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .add-network-button:active {
-  @apply transform scale-95 shadow-md;
+  background-color: #2E406F; /* גוון כהה מאוד */
+  transform: scale(0.95);
 }
 
 /* רספונסיביות למובייל */
@@ -87,6 +125,7 @@
   .network-table tbody td::before {
     @apply content-[''] absolute left-0 w-[50%] pl-2 font-bold text-left;
     content: attr(data-label);
+    color: #E6E6E6; /* התאם לטקסט */
   }
 
   .table-container {

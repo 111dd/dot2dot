@@ -1,3 +1,4 @@
+import API_BASE_URL from './../config';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import axios from 'axios';
 import {
@@ -23,7 +24,7 @@ const LogsPage = () => {
   const refreshLogs = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://127.0.0.1:5000/api/logs');
+      const response = await axios.get(`${API_BASE_URL}/api/logs`);
       setLogs(response.data);
       setErrorMessage('');
     } catch (error) {

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
+import API_BASE_URL from '../config';
+
 
 const NetworkModal = ({ network, onClose, onUpdate, onDelete }) => {
   const { translations, language } = useLanguage();
@@ -15,7 +17,7 @@ const NetworkModal = ({ network, onClose, onUpdate, onDelete }) => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5000/api/networks/${editableNetwork.id}`,
+        `${API_BASE_URL}/api/networks/${editableNetwork.id}`,
         editableNetwork
       );
       onUpdate(response.data);
@@ -28,7 +30,7 @@ const NetworkModal = ({ network, onClose, onUpdate, onDelete }) => {
   const handleDelete = async () => {
     if (window.confirm(translations.confirm_delete_network || 'Are you sure you want to delete this network?')) {
       try {
-        await axios.delete(`http://127.0.0.1:5000/api/networks/${network.id}`);
+        await axios.delete(`${API_BASE_URL}/api/networks/${network.id}`);
         onDelete(network.id);
         onClose();
       } catch (error) {

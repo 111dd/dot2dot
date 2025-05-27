@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
 import './css/AddRouterPage.css';
+import API_BASE_URL from '../config';
+
 
 const AddRouterPage = () => {
   const { translations } = useLanguage();
@@ -34,8 +36,8 @@ const AddRouterPage = () => {
     const fetchData = async () => {
       try {
         const [modelsResponse, networksResponse] = await Promise.all([
-          axios.get('http://127.0.0.1:5000/api/models/'),
-          axios.get('http://127.0.0.1:5000/api/networks/'),
+          axios.get(`${API_BASE_URL}/api/models/`),
+          axios.get(`${API_BASE_URL}/api/networks/`),
         ]);
         setModels(modelsResponse.data);
         setNetworks(networksResponse.data);
@@ -89,14 +91,14 @@ const AddRouterPage = () => {
     try {
       // אם הוקלד דגם חדש
       if (router.new_model_name.trim()) {
-        const newModelResponse = await axios.post('http://127.0.0.1:5000/api/models/', {
+        const newModelResponse = await axios.post(`${API_BASE_URL}/api/models/`, {
           model_name: router.new_model_name,
         });
         router.model_id = newModelResponse.data.id;
       }
 
       // שליחת הנתונים לשרת
-      await axios.post('http://127.0.0.1:5000/api/routers/', router);
+      await axios.post(`${API_BASE_URL}/api/routers/`, router);
       alert(translations.router_added_success || 'Router added successfully!');
 
       // איפוס

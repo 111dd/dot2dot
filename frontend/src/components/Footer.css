@@ -1,0 +1,18 @@
+.footer-container {
+  background-color: #2E406F; /* אותו צבע כמו ה-navbar */
+  color: #E6E6E6; /* אותו צבע טקסט כמו ה-navbar */
+  padding: 0.5rem 1rem; /* אותם מרווחים כמו ה-navbar */
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.2); /* צל כלפי מעלה, במקום כלפי מטה */
+  position: fixed; /* קבוע בתחתית העמוד */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100; /* ודא שהוא מעל תוכן אחר */
+  min-height: 46px; /* אותו גובה מינימלי כמו ה-navbar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Assistant;
+  font-size: 16px;
+  font-weight: 400;
+}

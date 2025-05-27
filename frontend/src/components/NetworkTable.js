@@ -12,6 +12,8 @@ import { motion } from 'framer-motion';
 import NetworkModal from './NetworkModal';
 import { useLanguage } from '../contexts/LanguageContext';
 import './NetworkTable.css';
+import API_BASE_URL from '../config';
+
 
 const NetworkTable = () => {
   const [networks, setNetworks] = useState([]);
@@ -27,7 +29,7 @@ const NetworkTable = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get('http://127.0.0.1:5000/api/networks');
+        const response = await axios.get(`${API_BASE_URL}/api/networks`);
         setNetworks(response.data);
       } catch (err) {
         console.error('Error fetching networks:', err);
@@ -112,7 +114,7 @@ const NetworkTable = () => {
   const handleDeleteNetwork = async (id) => {
     if (window.confirm(translations.confirm_delete || 'Are you sure you want to delete this network?')) {
       try {
-        await axios.delete(`http://127.0.0.1:5000/api/networks/${id}`);
+        await axios.delete(`${API_BASE_URL}/api/networks/${id}`);
         setNetworks((prev) => prev.filter((net) => net.id !== id));
       } catch (error) {
         console.error('Error deleting network:', error);

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLanguage } from '../contexts/LanguageContext';
+import API_BASE_URL from '../config';
+
 
 const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
   const { translations, language } = useLanguage(); // הוספתי language
@@ -29,7 +31,7 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
   const handleDelete = async () => {
     if (window.confirm(translations.confirm_delete_router || 'Are you sure you want to delete this router?')) {
       try {
-        await axios.delete(`http://127.0.0.1:5000/api/routers/${router.id}`);
+        await axios.delete(`${API_BASE_URL}/api/routers/${router.id}`);
         if (typeof onDelete === 'function') {
           onDelete(router.id);
         }
@@ -44,7 +46,7 @@ const RouterModal = ({ router, onClose, onUpdate, onDelete }) => {
   const handleSave = async () => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5000/api/routers/${router.id}`,
+        `${API_BASE_URL}/api/routers/${router.id}`,
         formData
       );
       if (typeof onUpdate === 'function') {

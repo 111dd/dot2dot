@@ -1,3 +1,4 @@
+import API_BASE_URL from './../config';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -5,7 +6,7 @@ const EndpointForm = ({ onSubmit, routers, initialEndpoint }) => {
   // אם יש אובייקט התחלה, נשתמש בו, אחרת ניקח ערכי ברירת מחדל ריקים.
   const [endpoint, setEndpoint] = useState(() => {
     return initialEndpoint || {
-      technician_name: '',
+      technician_name: ``,
       connected_port_number: '',
       point_location: '',
       destination_room: '',
@@ -23,7 +24,7 @@ const EndpointForm = ({ onSubmit, routers, initialEndpoint }) => {
   useEffect(() => {
     const fetchRitPrefixes = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/api/endpoints/rit-prefixes');
+        const response = await axios.get(`${API_BASE_URL}/api/endpoints/rit-prefixes`);
         setRitPrefixes(response.data);
       } catch (error) {
         console.error('Failed to fetch RIT prefixes:', error);
@@ -35,7 +36,7 @@ const EndpointForm = ({ onSubmit, routers, initialEndpoint }) => {
   useEffect(() => {
     const fetchNetworks = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/api/networks');
+        const response = await axios.get(`${API_BASE_URL}/api/networks`);
         setNetworks(response.data);
       } catch (error) {
         console.error('Failed to fetch networks:', error);
@@ -80,7 +81,7 @@ const EndpointForm = ({ onSubmit, routers, initialEndpoint }) => {
 
     if (isNewNetwork && endpoint.new_network_name.trim() !== '') {
       try {
-        const resp = await axios.post('http://127.0.0.1:5000/api/networks', {
+        const resp = await axios.post(`${API_BASE_URL}/api/networks`, {
           name: endpoint.new_network_name,
         });
         finalNetworkId = resp.data.id; // בהנחה שהשרת מחזיר {id: ...}

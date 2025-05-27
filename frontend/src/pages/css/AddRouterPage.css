@@ -1,70 +1,152 @@
+/* ==========================================================================
+   1. עיצוב כללי של הדף
+   ========================================================================== */
 .add-router-page__container {
   max-width: 650px;
   margin: 20px auto;
-  background-color: rgba(30, 41, 59, 0.6); /* רקע כהה ושקוף חלקית */
-  color: #fff;
+  background-color: #2E406F; /* התאם ל-navbar */
+  color: #E6E6E6; /* צבע טקסט בהיר */
   padding: 20px;
   border-radius: 8px;
   margin-top: 90px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.20); /* צל עדין כמו ב-navbar */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* כוכבית ליד שדות חובה */
-.add-router-page__required {
-  color: #ff6b6b;
-  margin-left: 4px;
+.add-router-page__container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.30);
 }
 
+/* כיוון דינמי לפי שפה */
+.add-router-page__container.ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+.add-router-page__container.rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ==========================================================================
+   2. כותרת הדף
+   ========================================================================== */
 .add-router-page__title {
   font-size: 1.5rem;
   margin-bottom: 15px;
   text-align: center;
-  text-shadow: 0 0 2px rgba(0,0,0,0.3);
+  color: #E6E6E6; /* התאם לטקסט של האתר */
+  font-family: 'Assistant'; /* התאם לפונט של האתר */
+  font-weight: 600;
+  animation: fadeInTitle 0.8s ease-in-out;
 }
 
-/* טופס */
+@keyframes fadeInTitle {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   3. מיכל הטופס
+   ========================================================================== */
 .add-router-page__form {
   display: flex;
   flex-direction: column;
-  gap: 14px; /* ריווח אנכי בין קבוצות שדות */
+  gap: 14px;
+  background: #3D538F; /* גוון מעט בהיר יותר מה-container */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
 }
 
-/* כל שדה בקבוצה משלו */
+.add-router-page__form:hover {
+  background: #2E406F; /* התאם ל-container */
+}
+
+/* ==========================================================================
+   4. עיצוב הטופס
+   ========================================================================== */
 .add-router-page__form-group {
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 /* תוויות */
 .add-router-page__form-group label {
   margin-bottom: 3px;
   font-weight: 600;
-  color: #cbd5e1;
+  color: #E6E6E6; /* התאם לטקסט */
+  font-family: 'Assistant';
+  transition: color 0.3s ease;
+}
+
+.add-router-page__form-group label:hover {
+  color: #FFFFFF; /* הבהר מעט ב-Hover */
+}
+
+/* כוכבית ליד שדות חובה */
+.add-router-page__required {
+  color: #ff6b6b;
+  margin-left: 4px;
+  font-size: 1rem;
 }
 
 /* שדה טקסט, מספר, סלקט, וכו' */
 .add-router-page__input,
-.add-router-page__select {
-  background-color: #2d3748;
-  border: 1px solid #4a5568;
+.add-router-page__select,
+.add-router-page__textarea {
+  background-color: #3D538F; /* התאם לרקע של שדות קלט */
+  border: 1px solid #2E406F; /* גבול כהה */
   border-radius: 4px;
-  color: #fff;
-  padding: 6px;
+  color: #E6E6E6;
+  padding: 8px 10px;
   font-size: 0.95rem;
+  font-family: 'Assistant';
   outline: none;
-
-  /* אנימציית מעבר עדינה */
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
 }
 
-.add-router-page__input:focus,
-.add-router-page__select:focus {
-  background-color: #394150;
-  border-color: #667080;
+.add-router-page__textarea {
+  min-height: 100px;
+  resize: vertical;
 }
+
+/*.add-router-page__input:focus,*/
+/*.add-router-page__select:focus,*/
+/*.add-router-page__textarea:focus {*/
+/*  background-color: #4C68B2; !* גוון בהיר יותר *!*/
+/*  border-color: #2E406F;*/
+/*  transform: scale(1.01);*/
+/*  box-shadow: 0 0 8px rgba(46, 64, 111, 0.3); !* צל כחול כהה *!*/
+/*}*/
 
 /* כאשר יש שגיאה */
-.add-router-page__input--error {
+.add-router-page__input--error,
+.add-router-page__select--error,
+.add-router-page__textarea--error {
   border-color: #ff6b6b !important;
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 /* הודעת שגיאה מתחת לשדה */
@@ -73,13 +155,26 @@
   margin-top: 3px;
   font-size: 0.85rem;
   font-weight: 500;
+  font-family: 'Assistant';
+  animation: fadeInError 0.5s ease;
+}
+
+@keyframes fadeInError {
+  0% {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* שורה עם שני עמודות (לדוגמה Floor + Building) */
 .add-router-page__row {
   display: flex;
   gap: 12px;
-  align-items: flex-start; /* או center, אם רוצים למרכז אנכית */
+  align-items: flex-start;
 }
 
 /* כל עמודה */
@@ -91,34 +186,63 @@
 .add-router-page__checkbox {
   width: 20px;
   height: 20px;
-  margin-left: 8px; /* רווח בין הטקסט לצ'קבוקס */
-  accent-color: #4caf50; /* צבע סימון ירוק (בדפדפנים תומכים) */
+  margin-left: 8px;
+  accent-color: #4C68B2; /* התאם לצבע הראשי */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.add-router-page__checkbox:hover {
+  transform: scale(1.1);
 }
 
 /* כפתור שליחה */
 .add-router-page__submit-btn {
-  background-color: #4caf50;
-  color: #fff;
+  background-color: #4C68B2; /* התאם לערכת הצבעים */
+  color: #E6E6E6;
   font-size: 1rem;
   font-weight: 600;
   border: none;
   border-radius: 4px;
-  padding: 8px;
+  padding: 8px 20px;
   cursor: pointer;
   margin-top: 12px;
-
-  /* מעבר חלק */
-  transition: background-color 0.2s, transform 0.2s;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
 }
 
-.add-router-page__submit-btn:hover {
-  background-color: #45a049;
-  transform: scale(1.02);
+.add-router-page__submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
 }
+
+.add-router-page__submit-btn:hover::before {
+  left: 100%;
+}
+
+/*.add-router-page__submit-btn:hover {*/
+/*  background-color: #3D538F; !* גוון כהה יותר *!*/
+/*  transform: scale(1.02);*/
+/*  box-shadow: 0 4px 15px rgba(46, 64, 111, 0.4);*/
+/*}*/
+
+/*.add-router-page__submit-btn:active {*/
+/*  transform: scale(0.98);*/
+/*  box-shadow: 0 2px 10px rgba(46, 64, 111, 0.3);*/
+/*}*/
 
 .add-router-page__submit-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* הודעת שגיאה גלובלית */
@@ -127,4 +251,61 @@
   margin-top: 10px;
   font-weight: bold;
   text-align: center;
+  font-family: 'Assistant';
+  animation: fadeInError 0.5s ease;
+}
+
+/* ==========================================================================
+   5. רספונסיביות
+   ========================================================================== */
+@media (max-width: 768px) {
+  .add-router-page__container {
+    margin: 15px auto;
+    padding: 15px;
+    max-width: 90%;
+    margin-top: 70px;
+  }
+
+  .add-router-page__title {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+
+  .add-router-page__form {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .add-router-page__row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .add-router-page__input,
+  .add-router-page__select,
+  .add-router-page__textarea {
+    padding: 6px 8px;
+    font-size: 0.9rem;
+  }
+
+  .add-router-page__submit-btn {
+    padding: 6px 16px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-router-page__title {
+    font-size: 1.1rem;
+  }
+
+  .add-router-page__form-group label {
+    font-size: 0.9rem;
+  }
+
+  .add-router-page__input,
+  .add-router-page__select,
+  .add-router-page__textarea {
+    font-size: 0.85rem;
+  }
 }

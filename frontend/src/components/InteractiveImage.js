@@ -23,7 +23,7 @@ const InteractiveImage = () => {
 
   return (
     <div className="interactive-image-container">
-      <h1>{translations.select_building || 'Select a building'}</h1>
+      {/*<h1>{translations.select_building || 'Select a building'}</h1>*/}
 
       <div className="image-wrapper">
         <img

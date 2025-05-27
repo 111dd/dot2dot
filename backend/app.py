@@ -9,9 +9,13 @@ from routes.endpoint_routes import endpoint_bp
 from routes.network_routes import network_bp
 from routes.log_routes import log_bp
 import logging
+import os  # הוסף את זה
 
 app = Flask(__name__)
 app.config.from_object(Config)
+
+# הדפס את ה-DATABASE_URL כדי לבדוק שהוא נטען נכון
+print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")  # הוסף שורה זו
 
 # השבת הפניות אוטומטיות עבור סלאשים
 app.url_map.strict_slashes = False
@@ -69,4 +73,4 @@ app.register_blueprint(model_bp, url_prefix='/api/models')
 app.register_blueprint(log_bp, url_prefix='/api/logs')
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='localhost', port=5000, debug=True)  # השאר כפי שהיה, כי זה לא משפיע בתוך Docker
